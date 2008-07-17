@@ -16,3 +16,4 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <assert.h>

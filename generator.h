@@ -16,6 +16,6 @@ public:
 	virtual Project* CreateProject(const char* name);
 	virtual Folder* CreateFolder(const char* name);
 	virtual Solution* CreateSolution(const char* name);
-	virtual Tool* GetTool(const char* name);
+	virtual Tool* GetTool(const char* name) = 0;
 	virtual Properties* NewProperties();
 };

@@ -38,12 +38,6 @@ Solution* Generator::CreateSolution(const char* name)
 	return new Solution(*this);
 }
 
-// tool
-Tool* Generator::GetTool(const char* name)
-{
-	return 0;
-}
-
 Properties* Generator::NewProperties()
 {
 	return new Properties();

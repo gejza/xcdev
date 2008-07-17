@@ -4,19 +4,43 @@
 
 class Generator;
 
-struct Item
+struct Define
 {
 	std::string name;
 	std::string value;
 };
 
-struct Option
+struct DefineList
 {
-	std::string value;
-	std::vector<Item> list;
+	std::vector<Define> list;
+	bool inherit_parent;
 };
 
-typedef std::map<std::string,Option> 
+struct ValueList
+{
+	std::vector<std::string> list;
+	bool inherit_parent;
+};
+
+struct Option
+{
+	enum Type
+	{
+		OTBool,
+		OTString,
+		OTDefines,
+		OTValues,
+	} type;
+	union {
+		bool b;
+		const char* str;
+		DefineList* defines;
+		ValueList* values;
+	} value;
+};
+
+typedef std::map<std::string, Option> Section;
+typedef std::map<std::string, Section> Sections;
 
 class Properties : public IProperties
 {
@@ -24,6 +48,7 @@ class Properties : public IProperties
 
 	typedef std::map<std::string,std::string> EnvMap;
 	EnvMap m_env;
+	Sections m_sec;
 public:
 	Properties(void);
 	~Properties(void);
@@ -47,13 +72,19 @@ class Configurations
 	PropMap m_optional;
 	Properties* m_main;
 	Configurations* m_parent;
+	// cache
+	// kvuli castemu volani serialize
+	static int m_ver;
+	int m_vers;
+	Properties* m_serialized;
 public:
 	Configurations(Generator& gen) 
-		: m_gen(gen), m_main(NULL), m_parent(NULL) {}
+		: m_gen(gen), m_main(NULL), m_parent(NULL), m_vers(0) {}
 	Properties* Get(const char* conf=NULL);
 	void SetParent(Configurations* parent) { m_parent = parent; }
 	// pospojuje vsechny properties podle dulezitosti
 	Properties* Serialize(ConfList& conflist);
+	void InvalidateCache() { m_ver++; }
 };
 
 

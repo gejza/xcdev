@@ -3,6 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "abs", "abs.vcproj", "{F4CEF8F1-9D8D-4033-BDEE-2C2479DAB11C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F2E74EA6-7D96-4C86-B4A8-55637E0AB7C8}"
+	ProjectSection(SolutionItems) = preProject
+		abs.vcproj.MILAN-NB.Milan.user = abs.vcproj.MILAN-NB.Milan.user
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32

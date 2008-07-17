@@ -16,17 +16,16 @@ int main(int argc, char* argv[])
 	ISolution* sol = gen->CreateSolution("Hoe");
 	sol->CreateFile("test.cpp");
 	IFolder* tools = sol->CreateFolder("Tools");
-	tools->CreateFolder("Generators")->CreateProject("Hcgen")
+	IFile* tf = tools->CreateFolder("Generators")->CreateProject("Hcgen")
 		->CreateFilter("Math")->CreateFile("blabla.cpp");
-	
+	tf->AddTool("m4");
+	tf->AddTool("lex");
+	tf->AddTool("cc");
+	// file muze mit depend nebo src file
 
-	/*IProperties* platf = gen->NewProperties();
-	IProperties* arch = platf->Inherit();
-	IProperties* konf = arch->Inherit();
+	// flex.l flex.cpp flex.o
+	// musi se pridat oboji.. 
 
-	IProperties* directx = gen->NewProperties();
-	IProperties* opengl = gen->NewProperties();
-	opengl->Derive(konf);*/
 	IProperties* m = sol->GetProperties();
 	IProperties* d = tools->GetProperties("debug"); 
 	IProperties* o = tools->GetProperties("opengl"); 
@@ -34,10 +33,13 @@ int main(int argc, char* argv[])
 	d->SetEnv("build", "debug");
 	o->SetEnv("build", "opengl");	
 
+	// gen configurations...
 	ConfList conf;
 	conf.push_back("debug");
 	conf.push_back("opengl");
-	return sol->Make(conf) ? 0:1;
+	return sol->Make(conf,0,0) ? 0:1;
+
+	// ulozit solutions
 }
 
 

@@ -49,8 +49,12 @@ void Properties::SetParent(Properties* prop)
 }
 
 /////////////////////////////////////////////////////
+int Configurations::m_ver = 1;
+
 Properties* Configurations::Get(const char* conf)
 {
+	InvalidateCache();
+
 	if (!conf) // main configuration
 	{
 		if (!m_main)
@@ -67,26 +71,27 @@ Properties* Configurations::Get(const char* conf)
 
 Properties* Configurations::Serialize(ConfList& conflist)
 {
+	if (m_ver == m_vers) return m_serialized;
 	// dedicnost
-	Properties* p = m_parent ? m_parent->Serialize(conflist):NULL;
+	m_serialized = m_parent ? m_parent->Serialize(conflist):NULL;
 	// hlavni
 	if (m_main)
 	{
-		if (p) m_main->SetParent(p);
-		p = m_main;
+		if (m_serialized) m_main->SetParent(m_serialized);
+		m_serialized = m_main;
 	}	
 	// volitelne
-	if (m_optional.empty()) return p; // opt
+	if (m_optional.empty()) return m_serialized; // opt
 	for (ConfList::iterator i=conflist.begin();i!=conflist.end();i++)
 	{
 		PropMap::iterator c = m_optional.find(*i);
 		if (c != m_optional.end())
 		{
-			if (p) c->second->SetParent(p);
-			p = c->second;
+			if (m_serialized) c->second->SetParent(m_serialized);
+			m_serialized = c->second;
 		}
 	}
-	return p;	
+	return m_serialized;	
 }
 
 

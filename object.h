@@ -4,95 +4,115 @@
 #include "properties.h"
 
 class Generator;
+class Tool;
+typedef std::vector<Tool*> Tools;
 
-class File : public IFile
+// pouze dependency wolker
+
+class Object
 {
-public:
-	typedef std::vector<File*> Files;
 protected:
 	Generator& m_gen;
+	Configurations m_conf;
+	Object* m_owner;
+public:
+	Object(Generator& gen, Object* owner=NULL) 
+		: m_gen(gen), m_conf(gen), m_owner(owner) {}
+	void SetOwner(Object* owner) { m_owner=owner; m_conf.SetParent(&owner->m_conf); }
+	virtual Object* GetOwner() { return m_owner; }
+};
+
+template<typename LIST> 
+class ItemList : public LIST
+{
+public:
+	bool Make(ConfList& conf, IBuilder* bld, ITool* tool)
+	{
+		bool ret = true;
+		for (LIST::iterator i=begin();i!=end();i++)
+			if (!(*i)->Make(conf, bld, tool))
+				ret = false;
+		return ret;
+	}
+};
+
+class File : public Object, public IFile
+{
+public:
+	typedef ItemList<std::vector<File*>> Files;
+protected:
 	std::string m_path;
-	Configurations m_conf;
+	Tools m_tool;
 public:
-	File(Generator& gen, const char* path) 
-		: m_gen(gen), m_path(path), m_conf(gen) {}
-	virtual bool Make(ConfList& conf);
+	File(Generator& gen, const char* path, Object* owner=NULL) 
+		: Object(gen, owner), m_path(path) {}
+	virtual bool Make(ConfList& conf, IBuilder* bld, ITool* tool);
 	virtual IProperties* GetProperties(const char* conf) { return m_conf.Get(conf); }
-	void SetParentConf(Configurations* parent) { m_conf.SetParent(parent); }
+	virtual void AddTool(const char* name);
 };
 
-class Filter : public IFilter
+class Filter : public Object, public IFilter
 {
 public:
-	typedef std::vector<Filter*> Filters;
+	typedef ItemList<std::vector<Filter*>> Filters;
 protected:
-	Generator& m_gen;
 	Filter::Filters m_filters;
 	File::Files m_files;
-	Configurations m_conf;
 public:
-	Filter(Generator& gen) : m_gen(gen), m_conf(gen) {}
+	Filter(Generator& gen, Object* owner=NULL) : Object(gen, owner) {}
 	virtual File* CreateFile(const char* path);
 	virtual Filter* CreateFilter(const char* name);
-	virtual bool Make(ConfList& conf);
+	virtual bool Make(ConfList& conf, IBuilder* bld, ITool* tool);
 	virtual IProperties* GetProperties(const char* conf) { return m_conf.Get(conf); }
-	void SetParentConf(Configurations* parent) { m_conf.SetParent(parent); }
 };
 
-class Project : public IProject
+class Project : public Object, public IProject
 {
 public:
-	typedef std::vector<Project*> Projects;
+	typedef ItemList<std::vector<Project*>> Projects;
 protected:
-	Generator& m_gen;
 	Filter::Filters m_filters;
 	File::Files m_files;
-	Configurations m_conf;
+	Tool* m_link;
 public:
-	Project(Generator& gen) : m_gen(gen), m_conf(gen) {}
+	Project(Generator& gen, Object* owner=NULL) : Object(gen, owner), m_link(NULL) {}
 	virtual File* CreateFile(const char* path);
 	virtual Filter* CreateFilter(const char* name);
-	virtual bool Make(ConfList& conf);
+	virtual bool Make(ConfList& conf, IBuilder* bld, ITool* tool);
 	virtual IProperties* GetProperties(const char* conf) { return m_conf.Get(conf); }
-	void SetParentConf(Configurations* parent) { m_conf.SetParent(parent); }
+	virtual void SetLinker(const char* name);
 };
 
-class Folder : public IFolder
+class Folder : public Object, public IFolder
 {
 public:
-	typedef std::vector<Folder*> Folders;
+	typedef ItemList<std::vector<Folder*>> Folders;
 protected:
-	Generator& m_gen;
 	Folder::Folders m_folders;
 	Project::Projects m_projects;
 	File::Files m_files;
-	Configurations m_conf;
 public:
-	Folder(Generator& gen) : m_gen(gen), m_conf(gen) {}
+	Folder(Generator& gen, Object* owner=NULL) : Object(gen, owner) {}
 	virtual File* CreateFile(const char* path);
 	virtual Project* CreateProject(const char* name);
 	virtual Folder* CreateFolder(const char* name);
-	virtual bool Make(ConfList& conf);
+	virtual bool Make(ConfList& conf, IBuilder* bld, ITool* tool);
 	virtual IProperties* GetProperties(const char* conf) { return m_conf.Get(conf); }
-	void SetParentConf(Configurations* parent) { m_conf.SetParent(parent); }
 };
 
-class Solution : public ISolution
+class Solution : public Object, public ISolution
 {
 protected:
-	Generator& m_gen;
 	Folder::Folders m_folders;
 	Project::Projects m_projects;
 	File::Files m_files;
-	Configurations m_conf;
 public:
-	Solution(Generator& gen) : m_gen(gen), m_conf(gen) {}
+	Solution(Generator& gen) : Object(gen, NULL) {}
 	virtual File* CreateFile(const char* path);
 	virtual Project* CreateProject(const char* name);
 	virtual Folder* CreateFolder(const char* name);
-	virtual bool Make(ConfList& conf);
+	virtual bool Make(ConfList& conf, IBuilder* bld, ITool* tool);
 	virtual IProperties* GetProperties(const char* conf) { return m_conf.Get(conf); }
-	void SetParentConf(Configurations* parent) { m_conf.SetParent(parent); }
 };
 
 

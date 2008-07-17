@@ -177,6 +177,14 @@
 			<File
 				RelativePath=".\abs.cpp"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						PreprocessorDefinitions="aaa"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\generator.cpp"
@@ -218,6 +226,10 @@
 				RelativePath=".\tool.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\vcgen.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -257,6 +269,10 @@
 			</File>
 			<File
 				RelativePath=".\tool.h"
+				>
+			</File>
+			<File
+				RelativePath=".\vcgen.h"
 				>
 			</File>
 		</Filter>

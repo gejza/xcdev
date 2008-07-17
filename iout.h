@@ -20,22 +20,32 @@ public:
 	virtual bool IsSelect() = 0; //< selector pro skupiny
 };
 
+class IBuilder
+{
+};
+
 // tools
 class ITool
 {
 public:
+	virtual void Reset() = 0;
+	virtual void AddSource(const char* src) = 0;
+	virtual bool Build(IProperties* prop, IBuilder* bld, ITool* out) = 0;
 };
+
 
 // objects
 class IObject
 {
 public:
-	virtual bool Make(ConfList& conf) = 0;
+	virtual bool Make(ConfList& conf, IBuilder* bld, ITool* exp) = 0;
 	virtual IProperties* GetProperties(const char* name=NULL) = 0;
 };
 
 class IFile : public IObject
 {
+public:
+	virtual void AddTool(const char* name) = 0;
 };
 
 class IFilter : public IObject
@@ -50,6 +60,7 @@ class IProject : public IFilter
 public:
 	virtual IFile* CreateFile(const char* path) = 0;
 	virtual IFilter* CreateFilter(const char* name) = 0;
+	virtual void SetLinker(const char* name) = 0;
 };
 
 class IFolder : public IObject
@@ -73,7 +84,5 @@ public:
 	virtual IProject* CreateProject(const char* name) = 0;
 	virtual IFolder* CreateFolder(const char* name) = 0;
 	virtual ISolution* CreateSolution(const char* name) = 0;
-
-	// tool
 	virtual ITool* GetTool(const char* name) = 0;
 };

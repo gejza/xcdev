@@ -20,8 +20,12 @@ zavislost:
  filter - rozdeleni do skupin (soubor jako skupina)
  tool:
   c++ preklad
+  
+  generators:
   flex preklad
   asm
+  m4 prep
+  python gen
  link - link knihovny
  install ?
  
