@@ -2,7 +2,7 @@
 
 #include "iout.h"
 
-class Generator;
+class Manager;
 
 struct Define
 {
@@ -67,24 +67,21 @@ public:
 
 class Configurations
 {
-	Generator& m_gen;
+	Manager& m_mgr;
 	typedef std::map<std::string, Properties*> PropMap;
 	PropMap m_optional;
 	Properties* m_main;
 	Configurations* m_parent;
 	// cache
-	// kvuli castemu volani serialize
-	static int m_ver;
-	int m_vers;
+	int m_buildId;
 	Properties* m_serialized;
 public:
-	Configurations(Generator& gen) 
-		: m_gen(gen), m_main(NULL), m_parent(NULL), m_vers(0) {}
+	Configurations(Manager& mgr) 
+		: m_mgr(mgr), m_main(NULL), m_parent(NULL), m_buildId(0) {}
 	Properties* Get(const char* conf=NULL);
 	void SetParent(Configurations* parent) { m_parent = parent; }
 	// pospojuje vsechny properties podle dulezitosti
-	Properties* Serialize(ConfList& conflist);
-	void InvalidateCache() { m_ver++; }
+	Properties* Serialize(ConfList& conflist, int buildId);
 };
 
 

@@ -3,7 +3,7 @@
 #include "object.h"
 #include "generator.h"
 
-class Output : public Generator
+class Output : public Manager
 {
 public:
 	Output(void);

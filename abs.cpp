@@ -4,7 +4,29 @@
 #include "StdAfx.h"
 #include "iout.h"
 
-IGenerator* CreateGenerator();
+IManager* CreateGenerator();
+
+class BuildConf : public IBuilder
+{
+	static int m_genId;
+	int m_id;
+	ConfList m_conf;
+public:
+	BuildConf() : m_id(m_genId++) {}
+	void ActiveConf(const char* cnf) { m_conf.push_back(cnf); }
+	virtual int BuildId() { return m_id; }
+	virtual ConfList& GetBuildConf() { return m_conf; }
+	virtual IProfile* GetProfile() { return NULL; }
+	virtual unsigned long PassDependency() { return ~0; }
+};
+int BuildConf::m_genId = 1;
+
+class GenTarget : public ITarget
+{
+public:
+	virtual int GetLevel() { return 1; }
+	virtual ITarget* GetNext(EObjectType type) { return NULL; }
+};
 
 #ifdef _WIN32
 int _tmain(int argc, _TCHAR* argv[])
@@ -12,21 +34,26 @@ int _tmain(int argc, _TCHAR* argv[])
 int main(int argc, char* argv[])
 #endif
 {
-	IGenerator* gen = CreateGenerator();
+	IManager* gen = CreateGenerator();
 	ISolution* sol = gen->CreateSolution("Hoe");
-	sol->CreateFile("test.cpp");
+	IFile* pruv = sol->CreateFile("test.cpp");
 	IFolder* tools = sol->CreateFolder("Tools");
 	IFile* tf = tools->CreateFolder("Generators")->CreateProject("Hcgen")
 		->CreateFilter("Math")->CreateFile("blabla.cpp");
-	tf->AddTool("m4");
-	tf->AddTool("lex");
-	tf->AddTool("cc");
+	GenTarget gt;
+	tf->AddTool(&gt, "m4");
+	tf->AddTool(&gt, "lex");
+	tf->AddTool(&gt, "cc");
+	tf->Include(&gt, "debug");
+	tf->Include(&gt, "opengl");
 	// file muze mit depend nebo src file
-
+	pruv->AddTool(&gt, "doc");
+	tools->AddDepend(&gt, pruv,&gt, false);
 	// flex.l flex.cpp flex.o
 	// musi se pridat oboji.. 
 
 	IProperties* m = sol->GetProperties();
+	sol->GetProperties("release")->SetEnv("build", "release");
 	IProperties* d = tools->GetProperties("debug"); 
 	IProperties* o = tools->GetProperties("opengl"); 
 	m->SetEnv("build", "hoe");
@@ -34,12 +61,31 @@ int main(int argc, char* argv[])
 	o->SetEnv("build", "opengl");	
 
 	// gen configurations...
-	ConfList conf;
-	conf.push_back("debug");
-	conf.push_back("opengl");
-	return sol->Make(conf,0,0) ? 0:1;
-
-	// ulozit solutions
+	{
+		BuildConf cnf;
+		cnf.ActiveConf("debug");
+		cnf.ActiveConf("opengl");
+		sol->Make(&cnf,&gt,0);
+	}
+	{
+		BuildConf cnf;
+		cnf.ActiveConf("release");
+		cnf.ActiveConf("directx");
+		sol->Make(&cnf,&gt,0);
+	}
+	{
+		BuildConf cnf;
+		cnf.ActiveConf("debug");
+		cnf.ActiveConf("directx");
+		sol->Make(&cnf,&gt,0);
+	}
+	{
+		BuildConf cnf;
+		cnf.ActiveConf("release");
+		cnf.ActiveConf("opengl");
+		sol->Make(&cnf,&gt,0);
+	}
+	return 0;
 }
 
 

@@ -2,7 +2,7 @@
 #include "output.h"
 #include "vcgen.h"
 
-IGenerator* CreateGenerator()
+IManager* CreateGenerator()
 {
 	return new VCGen();
 }
