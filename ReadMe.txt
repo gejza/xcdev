@@ -143,3 +143,33 @@ ochrana kodu (hlidani zanaseni chyb do kodu)
 sprava komentaru (organizace todo a not implement)
 statistiky a prehledy
 gen dokumentace
+
+<Solution Hoe>
+ 
+ AddProject HoeCore
+ AddProject HoeEditor
+
+
+</Solution>
+
+
+# Projekt hoe core
+# hlavni projekt pro ostatni
+
+<Project HoeCore>
+
+ <Filter Math>
+   Sources *.cpp
+
+ </Filter>
+
+ <Conf opengl>
+   cc.Define=_OPENGL_
+ </Conf>
+
+ 
+
+</Project>
+
+
+

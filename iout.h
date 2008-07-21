@@ -111,7 +111,7 @@ public:
 };
 
 // generator
-class IManager
+class IOutput
 {
 public:
 	virtual IFile* CreateFile(const char* path) = 0;

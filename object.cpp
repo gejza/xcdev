@@ -49,10 +49,10 @@ void TargetSpec::Exclude(int l, const char* name)
 	m_sel[l].exclude.push_back(name);
 }
 
-template<typename MAP>
+template<typename MAP, typename ITER>
 int GetNext(MAP& map, int l)
 {
-	for (MAP::iterator i=map.begin();
+	for (ITER i=map.begin();
 		i!=map.end();i++)
 	{
 		if (i->first > l)
@@ -63,8 +63,8 @@ int GetNext(MAP& map, int l)
 
 int TargetSpec::GetNextLevel(int l)
 {
-	int lt = GetNext(m_tools, l);
-	int ld = GetNext(m_depend, l);
+	int lt = GetNext<ToolMap, ToolMap::iterator>(m_tools, l);
+	int ld = GetNext<DepMap,DepMap::iterator>(m_depend, l);
 	if (lt && !ld) return lt;
 	if (!lt && ld) return ld;
 	return lt < ld ? lt:ld;

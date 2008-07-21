@@ -4,7 +4,7 @@
 #include "StdAfx.h"
 #include "iout.h"
 
-IManager* CreateGenerator();
+IOutput* CreateGenerator();
 
 class BuildConf : public IBuilder
 {
@@ -38,7 +38,7 @@ int _tmain(int argc, _TCHAR* argv[])
 int main(int argc, char* argv[])
 #endif
 {
-	IManager* gen = CreateGenerator();
+	IOutput* gen = CreateGenerator();
 	ISolution* sol = gen->CreateSolution("Hoe");
 	IFile* pruv = sol->CreateFile("test.cpp");
 	IFolder* tools = sol->CreateFolder("Tools");

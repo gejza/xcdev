@@ -202,25 +202,25 @@ public:
 	virtual bool Make(IBuilder* builder, ITarget* target, ITool* tool)
 		{ return Object::Make(builder, target, tool); }
 	// forward for type
-	virtual EObjectType Object::GetType() { return IF::GetType(); }
+	virtual EObjectType GetType() { return IF::GetType(); }
 
 };
 
-template<typename LIST> 
+template<typename LIST, typename ITER> 
 class ItemList : public LIST
 {
 public:
 	bool Make(IBuilder* builder, ITarget* target, ITool* tool)
 	{
 		bool ret = true;
-		for (LIST::iterator i=begin();i!=end();i++)
+		for (ITER i=this->begin();i!=this->end();i++)
 			if (!(*i)->Make(builder, target, tool))
 				ret = false;
 		return ret;
 	}
 	void AddTool(ITarget* target, Tool* tool)
 	{
-		for (LIST::iterator i=begin();i!=end();i++)
+		for (ITER i=this->begin();i!=this->end();i++)
 			static_cast<Object*>(*i)->AddTool(target, tool);
 	}
 };
@@ -228,25 +228,26 @@ public:
 class File : public ObjectRef<IFile>
 {
 public:
-	typedef ItemList<std::vector<File*>> Files;
+	typedef ItemList<std::vector<File*>, std::vector<File*>::iterator> Files;
 protected:
 	std::string m_path;
 	virtual bool MakeLevel(IBuilder* builder, ITool* tool, Level& lvl);
 public:
 	File(Manager& mgr, const char* path, Object* owner=NULL) 
-		: ObjectRef(mgr, owner), m_path(path) {}
+		: ObjectRef<IFile>(mgr, owner), m_path(path) {}
 };
 
 class Filter : public ObjectRef<IFilter>
 {
 public:
-	typedef ItemList<std::vector<Filter*>> Filters;
+	typedef std::vector<Filter*> FilterList;
+	typedef ItemList<FilterList, FilterList::iterator> Filters;
 protected:
 	Filter::Filters m_filters;
 	File::Files m_files;
 	virtual bool MakeLevel(IBuilder* builder, ITool* tool, Level& lvl);
 public:
-	Filter(Manager& mgr, Object* owner=NULL) : ObjectRef(mgr, owner) {}
+	Filter(Manager& mgr, Object* owner=NULL) : ObjectRef<IFilter>(mgr, owner) {}
 	virtual File* CreateFile(const char* path);
 	virtual Filter* CreateFilter(const char* name);
 	virtual void AddTool(ITarget* target, Tool* tool);
@@ -255,13 +256,14 @@ public:
 class Project : public ObjectRef<IProject>
 {
 public:
-	typedef ItemList<std::vector<Project*>> Projects;
+	typedef std::vector<Project*> ProjectList;
+	typedef ItemList<ProjectList, ProjectList::iterator> Projects;
 protected:
 	Filter::Filters m_filters;
 	File::Files m_files;
 	virtual bool MakeLevel(IBuilder* builder, ITool* tool, Level& lvl);
 public:
-	Project(Manager& mgr, Object* owner=NULL) : ObjectRef(mgr, owner) {}
+	Project(Manager& mgr, Object* owner=NULL) : ObjectRef<IProject>(mgr, owner) {}
 	virtual File* CreateFile(const char* path);
 	virtual Filter* CreateFilter(const char* name);
 	virtual void AddTool(ITarget* target, Tool* tool);
@@ -270,14 +272,15 @@ public:
 class Folder : public ObjectRef<IFolder>
 {
 public:
-	typedef ItemList<std::vector<Folder*>> Folders;
+	typedef std::vector<Folder*> FolderList;
+	typedef ItemList<FolderList, FolderList::iterator> Folders;
 protected:
 	Folder::Folders m_folders;
 	Project::Projects m_projects;
 	File::Files m_files;
 	virtual bool MakeLevel(IBuilder* builder, ITool* tool, Level& lvl);
 public:
-	Folder(Manager& mgr, Object* owner=NULL) : ObjectRef(mgr, owner) {}
+	Folder(Manager& mgr, Object* owner=NULL) : ObjectRef<IFolder>(mgr, owner) {}
 	virtual File* CreateFile(const char* path);
 	virtual Project* CreateProject(const char* name);
 	virtual Folder* CreateFolder(const char* name);
@@ -292,14 +295,14 @@ protected:
 	File::Files m_files;
 	virtual bool MakeLevel(IBuilder* builder, ITool* tool, Level& lvl);
 public:
-	Solution(Manager& mgr) : ObjectRef(mgr, NULL) {}
+	Solution(Manager& mgr) : ObjectRef<ISolution>(mgr, NULL) {}
 	virtual File* CreateFile(const char* path);
 	virtual Project* CreateProject(const char* name);
 	virtual Folder* CreateFolder(const char* name);
 	virtual void AddTool(ITarget* target, Tool* tool);
 };
 
-class Manager : public IManager
+class Manager : public IOutput
 {
 public:
 	Manager(void);
