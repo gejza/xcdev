@@ -65,7 +65,9 @@ int TargetSpec::GetNextLevel(int l)
 {
 	int lt = GetNext(m_tools, l);
 	int ld = GetNext(m_depend, l);
-	return lt && lt < ld ? lt:ld;
+	if (lt && !ld) return lt;
+	if (!lt && ld) return ld;
+	return lt < ld ? lt:ld;
 }
 
 // depend
