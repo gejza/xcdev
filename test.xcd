@@ -1,0 +1,14 @@
+
+# solution
+# sol
+
+<Project xcmake>
+  # make?
+
+  Sources *.cpp
+  <File a>
+    <Conf debug>
+    
+    </Conf>
+  </File>
+</Project>

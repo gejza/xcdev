@@ -3,6 +3,7 @@
 
 #include "StdAfx.h"
 #include "iout.h"
+#include "parser.h"
 
 IOutput* CreateGenerator();
 
@@ -39,6 +40,10 @@ int main(int argc, char* argv[])
 #endif
 {
 	IOutput* gen = CreateGenerator();
+	OpenFlex("test.xcd");
+	Parser p;
+	return yyparse(p);
+#if 0
 	ISolution* sol = gen->CreateSolution("Hoe");
 	IFile* pruv = sol->CreateFile("test.cpp");
 	IFolder* tools = sol->CreateFolder("Tools");
@@ -75,6 +80,7 @@ int main(int argc, char* argv[])
 		cnf.ActiveConf("opengl");
 		sol->Make(&cnf,&gt,0);
 	}
+#endif
 	return 0;
 }
 
