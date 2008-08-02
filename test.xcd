@@ -8,7 +8,7 @@
   Sources *.cpp
   <File a>
     <Conf debug>
-    
+         aaa    
     </Conf>
   </File>
 </Project>

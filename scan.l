@@ -5,7 +5,8 @@
 #include <string.h>
 #include "parser.tab.hpp"
 #include "parser.h"
-extern "C"  static int yywrap() { return 1; }
+inline int yywrap() { return 1; } 
+#define YY_SKIP_YYWRAP 1
 %}
 
 string  \"[^\n"]+\"
