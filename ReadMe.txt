@@ -1,6 +1,19 @@
 ========================================================================
     CONSOLE APPLICATION : abs Project Overview
 ========================================================================
+nova arch
+
+
+parser-> vstup souboru (xbd, Makefile, vsproj, atd...)
+generator-> zavislosti (xbs, xbd, Makefile, vsproj, kdevelop atd.) <- konfigurator
+builder (xbs)
+
+zavislost resi generator
+skupiny konfiguraci
+Debug GL / Release GL / Tools
+Jak resit update?
+
+old:
 
 features:
  skupiny souboru (pro prehled i pro jednotne nastaveni)
@@ -13,7 +26,6 @@ styl podle VS?
  dedeni nastaveni
  
 objekty a zavislosti
-
 objekty a mnoziny? (tools)
  
 zavislost:

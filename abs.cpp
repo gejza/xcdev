@@ -7,7 +7,7 @@
 
 IOutput* CreateGenerator();
 
-class BuildConf : public IBuilder
+class BuildConf : public IBuild
 {
 	static int m_genId;
 	int m_id;

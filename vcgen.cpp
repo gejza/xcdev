@@ -4,7 +4,7 @@
 
 ///////////////////////////////////////////
 // VSProject
-bool VSProject::Make(IBuilder* bld, ITarget* target, ITool* tool)
+bool VSProject::Make(IBuild* bld, ITarget* target, ITool* tool)
 {
 	// nahradit build
 	// vytvorit v build

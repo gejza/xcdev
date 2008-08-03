@@ -40,7 +40,7 @@ public:
 	virtual ITarget* GetNext(EObjectType type) = 0;
 };
 
-class IBuilder
+class IBuild
 {
 public:
 	virtual int BuildId() = 0;
@@ -56,7 +56,7 @@ public:
 	virtual EObjectType ObjectUsed() = 0;
 	virtual void Reset() = 0;
 	virtual void AddSource(const char* src) = 0;
-	virtual bool Build(IProperties* prop, IBuilder* builder, ITool* tool) = 0;
+	virtual bool Build(IProperties* prop, IBuild* builder, ITool* tool) = 0;
 };
 
 // objects
@@ -64,7 +64,7 @@ class IObject
 {
 public:
 	virtual EObjectType GetType() = 0;
-	virtual bool Make(IBuilder* builder, ITarget* target, ITool* tool) = 0;
+	virtual bool Make(IBuild* builder, ITarget* target, ITool* tool) = 0;
 	virtual IProperties* GetProperties(const char* name=NULL) = 0;
 	// target spec
 	virtual void AddDepend(ITarget* target, IObject* depend, ITarget* targetdep, bool direct) = 0;

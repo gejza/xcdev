@@ -2,17 +2,17 @@
 
 #include "iout.h"
 
-class Builder : public IBuilder
+class Builder : public IBuild
 {
 protected:
-	IBuilder* m_parent;
+	IBuild* m_parent;
 public:
-	Builder(IBuilder* parent=NULL) : m_parent(parent) {}
+	Builder(IBuild* parent=NULL) : m_parent(parent) {}
 	virtual int BuildId();
 	virtual ConfList& GetBuildConf();
 	virtual IProfile* GetProfile();
 	virtual unsigned long PassDependency();
-	void Set(IBuilder* parent) { m_parent = parent; }
+	void Set(IBuild* parent) { m_parent = parent; }
 };
 
 class Tool : public ITool

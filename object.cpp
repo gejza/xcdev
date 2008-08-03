@@ -4,7 +4,7 @@
 
 ///////////////////////////
 // Selector
-bool TargetSpec::Select(int l, IBuilder* builder)
+bool TargetSpec::Select(int l, IBuild* builder)
 {
 	// neni co na praci...
 	if (m_sel.find(l) == m_sel.end())
@@ -71,7 +71,7 @@ int TargetSpec::GetNextLevel(int l)
 }
 
 // depend
-bool TargetSpec::DepList::MakeDepend(IBuilder* builder, ITool* tool, ITool* link)
+bool TargetSpec::DepList::MakeDepend(IBuild* builder, ITool* tool, ITool* link)
 {
 	// omezeni na zavislost
 	unsigned long pass = builder->PassDependency();
@@ -87,7 +87,7 @@ bool TargetSpec::DepList::MakeDepend(IBuilder* builder, ITool* tool, ITool* link
 	return ret;
 }
 
-bool Object::Make(IBuilder* builder, ITarget* target, ITool* tool)
+bool Object::Make(IBuild* builder, ITarget* target, ITool* tool)
 {
 	// probehnout pro kazdy target?
 	// clean and install
@@ -144,7 +144,7 @@ bool Object::Make(IBuilder* builder, ITarget* target, ITool* tool)
 }
 
 bool Object::Build(TargetSpec::ToolList& tools, Properties* prop, 
-				   IBuilder* builder, ITool* out)
+				   IBuild* builder, ITool* out)
 {
 	TargetSpec::ToolList::iterator t=tools.begin();
 	while (t != tools.end())
@@ -180,7 +180,7 @@ void Object::AddTool(ITarget *target, Tool *tool)
 
 /////////////////////////
 // file
-bool File::MakeLevel(IBuilder* builder, ITool* tool, Level& level)
+bool File::MakeLevel(IBuild* builder, ITool* tool, Level& level)
 {
 	if (!level.tools || level.tools->empty()) // no tools for build in this level
 	{
@@ -204,7 +204,7 @@ bool File::MakeLevel(IBuilder* builder, ITool* tool, Level& level)
 
 /////////////////////////
 // filter
-bool Filter::MakeLevel(IBuilder* builder, ITool* tool, Level& level)
+bool Filter::MakeLevel(IBuild* builder, ITool* tool, Level& level)
 {
 	// make folders, make projects -> podle dependency!!!
 	if (level.deps && !level.deps->MakeDepend(builder, tool, tool))
@@ -246,7 +246,7 @@ Filter* Filter::CreateFilter(const char* name)
 
 /////////////////////////
 // Project
-bool Project::MakeLevel(IBuilder* builder, ITool* tool, Level& level)
+bool Project::MakeLevel(IBuild* builder, ITool* tool, Level& level)
 {
 	// make folders, make projects -> podle dependency!!!
 	// get link
@@ -301,7 +301,7 @@ Filter* Project::CreateFilter(const char* name)
 
 /////////////////////////
 // folder
-bool Folder::MakeLevel(IBuilder* builder, ITool* tool, Level& level)
+bool Folder::MakeLevel(IBuild* builder, ITool* tool, Level& level)
 {
 	// make folders, make projects -> podle dependency!!!
 	if (level.deps && !level.deps->MakeDepend(builder, tool, tool))
@@ -371,7 +371,7 @@ Folder* Solution::CreateFolder(const char* name)
 	return m_folders.back();
 }
 
-bool Solution::MakeLevel(IBuilder* builder, ITool* tool, Level& level)
+bool Solution::MakeLevel(IBuild* builder, ITool* tool, Level& level)
 {
 	if (!m_folders.Make(builder, level.target, tool))
 		m_check.Fail();

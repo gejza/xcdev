@@ -22,7 +22,7 @@ public:
 		: m_buildId(-1), m_res(true), 
 		m_build(false), m_level(0), m_targetlevel(0), m_oklevel(0) {}
 	// check if build?
-	bool Build(int level, IBuilder* bld) 
+	bool Build(int level, IBuild* bld) 
 	{ 
 		int buildId = bld->BuildId();
 		if (m_buildId==buildId)
@@ -105,7 +105,7 @@ public:
 	{
 	public:
 		// vybuildi zavislosti
-		bool MakeDepend(IBuilder* builder, ITool* tool, ITool* link);
+		bool MakeDepend(IBuild* builder, ITool* tool, ITool* link);
 	};
 	typedef std::vector<Tool*>	ToolList;
 	typedef std::map<int, ToolList> ToolMap;
@@ -122,7 +122,7 @@ public:
 	TargetSpec() : m_parent(NULL) {}
 	void AddDepend(int l, IObject* obj, ITarget* target, bool direct) 
 	{ m_depend[l].push_back(Depend(obj, target, direct)); }
-	bool Select(int l, IBuilder*);
+	bool Select(int l, IBuild*);
 	void Include(int l, const char* name);
 	void Exclude(int l, const char* name);
 	void SetParent(TargetSpec* parent) { m_parent = parent; }
@@ -160,9 +160,9 @@ protected:
 	TargetSpec m_targets;
 
 	// make levels
-	virtual bool MakeLevel(IBuilder* builder, ITool* tool, Level& lvl) = 0;
+	virtual bool MakeLevel(IBuild* builder, ITool* tool, Level& lvl) = 0;
 	bool Build(TargetSpec::ToolList& tools, 
-		Properties* prop, IBuilder* builder, ITool* out);
+		Properties* prop, IBuild* builder, ITool* out);
 public:
 	Object(Manager& mgr, Object* owner=NULL) 
 		: m_mgr(mgr), m_conf(mgr), m_owner(owner) {}
@@ -172,7 +172,7 @@ public:
 		m_conf.SetParent(&owner->m_conf);
 		m_targets.SetParent(&owner->m_targets);
 	}
-	bool Make(IBuilder* builder, ITarget* target, ITool* tool);
+	bool Make(IBuild* builder, ITarget* target, ITool* tool);
 	void AddTool(ITarget* target, const char* name);
 	virtual void AddTool(ITarget* target, Tool* tool);
 
@@ -199,7 +199,7 @@ public:
 	virtual void AddTool(ITarget* target, const char* name)
 		{ Object::AddTool(target, name); }
 	// distribute to child, or set to owner?
-	virtual bool Make(IBuilder* builder, ITarget* target, ITool* tool)
+	virtual bool Make(IBuild* builder, ITarget* target, ITool* tool)
 		{ return Object::Make(builder, target, tool); }
 	// forward for type
 	virtual EObjectType GetType() { return IF::GetType(); }
@@ -210,7 +210,7 @@ template<typename LIST, typename ITER>
 class ItemList : public LIST
 {
 public:
-	bool Make(IBuilder* builder, ITarget* target, ITool* tool)
+	bool Make(IBuild* builder, ITarget* target, ITool* tool)
 	{
 		bool ret = true;
 		for (ITER i=this->begin();i!=this->end();i++)
@@ -231,7 +231,7 @@ public:
 	typedef ItemList<std::vector<File*>, std::vector<File*>::iterator> Files;
 protected:
 	std::string m_path;
-	virtual bool MakeLevel(IBuilder* builder, ITool* tool, Level& lvl);
+	virtual bool MakeLevel(IBuild* builder, ITool* tool, Level& lvl);
 public:
 	File(Manager& mgr, const char* path, Object* owner=NULL) 
 		: ObjectRef<IFile>(mgr, owner), m_path(path) {}
@@ -245,7 +245,7 @@ public:
 protected:
 	Filter::Filters m_filters;
 	File::Files m_files;
-	virtual bool MakeLevel(IBuilder* builder, ITool* tool, Level& lvl);
+	virtual bool MakeLevel(IBuild* builder, ITool* tool, Level& lvl);
 public:
 	Filter(Manager& mgr, Object* owner=NULL) : ObjectRef<IFilter>(mgr, owner) {}
 	virtual File* CreateFile(const char* path);
@@ -261,7 +261,7 @@ public:
 protected:
 	Filter::Filters m_filters;
 	File::Files m_files;
-	virtual bool MakeLevel(IBuilder* builder, ITool* tool, Level& lvl);
+	virtual bool MakeLevel(IBuild* builder, ITool* tool, Level& lvl);
 public:
 	Project(Manager& mgr, Object* owner=NULL) : ObjectRef<IProject>(mgr, owner) {}
 	virtual File* CreateFile(const char* path);
@@ -278,7 +278,7 @@ protected:
 	Folder::Folders m_folders;
 	Project::Projects m_projects;
 	File::Files m_files;
-	virtual bool MakeLevel(IBuilder* builder, ITool* tool, Level& lvl);
+	virtual bool MakeLevel(IBuild* builder, ITool* tool, Level& lvl);
 public:
 	Folder(Manager& mgr, Object* owner=NULL) : ObjectRef<IFolder>(mgr, owner) {}
 	virtual File* CreateFile(const char* path);
@@ -293,7 +293,7 @@ protected:
 	Folder::Folders m_folders;
 	Project::Projects m_projects;
 	File::Files m_files;
-	virtual bool MakeLevel(IBuilder* builder, ITool* tool, Level& lvl);
+	virtual bool MakeLevel(IBuild* builder, ITool* tool, Level& lvl);
 public:
 	Solution(Manager& mgr) : ObjectRef<ISolution>(mgr, NULL) {}
 	virtual File* CreateFile(const char* path);

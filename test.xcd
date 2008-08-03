@@ -8,7 +8,12 @@
   Sources *.cpp
   <File a>
     <Conf debug>
+<<<<<<< .mine
+=======
          aaa    
+>>>>>>> .r8
+    </Conf>
+    <Conf debug>
     </Conf>
   </File>
 </Project>

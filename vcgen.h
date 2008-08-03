@@ -42,7 +42,7 @@ public:
 	virtual EObjectType ObjectUsed() { return EOTFile; } 
 	virtual void Reset() {}
 	virtual void AddSource(const char* src) { m_path = src; }
-	virtual bool Build(IProperties* prop, IBuilder*, ITool* link)
+	virtual bool Build(IProperties* prop, IBuild*, ITool* link)
 	{
 		// set file
 		printf("mgr file %s in conf %s\n", m_path.c_str(), prop->GetEnv("build"));
@@ -59,7 +59,7 @@ class VSFilter : public Filter
 public:
 	VSFilter(Manager& mgr, const std::string& name)
 		: Filter(mgr), m_name(name) {}
-	virtual bool Make(IBuilder* builder, ITarget* target, ITool* tool)
+	virtual bool Make(IBuild* builder, ITarget* target, ITool* tool)
 	{
 		VSProjGenerator* vpg = dynamic_cast<VSProjGenerator*>(builder);
 		vpg->PushFilter(m_name.c_str());
@@ -74,7 +74,7 @@ class VSProject : public Project
 	VSProjGenerator m_gen;
 public:
 	VSProject(Manager& mgr) : Project(mgr) {}
-	virtual bool Make(IBuilder* builder, ITarget* target, ITool* tool);
+	virtual bool Make(IBuild* builder, ITarget* target, ITool* tool);
 };
 
 ////////////////////////////////////////
