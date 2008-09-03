@@ -497,20 +497,6 @@
 			<File
 				RelativePath=".\generator.h"
 				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|x64"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\iout.h"
@@ -564,6 +550,8 @@
 				<Tool
 					Name="Bison"
 					genhdr="true"
+					debug="false"
+					report="true"
 				/>
 			</FileConfiguration>
 		</File>
@@ -574,14 +562,6 @@
 		<File
 			RelativePath=".\scan.l"
 			>
-			<FileConfiguration
-				Name="Debug|Win32"
-				>
-				<Tool
-					Name="Flex"
-					Lang="false"
-				/>
-			</FileConfiguration>
 		</File>
 		<File
 			RelativePath=".\test.xcd"

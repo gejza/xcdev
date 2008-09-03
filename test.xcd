@@ -2,18 +2,16 @@
 # solution
 # sol
 
-<Project xcmake>
-  # make?
-
+<Project xcm>
   Sources *.cpp
-  <File a>
-    <Conf debug>
-<<<<<<< .mine
-=======
-         aaa    
->>>>>>> .r8
-    </Conf>
-    <Conf debug>
-    </Conf>
+  Author gejza@gejza.net
+  Web http://www.gejza.net/~facility
+  
+  <File *.l>
+    Tool flex
+  </File>
+  <File *.y>
+    Tool bison
+    Header=On
   </File>
 </Project>

@@ -2,28 +2,30 @@
 %error-verbose
 %parse-param { IParser& parser }
   //%lex-param   { Parser& parser }
+%glr-parser
 
 %{
 #include <stdio.h>
 #include "iparser.h"
-int yyerror(IParser& parser, char *);
+int yyerror(IParser& parser, const char*);
 %}
 
 %union {
-  bool        b;
-  const char *str;
+  bool b;
+  xcstring s;
+  xcnumber n;
 }
 
 %token	TSolution TFolder TProject 
 %token	TFilter TFile TConfiguration
-%token	<str> TName
-%token  <b> TBool
-%type   <str> name
-%destructor { free ((void*)$$); } TName
+%token	<b> TBool
+%token  <n> TNumber TReal 
+%token  <s> TName TString TRegex TWildcart TPath
+%type   <s> name 
+%destructor { printf("d");free ((void*)$$.str); } TName TString TRegex TWildcart TPath name
 %%
 
-input:      /* empty */
-           | defs
+input      : defs
            ;
 defs       : def
            | defs def
@@ -55,13 +57,11 @@ folder_d   : obj_cnt
            | project
            ;
            
-project    : project_b project_c 
-             '<' '/' TProject '>' '\n' { parser.End(); }
-           | '<' TProject name '>' '\n'
-             '<' '/' TProject '>' '\n' { parser.AddObj(0, $3);parser.End(); }
+project    : project_b project_c project_e
+           | project_b project_e
            ;
 project_b  : '<' TProject name '>' '\n' { parser.AddObj(0, $3); }
-           ;
+project_e  : '<' '/' TProject '>' '\n' { parser.End(); }
 project_c  : project_d
            | project_c project_d
            ;
@@ -70,14 +70,11 @@ project_d  : obj_cnt
            | file
            ;
            
-filter     : filter_b
-                filter_c
-             '<' '/' TFilter '>' '\n' { parser.End(); }
-           | '<' TFilter name '>' '\n' 
-             '<' '/' TFilter '>' '\n' { parser.AddObj(0, $3);parser.End(); }
+filter     : filter_b filter_c filter_e
+           | filter_b filter_e
            ;
 filter_b   : '<' TFilter name '>' '\n' { parser.AddObj(0, $3); }
-           ;
+filter_e   : '<' '/' TFilter '>' '\n' { parser.End(); }
 filter_c   : filter_d
            | filter_c filter_d
            ;
@@ -90,22 +87,16 @@ file       : file_b file_l file_e
            | file_b file_e
            ;
 file_b     : '<' TFile name '>' '\n' { parser.AddObj(0, $3); }
-           ;
 file_e     : '<' '/' TFile '>' '\n' { parser.End(); }
-           ;
-file_l     : file_d
-           | file_l file_d
-           ;
-file_d     : obj_cnt
+file_l     : obj_cnt
+           | file_l obj_cnt
            ;
            
-conf       : conf_b conf_c
-             '<' '/' TConfiguration '>' '\n' { parser.End(); }
-           | '<' TConfiguration name '>' '\n' { parser.AddObj(0, $3); }
-             '<' '/' TConfiguration '>' '\n' { parser.End(); }
+conf       : conf_b conf_c conf_e
+           | conf_b conf_e
            ;
 conf_b     : '<' TConfiguration name '>' '\n' { parser.AddObj(0, $3); }
-           ;
+conf_e     : '<' '/' TConfiguration '>' '\n' { parser.End(); }
 conf_c     : conf_d
            | conf_c conf_d
            ;
@@ -116,28 +107,35 @@ obj_cnt    : conf
            | cnt
            ;
 cnt        : '\n'
-           | cmd
-           | option
+           | cmd    '\n'
+           | option '\n'
+           | error { parser.Error(); }
            ;   
-cmd        : TName { parser.Cmd($1); parser.End(); }
-           | TName { parser.Cmd($1); } args { parser.End(); }
+cmd        : TName { parser.Cmd(($1).str); parser.End(); }
+           | TName { parser.Cmd(($1).str); } args { parser.End(); }
            ;
-option     : TName '=' { parser.Option($1); } arg { parser.End(); }
+option     : TName '=' { parser.Option(($1).str); } arg { parser.End(); }
            ;
 args       : arg
            | args arg
            ;
-arg        : TName       { parser.Arg($1); }
-           | TBool       { parser.Arg($1); }
+arg        : TBool       { parser.Arg($1); }
+           | TNumber     { parser.Arg($1); }
+           | TReal       { parser.Arg($1); }
+           | name        { parser.Arg($1); }
            ;
 name       : TName       { $$ = $1; }
+           | TString     { $$ = $1; }
+           | TPath       { $$ = $1; }
+           | TRegex      { $$ = $1; }
+           | TWildcart   { $$ = $1; }
            ;
 
 %%
 
-int yyerror(IParser& parser, char *chybka)
+int yyerror(IParser& parser, const char* msg)
 {
-  printf("%d: %s\n", yylineno, chybka);
+  printf("%d: %s\n", yylineno, msg);
   return 0;
 }
 

@@ -3,10 +3,19 @@
 ========================================================================
 nova arch
 
+definice:
 
-parser-> vstup souboru (xbd, Makefile, vsproj, atd...)
-generator-> zavislosti (xbs, xbd, Makefile, vsproj, kdevelop atd.) <- konfigurator
-builder (xbs)
+
+zavislosti:
+cas, SHA-1
+
+generator skriptu 
+
+skript featury
+knihovny: lib, include, bin
+solution -> folder -> projekt -> filter -> soubor
+soubor - tool, tool2 -> projekt(tool)
+
 
 zavislost resi generator
 skupiny konfiguraci
