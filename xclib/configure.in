@@ -1,0 +1,134 @@
+
+AC_PREREQ(2.50)
+
+# initialize autoconf
+AC_INIT([libxc], [0.0.1], [milan@ministryofnet.com])
+
+# install autotools scripts to build-aux dir
+AC_CONFIG_AUX_DIR([build-aux])
+
+# initialize automake(use AC_INIT's arguments)
+AM_INIT_AUTOMAKE(-Wall foreign)
+
+
+# tell autoconf where to find sources
+AC_CONFIG_SRCDIR([src/file.cpp])
+
+# check for C++ compiler
+AC_PROG_CXX
+AM_PROG_LEX
+
+# check for std C headers
+AC_HEADER_STDC
+
+# check for libtool
+AC_PROG_LIBTOOL
+
+# This version number needs to be changed in several different ways for each
+# release. Please read the libtool documentation (info libtool 'Updating
+# version info') before touching this. (this is *.so version number).
+VERSION_INFO="-version-info 1:0:0"
+AC_SUBST(VERSION_INFO)
+
+### define test-for-header macro
+# $1 = header file name (i.e. "mdbg.h")
+# function fids out the header or terminates configure script
+AC_DEFUN([TEST_HEADER],[
+FOUND="no"
+AC_CHECK_HEADER($1,FOUND="yes")
+if test "$FOUND" = "no"; then
+# try search dirs
+  for SRCHDIR in \
+      `pwd` \
+      $HOME/libs/include \
+      $HOME/cvs/libs/include \
+      $HOME/CVS/libs/include \
+      /usr/local/include \
+      /usr/include/mysql \
+      ;
+  do
+    AC_MSG_CHECKING(for $1 ($SRCHDIR))
+    AC_TRY_CPP([#include "$SRCHDIR/$1"],FOUND="yes")
+    AC_MSG_RESULT($FOUND)
+    if test "$FOUND" = "yes"; then
+# add path to env
+      CPPFLAGS="$CPPFLAGS -I$SRCHDIR"
+      break
+    fi
+  done
+fi
+# check for result
+if test "$FOUND" = "no"; then
+  AC_MSG_ERROR(*** Cannot find $1 header!!! ***)
+fi
+])
+### end macro
+
+
+### define test-for-lib macro
+# $1 = library file name (i.e. "mdbg")
+# $2 = test function to link (i.e. "MLOG_LOG")
+# $3 = other libs needed to link against lib in $1
+# function fids out the library or terminates configure script
+AC_DEFUN([TEST_LIB],[
+FOUND="no"
+AC_CHECK_LIB($1,$2,FOUND="yes"; LIBS="-l$1 $LIBS",,$3)
+if test "$FOUND" = "no"; then
+# try search dirs
+  SAVED_LIBS=$LIBS
+  for SRCHDIR in \
+      `pwd` \
+      $HOME/libs/lib \
+      $HOME/cvs/libs/lib \
+      $HOME/CVS/libs/lib \
+      /usr/local/lib \
+      ;
+  do
+    AC_MSG_CHECKING(for $2 in -l$1 ($SRCHDIR))
+    LIBS="-l$1 $SAVED_LIBS -L$SRCHDIR $3"
+    AC_TRY_LINK_FUNC($2, FOUND="yes")
+    AC_MSG_RESULT($FOUND)
+    if test "$FOUND" = "yes"; then
+# add path to env
+      LIBS="-l$1 $SAVED_LIBS -L$SRCHDIR"
+      break
+    fi
+  done
+fi
+# check for result
+if test "$FOUND" = "no"; then
+  AC_MSG_ERROR(*** Cannot find $1 library!!! ***)
+fi
+])
+### end macro
+
+CPPFLAGS="$CPPFLAGS -DDEBUG=1 -g -fPIC -DXC_THREADSAFE=1"
+
+AC_ARG_ENABLE(optimization,[  --enable-optimization compile optimized without debug logging],[
+    case "${enableval}" in
+        no)
+            AC_MSG_NOTICE([disabling optimization.])
+            CPPFLAGS="${CPPFLAGS} -DDEBUG=1"
+        ;;
+        yes)
+            AC_MSG_NOTICE([enabling optimization.])
+            CXXEXTRAFLAGS="${CXXEXTRAFLAGS} -O2"
+            CPPFLAGS="${CPPFLAGS} -UDEBUG"
+        ;;
+        *)
+            AC_MSG_ERROR([Say yes or no to --enable-optimization.])
+        ;;
+    esac
+], [
+   CPPFLAGS="${CPPFLAGS} -DDEBUG=1"
+])
+
+CFLAGS="${CFLAGS} -I../include -DXC_THREADSAFE=1"
+
+AC_SUBST(CXXEXTRAFLAGS)
+
+#AC_CONFIG_FILES([xcprof-config], [chmod +x xcprof-config])
+
+# Write config.status and the Makefile
+AC_OUTPUT(Makefile src/Makefile test/Makefile include/Makefile libxc.pc)
+
