@@ -1,9 +1,16 @@
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #ifdef _WIN32
 #include <windows.h>
-#else
+#endif
+
+#ifdef HAVE_SYS_INFO_H
 #include <sys/sysinfo.h>
 #endif
+
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
