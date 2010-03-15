@@ -1,0 +1,82 @@
+#!/bin/bash
+# -*- Shell -*- do not remove
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+
+bindir=@bindir@
+sbindir=@sbindir@
+libexecdir=@libexecdir@
+datadir=@datadir@
+sysconfdir=@sysconfdir@
+sharedstatedir=@sharedstatedir@
+localstatedir=@localstatedir@
+datarootdir=@datarootdir@
+libdir=@libdir@
+infodir=@infodir@
+mandir=@mandir@
+includedir=@includedir@
+
+usage="Usage: metaserver-config <flag>
+
+Available flags include:
+  --version      The version number of the package
+  --includes     C compiler flags to use when '#include'ing package headers
+  --libs         C compiler flags to use when linking
+  --ldadd        Libraries to use with automake
+  --ldflags      Flags to use with automake & libtool
+  --*dir         Directories
+"
+if test $# -eq 0; then
+      echo "${usage}" 1>&2
+      exit 1
+fi
+
+while test $# -gt 0; do
+  case $1 in
+    --version)
+      echo "@VERSION@"
+      exit 0
+      ;;
+
+    --includes)
+      echo "-I@includedir@"
+      exit 0
+      ;;
+
+    --libs)
+      echo "-L@libdir@"
+      exit 0
+      ;;
+
+    --ldadd)
+      echo "-L@libdir@"
+      exit 0
+      ;;
+
+    --ldflags)
+      echo ""
+      exit 0
+      ;;
+
+    --*dir)
+      dirname=\$`echo $1 | sed -e 's,^--,,'`
+      dirname=`eval echo $dirname`
+      test -z "$dirname" && exit 1
+      echo $dirname
+      exit 0
+      ;;
+    --help)
+      echo "${usage}" 1>&2
+      exit 0
+      ;;
+    *)
+      echo "${usage}" 1>&2
+      exit 1
+      ;;
+  esac
+  shift
+done
+
+echo "${usage}" 1>&2
+exit 1
