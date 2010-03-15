@@ -1,0 +1,30 @@
+/*****************************************
+%version
+ * Compiled options:
+%options
+ *****************************************/
+
+%if-header
+#ifndef _AUTO_REGEX_TABLE_RE_H_
+#define _AUTO_REGEX_TABLE_RE_H_
+#pragma once
+%if-source
+#include <pcre.h>
+%header
+%endif
+
+#if (defined (PCRE_MAJOR) && PCRE_MAJOR != 7) \
+    || (defined (PCRE_MINOR) && PCRE_MINOR != 8)
+#  error "Incompatible version of PCRE v7.8 for predcompiled regexp. Try recompile it."
+#endif
+
+%begin-namespace
+
+%% regexp definitions
+
+%end-namespace
+
+%if-header
+#endif // _AUTO_REGEX_TABLE_RE_H_
+%endif
+
