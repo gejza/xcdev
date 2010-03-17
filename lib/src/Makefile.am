@@ -1,9 +1,9 @@
 
 # current[:revision[:age]]
-VERSION_INFO="-version-info 0:0:0"
+VERSION_INFO="-version-info 1:0:0"
 
 # path to includes
-AM_CPPFLAGS = -I../include
+AM_CPPFLAGS = -I../include $(LIBCONFIG_CFLAGS)
 
 lib_LTLIBRARIES = libxc.la libxclog.la libxcconfig.la
 
@@ -14,4 +14,4 @@ libxclog_la_SOURCES = log.cc debug.cpp
 libxclog_la_LDFLAGS = -shared $(VERSION_INFO)
 
 libxcconfig_la_SOURCES = config.cpp
-libxcconfig_la_LDFLAGS = -shared $(VERSION_INFO) -lconfig
+libxcconfig_la_LDFLAGS = -shared $(VERSION_INFO) $(LIBCONFIG_LIBS)
