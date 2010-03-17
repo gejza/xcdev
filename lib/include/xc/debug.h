@@ -31,5 +31,6 @@ namespace debug {
 #endif
 #define XC_ASSERT(_Expression) (void)( (!!(_Expression)) || (xc::debug::Assert(false, __FILE__, __LINE__, #_Expression), 0))
 
+#define TRACE_WARN(level, format...) ::Itissien::_i_trace_warn(DEBUG_INFO, ::Itissien::Trace(0), level, format)
 
 #endif // _XC_DEBUG_HPP_

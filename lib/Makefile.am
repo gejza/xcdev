@@ -1,5 +1,5 @@
 
-SUBDIRS = src include
+SUBDIRS = include src tests
 #test include
 
 pkgconfigdir = $(libdir)/pkgconfig

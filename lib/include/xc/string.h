@@ -12,7 +12,15 @@
 
 namespace xc {
 
-    typedef ::std::string string;
+typedef ::std::string string;
+#if 0
+class string : public ::std::string
+{
+public:
+    string(const char* str)
+        : ::std::string(str) {}
+};
+#endif
 
 } // namespace xc
 

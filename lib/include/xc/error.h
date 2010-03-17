@@ -11,15 +11,16 @@
 #include "string.h"
 
 namespace xc {
-class exception
+
+class error_t
 {
 protected:
 	int status;
 	xc::string message;
 public:
-	exception(int status, const char* msg = "Unknown Exception")
+	error_t(int status, const char* msg = "Unknown Exception")
 		:status(status), message(msg) {}
-	virtual ~exception() {}
+	virtual ~error_t() {}
 	const char* what() const
 	{
 		return message.c_str();

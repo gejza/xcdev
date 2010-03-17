@@ -1,11 +1,17 @@
 
+# current[:revision[:age]]
+VERSION_INFO="-version-info 0:0:0"
+
 # path to includes
 AM_CPPFLAGS = -I../include
 
-lib_LTLIBRARIES = libxc.la
+lib_LTLIBRARIES = libxc.la libxclog.la libxcconfig.la
 
-libxc_la_SOURCES = config.cpp text.cpp uuid.cpp debug.cpp
-#libxc_a_SOURCES = config.cpp symboltable.cpp tree.cpp \
-#				  file.cpp pool.cpp system.cpp uuid.cpp time.cpp \
-#				  debug.cpp error.cpp stream.cpp string.cpp text.cpp
+libxc_la_SOURCES = text.cpp uuid.cpp
+libxc_la_LDFLAGS = $(VERSION_INFO)
 
+libxclog_la_SOURCES = log.cc debug.cpp
+libxclog_la_LDFLAGS = -shared $(VERSION_INFO)
+
+libxcconfig_la_SOURCES = config.cpp
+libxcconfig_la_LDFLAGS = -shared $(VERSION_INFO) -lconfig
