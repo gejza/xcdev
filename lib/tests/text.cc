@@ -1,7 +1,7 @@
 /*
    File name:  text.cc
    Date:       2010/03/17 03:05
-   Subversion: $Id: $
+   Subversion: $Id$
    Author:     Milan Dunghubel <milan@mfis.cz>
 
    Copyright (C) 2010 Milan Dunghubel <milan@mfis.cz>

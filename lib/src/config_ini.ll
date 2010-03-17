@@ -2,7 +2,7 @@
 /*
    File name:  parser.h
    Date:       2010/02/05 18:07
-   Subversion: $Id: $
+   Subversion: $Id$
    Author:     Milan Dunghubel <milan@mfis.cz>
 
    Copyright (C) 2010 Milan Dunghubel <milan@mfis.cz>
@@ -31,44 +31,9 @@ STR2    '[^']*'
 %%
 
 
-^%include{WS}{STR1}.*$  return T_INCLUDE;
-^%include{WS}{STR2}.*$  return T_INCLUDE;
-^%{NAME}                return T_SECTION;
-
-"<!"[^>]+">"            return T_TEXT;
-"<<"{NAME}">>"          return T_PAGE;
-
-"#{"[^\}]*"}"           return T_DICT;
-"${"[^\}]*"}"           return T_VALUE;
-
-\<style\>               m_echo = T_TEXT; return T_TEXT;
-\</style\>              m_echo = T_DICT; return T_TEXT;
-\<                      m_echo = T_TEXT; return T_TEXT;
-\>                      m_echo = T_DICT; return T_TEXT;
-
-\</[^>]\>              m_echo = T_DICT; return T_TEXT;
-
-\*{NAME}\*              return T_BEGIN_FRAG;
-#{NAME}#              return T_END_FRAG;
-
-{WS}+                   return T_TEXT;
-{NAME}                  return m_echo;
-
-"{*"                    BEGIN(COMMENT);
-<COMMENT>"*}"           BEGIN(INITIAL);
-<COMMENT>[^\*]*         /* eat anything that's not a '*' */
-<COMMENT>\*             /* eat up '*'s */
-<COMMENT>\n             /* eat new line */
-
-"{{{"                   BEGIN(PRE);
-<PRE>"}}}"              BEGIN(INITIAL);
-<PRE>[^}]*              return T_TEXT;
-<PRE>\}                 return T_TEXT;
-<PRE>\n                 return T_TEXT;
-
-.                       return T_TEXT;
-\n                      return T_TEXT;
-
+^%include{WS}{STR1}.*$  return 1;
+^%include{WS}{STR2}.*$  return 1;
+^%{NAME}                return 1;
 
 %%
 

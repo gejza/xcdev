@@ -1,7 +1,7 @@
 /*
    File name:  struct.h
    Date:       2010/03/17 01:56
-   Subversion: $Id: $
+   Subversion: $Id$
    Author:     Milan Dunghubel <milan@mfis.cz>
 
    Copyright (C) 2010 Milan Dunghubel <milan@mfis.cz>
