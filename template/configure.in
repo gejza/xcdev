@@ -1,0 +1,141 @@
+# -*- Autoconf -*-
+# $Id: configure.in 13899 2009-01-15 08:21:30Z michal.bukovsky $
+# 
+#   Xross Core Library Templates
+#   autoconf requirements and initialization 
+#   Milan Dunghubel <milan@ministryofnet.com>
+#   Copyright (C) 2010 All Rights Reserved
+#
+
+AC_PREREQ(2.50)
+
+# initialize autoconf
+AC_INIT([libxctemplate], [0.0.1], [milan@ministryofnet.com])
+
+# install autotools scripts to build-aux dir
+AC_CONFIG_AUX_DIR([build-aux])
+
+# initialize automake(use AC_INIT's arguments)
+dnl AM_INIT_AUTOMAKE(-Wall foreign)
+AM_INIT_AUTOMAKE(-Wall foreign)
+
+# tell autoconf where to find sources
+AC_CONFIG_SRCDIR([configure.in])
+AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_HEADER([config.h])
+
+dnl To regenerate configure and .in files, configure with --enable-maintainer-mode
+dnl AM_MAINTAINER_MODE
+
+dnl --------------------------------------------------------------------------
+dnl Checks for location of programs
+dnl --------------------------------------------------------------------------
+AC_PROG_CXX
+AM_PROG_LEX
+AC_PROG_LIBTOOL
+AC_PROG_INSTALL
+
+PKG_PROG_PKG_CONFIG
+
+dnl --------------------------------------------------------------------------
+dnl Debug/development/test
+dnl --------------------------------------------------------------------------
+AC_MSG_CHECKING(for --enable-debug)
+AC_ARG_ENABLE(debug, AS_HELP_STRING([--enable-debug], [Enable debug features (default: no)]),
+[
+  AC_MSG_RESULT(yes)
+  debug_defs="-DDEBUG -D_DEBUG"
+],
+[
+  AC_MSG_RESULT(no)
+  debug_defs=""
+])
+AC_SUBST([debug_defs])
+
+dnl CFLAGS="${CFLAGS} -I../include -DXC_THREADSAFE=1"
+CXXFLAGS="${CXXFLAGS} -DPIC -fPIC -ggdb -rdynamic -DDEBUG -D_DEBUG"
+
+dnl --------------------------------------------------------------------------
+dnl Checks for compiler & standard-library characteristics
+dnl --------------------------------------------------------------------------
+AC_HEADER_STAT
+AC_C_CONST
+AC_HEADER_STDBOOL
+AC_TYPE_UID_T
+AC_TYPE_PID_T
+AC_TYPE_SIZE_T
+AC_HEADER_TIME
+AC_STRUCT_TM
+
+dnl --------------------------------------------------------------------------
+dnl Checks for standard headers
+dnl --------------------------------------------------------------------------
+# check for std C headers
+AC_HEADER_STDC
+AC_HEADER_DIRENT
+AC_HEADER_STDC
+AC_HEADER_SYS_WAIT
+AC_CHECK_HEADERS([arpa/inet.h fcntl.h malloc.h netdb.h netinet/in.h stdlib.h string.h strings.h sys/file.h sys/socket.h sys/time.h unistd.h])
+
+dnl --------------------------------------------------------------------------
+dnl Checks for library configuration (added right-to-left)
+dnl --------------------------------------------------------------------------
+
+dnl --------------------------------------------------------------------------
+dnl Checks for library units
+dnl --------------------------------------------------------------------------
+# Checks for library functions.
+AC_FUNC_CHOWN
+AC_FUNC_CLOSEDIR_VOID
+AC_FUNC_ERROR_AT_LINE
+AC_FUNC_FORK
+AC_FUNC_LSTAT
+AC_FUNC_LSTAT_FOLLOWS_SLASHED_SYMLINK
+AC_FUNC_MALLOC
+AC_FUNC_MEMCMP
+AC_FUNC_MMAP
+AC_TYPE_SIGNAL
+AC_FUNC_STAT
+AC_FUNC_STRERROR_R
+AC_FUNC_STRFTIME
+AC_FUNC_VPRINTF
+AC_CHECK_FUNCS([setrlimit endpwent ftruncate getcwd gethostbyname inet_ntoa localtime_r memmove memset mkdir munmap putenv rmdir socket strcasecmp strchr strcspn strdup strerror strncasecmp strpbrk strrchr strstr strtol tzset])
+
+dnl --------------------------------------------------------------------------
+dnl Checks for external-data
+dnl --------------------------------------------------------------------------
+
+dnl --------------------------------------------------------------------------
+dnl Miscellaneous options that don't need to test system features
+dnl --------------------------------------------------------------------------
+# Allow the pkg-config directory to be set
+AC_ARG_WITH(pkgconfigdir,
+    AC_HELP_STRING([--with-pkgconfigdir],
+    [Use the specified pkgconfig dir (default is libdir/pkgconfig)]),
+    [pkgconfigdir=${withval}],
+    [pkgconfigdir='${libdir}/pkgconfig'])
+AC_SUBST([pkgconfigdir])
+AC_MSG_NOTICE([pkgconfig directory is ${pkgconfigdir}])
+
+# This version number needs to be changed in several different ways for each
+# release. Please read the libtool documentation (info libtool 'Updating
+# version info') before touching this. (this is *.so version number).
+VERSION_INFO="-version-info 1:0:0"
+AC_SUBST(VERSION_INFO)
+
+dnl --------------------------------------------------------------------------
+dnl Test features that rely on configure-definitions
+dnl --------------------------------------------------------------------------
+AC_SUBST([VA_ARGS_DECL], [...])
+AC_SUBST([VA_ARGS], [])
+
+dnl --------------------------------------------------------------------------
+dnl Finally, build config.h and the makefiles
+dnl --------------------------------------------------------------------------
+#AC_CONFIG_FILES([xcprof-config], [chmod +x xcprof-config])
+AC_CONFIG_FILES([Makefile include/Makefile include/xc/Makefile
+                 include/xc/template/Makefile])
+AC_CONFIG_FILES([src/Makefile test/Makefile])
+# Write config.status and the Makefile
+AC_OUTPUT
+
