@@ -12,22 +12,82 @@
 #pragma once
 
 #include <stdarg.h>
+#include <xc/debug.h>
 
 namespace xc {
+namespace log {
 
-void log_info(int level, const char* format, ...);// __attribute__((format(printf, 1, 2)));
-void logv_info(int level, const char* format, va_list arg);// __attribute__((format(printf, 1, 2)));
+    void add_file(const char* path, const char* mask);
+    void add_stderr(const char* mask);
 
-void log_warn(int level, const char* format, ...);// __attribute__((format(printf, 1, 2)));
-void logv_warn(int level, const char* format, va_list arg);// __attribute__((format(printf, 1, 2)));
+    void logrotate();
 
-void log_error(int level, const char* format, ...);// __attribute__((format(printf, 1, 2)));
-void logv_error(int level, const char* format, va_list arg);// __attribute__((format(printf, 1, 2)));
+} // namespace log
 
-void log_fatal(const char* format, ...);// __attribute__((format(printf, 1, 2)));
-void logv_fatal(const char* format, va_list arg);// __attribute__((format(printf, 1, 2)));
+/** 
+ * @short 
+ * @param level 
+ * @param format 
+ */
+void log_info(const debug::loc_t& loc, int level, const char* format, ...);// __attribute__((format(printf, 1, 2)));
 
-#define DEBUG_INFO
+/** 
+ * @short 
+ * @param level 
+ * @param format 
+ * @param arg 
+ */
+void logv_info(const debug::loc_t& loc, int level, const char* format, va_list arg);// __attribute__((format(printf, 1, 2)));
+
+/** 
+ * @short 
+ * @param level 
+ * @param format 
+ */
+void log_warn(const debug::loc_t& loc, int level, const char* format, ...);// __attribute__((format(printf, 1, 2)));
+
+/** 
+ * @short 
+ * @param level 
+ * @param format 
+ * @param arg 
+ */
+void logv_warn(const debug::loc_t& loc, int level, const char* format, va_list arg);// __attribute__((format(printf, 1, 2)));
+
+/** 
+ * @short 
+ * @param level 
+ * @param format 
+ */
+void log_error(const debug::loc_t& loc, int level, const char* format, ...);// __attribute__((format(printf, 1, 2)));
+
+/** 
+ * @short 
+ * @param level 
+ * @param format 
+ * @param arg 
+ */
+void logv_error(const debug::loc_t& loc, int level, const char* format, va_list arg);// __attribute__((format(printf, 1, 2)));
+
+/** 
+ * @short 
+ * @param format 
+ */
+void log_fatal(const debug::loc_t& loc, const char* format, ...);// __attribute__((format(printf, 1, 2)));
+
+/** 
+ * @short 
+ * @param level 
+ * @param format 
+ * @param arg 
+ */
+void logv_fatal(const debug::loc_t& loc, const char* format, va_list arg);// __attribute__((format(printf, 1, 2)));
+
+#ifdef LOGBACKTRACE
+#define DEBUG_INFO XC_LOC_TRACE,
+#else
+#define DEBUG_INFO XC_LOC_FILE,
+#endif
 
 #ifndef LOG_INFO
 #define LOG_INFO(level, format...) ::xc::log_info(DEBUG_INFO level, format)

@@ -1,0 +1,46 @@
+/*
+   File name:  version.h
+   Date:       2010/03/30 12:39
+   Subversion: $Id: $
+   Author:     Milan Dunghubel <milan@mfis.cz>
+
+   Copyright (C) 2010 Milan Dunghubel <milan@mfis.cz>
+*/
+#line 6 "version.h.in"
+
+#ifndef _XC_VERSION_H_
+#define _XC_VERSION_H_
+#pragma once
+
+#define XC_VERSION "@VERSION@"
+
+namespace xc {
+
+    /** 
+     * @short Get version ex. "1.0.0"
+     */
+    const char* get_version();
+
+    /** 
+     * @short Get built info
+     */
+    const char* get_built_info();
+
+    /** 
+     * @short Get version string
+     */
+    const char* get_info();
+
+    /** 
+     * @short Get full version string.
+     * version
+     * built info
+     * copyright
+     */
+    const char* get_full_info();
+
+} // namespace xc
+
+#endif // _XC_VERSION_H_
+/* end of version.h */
+

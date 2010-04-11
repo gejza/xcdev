@@ -1,18 +1,19 @@
 
 #include <stdio.h>
 #include <stdarg.h>
+#include <stdlib.h>
 #include "xc/debug.h"
 
 namespace {
 	bool g_debug = false;
 }
 
-XC_API void xc::debug::EnableDebug(bool enable)
+void xc::debug::EnableDebug(bool enable)
 {
 	g_debug = enable;
 }
 
-XC_API void xc::debug::Print(int type, const char* format, ...)
+void xc::debug::Print(int type, const char* format, ...)
 {
 	if (!g_debug)
 		return;
@@ -22,7 +23,7 @@ XC_API void xc::debug::Print(int type, const char* format, ...)
 	va_end(arg);
 }
 
-XC_API void xc::debug::PrintV(int type, const char* format, va_list arg)
+void xc::debug::PrintV(int type, const char* format, va_list arg)
 {
 	if (!g_debug)
 		return;
@@ -31,7 +32,7 @@ XC_API void xc::debug::PrintV(int type, const char* format, va_list arg)
 	printf("\n");
 }
 
-XC_API void xc::debug::Assert(bool exp, const char* file, int line, const char* format, ...)
+void xc::debug::Assert(bool exp, const char* file, int line, const char* format, ...)
 {
 	if (exp)
 		return;

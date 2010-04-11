@@ -9,24 +9,32 @@
 #define _XC_ERROR_H_
 
 #include "string.h"
+#include "log.h"
 
 namespace xc {
 
 class error_t
 {
-protected:
-	int status;
-	xc::string message;
 public:
-	error_t(int status, const char* msg = "Unknown Exception")
-		:status(status), message(msg) {}
+	error_t(const char* format, ...);
+	error_t(const xc::string& msg);
 	virtual ~error_t() {}
-	const char* what() const
+	virtual xc::string message() const
 	{
-		return message.c_str();
+		return _message;
 	}
+private:
+    xc::string _message;
 };
 
 }
+
+#define ERROR(err, msg...) \
+    do { \
+        err e(msg); \
+        LOG_ERROR(1, msg); \
+        throw e; \
+    } while (0); 
+
 
 #endif // _XC_ERROR_H_

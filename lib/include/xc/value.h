@@ -17,6 +17,12 @@ class value_t {
 public:
     value_t() {}
     virtual ~value_t() {}
+
+    virtual unsigned int type() const = 0;
+    virtual const char* type_name() const = 0;
+};
+
+class struct_t : public value_t {
 };
 
 } // namespace xc

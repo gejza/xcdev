@@ -1,4 +1,2 @@
 
-nobase_include_HEADERS = \
-xc/*.h
-
+SUBDIRS = xc

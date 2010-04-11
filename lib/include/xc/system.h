@@ -1,36 +1,34 @@
-
 /*
-* Copyright
+   File name:  system.h
+   Date:       2010/03/25 12:29
+   Subversion: $Id$
+   Author:     Milan Dunghubel <milan@mfis.cz>
+
+   Copyright (C) 2010 Milan Dunghubel <milan@mfis.cz>
 */
 
+#ifndef _XC_SYSTEM_H_
+#define _XC_SYSTEM_H_
 #pragma once
-#ifndef _SYSTEM_FUNCTIONS_H_
-#define _SYSTEM_FUNCTIONS_H_
 
-#include "tree.h"
-#include "system.h"
+#include <pwd.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+namespace xc {
+namespace system {
 
-// todo vyresit typ
-typedef long threadid_t;
-#ifdef _WIN32
-typedef long mutex_t;
-#else
-typedef long mutex_t;
-#endif
+    uid_t get_uid(const char* user);
+    gid_t get_gid(const char* group);
 
-threadid_t system_get_thread_id();
+    void set_user(const char* user, const char* group = 0x0);
+    void set_user(uid_t uid, gid_t gid = 0);
 
-mutex_t system_mutex_create();
-void system_mutex_delete(mutex_t mutex);
-void system_lock(mutex_t mutex);
-void system_unlock(mutex_t mutex);
+    void daemonize();
 
-#ifdef __cplusplus 
-} // extern "C"
-#endif
+} // namespace system
+} // namespace xc
 
-#endif // _SYSTEM_FUNCTIONS_H_
+#include "system/pidfile.h"
+
+#endif // _XC_SYSTEM_H_
+/* end of system.h */
+

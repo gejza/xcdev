@@ -3,15 +3,24 @@
 VERSION_INFO="-version-info 1:0:0"
 
 # path to includes
-AM_CPPFLAGS = -I../include $(LIBCONFIG_CFLAGS)
+AM_CPPFLAGS = -I../include $(LIBCONFIG_CFLAGS) -DLOCALEDIR=\"$(localedir)\"
 
-lib_LTLIBRARIES = libxc.la libxclog.la libxcconfig.la
+lib_LTLIBRARIES = libxc.la libxclog.la libxcconfig.la libxctest.la
 
-libxc_la_SOURCES = text.cpp uuid.cpp
+libxc_la_SOURCES = text.cpp regex.cc \
+				   pool.cc error.cc debug.cc debug_sys.cc \
+				   fd.cc file.cc fs.cc paths.cc \
+				   system.cc system_pidfile.cc refobj.cc \
+				   version.cc
+
 libxc_la_LDFLAGS = $(VERSION_INFO)
+libxc_la_LIBADD = -lpcre
 
-libxclog_la_SOURCES = log.cc debug.cpp
-libxclog_la_LDFLAGS = -shared $(VERSION_INFO)
+libxclog_la_SOURCES = log.cc
+libxclog_la_LDFLAGS = -shared $(VERSION_INFO) -lxc -ldl -liberty_pic
 
 libxcconfig_la_SOURCES = config.cc config_ini.ll
-libxcconfig_la_LDFLAGS = -shared $(VERSION_INFO) $(LIBCONFIG_LIBS)
+libxcconfig_la_LDFLAGS = -shared $(VERSION_INFO) -lxc $(LIBCONFIG_LIBS)
+
+libxctest_la_SOURCES = test_main.cc
+libxctest_la_LDFLAGS = -static

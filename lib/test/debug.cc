@@ -1,6 +1,6 @@
 /*
-   File name:  text.cc
-   Date:       2010/03/17 03:05
+   File name:  debug.cc
+   Date:       2010/03/17 03:01
    Subversion: $Id$
    Author:     Milan Dunghubel <milan@mfis.cz>
 
@@ -10,11 +10,14 @@
 #include "config.h"
 #endif
 
+#include <xc/debug.h>
 
-int main(int argc, const char* argv[])
+int xc_test_main(int argc, const char* argv[])
 {
+    XC_TRACE("main");
     return 0;
 }
+
 
 
 

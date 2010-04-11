@@ -1,50 +1,86 @@
-
 /*
-* Copyright
+   File name:  stream.h
+   Date:       2010/03/30 15:00
+   Subversion: $Id$
+   Author:     Milan Dunghubel <milan@mfis.cz>
+
+   Copyright (C) 2010 Milan Dunghubel <milan@mfis.cz>
 */
 
+#ifndef _XC_STREAM_H_
+#define _XC_STREAM_H_
 #pragma once
-#ifndef _STREAM_H_
-#define _STREAM_H_
-
-#include <xc/stream.h>
-#include <xc/config.hpp>
-
-#ifdef XC_LIB_STD_COMPATIBLE
-//#include <stream>
-#endif // XC_LIB_STD_COMPATIBLE
 
 namespace xc {
 
-class String;
-
-class Stream
+/**
+ * @short istream_t
+ */
+class istream_t
 {
 public:
-	virtual size_t Read(char* buff, size_t num) const = 0;
-	XC_API const String ToString() const;
+
+    /**
+     * Default constructor
+     */
+    istream_t() {}
+
+    /**
+     * Destructor
+     */
+    virtual ~istream_t() {}
+
+    virtual ssize_t read(char* buf, size_t nbyte) = 0;
+private:
+    istream_t(const istream_t&);
+    istream_t& operator=(const istream_t&);
 };
 
-class CStream : public Stream
+/**
+ * @short ostream_t
+ */
+class ostream_t
 {
 public:
-	virtual ~CStream() {}
-	virtual size_t Read(char* buff, size_t num) const;
+
+    /**
+     * Default constructor
+     */
+    ostream_t() {}
+
+    /**
+     * Destructor
+     */
+    virtual ~ostream_t() {}
+
+    virtual void write(const char* buf, size_t nbyte) = 0;
+private:
+    ostream_t(const ostream_t&);
+    ostream_t& operator=(const ostream_t&);
 };
 
-class StreamFilter : public Stream
+
+class ostream_file_t : public ostream_t
 {
-protected:
-	void Out(const char* str, size_t s);
 public:
-	virtual bool Filter(const char* param) = 0;
+    ostream_file_t(FILE* file)
+        : _file(file) {}
+
+    virtual ~ostream_file_t() {}
+
+    virtual void write(const char* buf, size_t nbyte) {
+        ::fwrite(buf, nbyte, 1, _file);
+    }
+private:
+    ostream_file_t(const ostream_file_t&);
+    ostream_file_t& operator=(const ostream_file_t&);
+
+    FILE* _file;
 };
 
-
-#ifdef XC_LIB_STD_COMPATIBLE
-typedef Stream stream;
-#endif // XC_LIB_STD_COMPATIBLE
 
 } // namespace xc
 
-#endif // _STREAM_H_
+#endif // _XC_STREAM_H_
+/* end of stream.h */
+

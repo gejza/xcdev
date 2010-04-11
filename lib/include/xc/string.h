@@ -8,7 +8,6 @@
 #define _XC_STRING_H_
 
 #include <string>
-#include "config.h"
 
 namespace xc {
 
