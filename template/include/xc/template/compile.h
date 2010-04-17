@@ -14,6 +14,40 @@
 namespace xc {
 namespace templ {
 
+class files_t;
+class page_t;
+
+/**
+ * @short compiler_t
+ */
+class compiler_t
+{
+public:
+
+    /**
+     * Default constructor
+     */
+    compiler_t(files_t& files);
+
+    /**
+     * Destructor
+     */
+    ~compiler_t();
+
+    /** 
+     * @short 
+     * @param name 
+     * @return 
+     */
+    page_t* compile(const char* name);
+
+private:
+    compiler_t(const compiler_t&);
+    compiler_t& operator=(const compiler_t&);
+
+    files_t& _files;
+};
+
 
 } // namespace templ
 } // namespace xc

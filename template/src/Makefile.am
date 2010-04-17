@@ -10,7 +10,7 @@ lib_LTLIBRARIES = libxctemplate.la
 
 libxctemplate_la_SOURCES = \
 	env.cc template.cc debug.cc vm.cc \
-	bytecode.cc preprocess.cc scan_html.ll \
+	bytecode.cc preprocess.cc compile.cc scan_html.ll \
 	db.cc fs.cc \
 	output.cc
 libxctemplate_la_LDFLAGS = -lxc -lxclog -lcdb

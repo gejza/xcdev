@@ -28,6 +28,8 @@ EXTRA_DIST = build-aux/config.rpath m4/ChangeLog
 MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess config.h.in \
                        config.sub configure depcomp install-sh ltmain.sh missing
 
+bin_SCRIPTS = xctemplate-config
+
 dist-hook:
 	echo "$(VERSION)" > $(distdir)/VERSION
 

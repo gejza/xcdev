@@ -11,7 +11,8 @@
 #define _XC_TEMPLATE_H_
 #pragma once
 
-#include <queue>
+#include <vector>
+#include <map>
 
 #include "template/error.h"
 #include "template/env.h"
@@ -23,33 +24,49 @@ namespace templ {
 
 // forward
 class page_t;
-class output_t;
 
 /**
  * @short templ_t
  */
-class templ_t : public vm_t
+class templ_t : private vm_t
 {
 public:
 
     /**
      * Default constructor
      */
-    templ_t(const env_t& env, output_t& out);
+    templ_t(const env_t& env);
 
     /**
      * Destructor
      */
-    ~templ_t();
+    virtual ~templ_t();
 
-    void add_page(const char* name);
+    void add_page(const char* source);
+
+    void set_page(const char* name, const char* source);
+    /** 
+     * @short 
+     * @param out 
+     */
+    void generate(output_t& out);
 private:
     templ_t(const templ_t&);
     templ_t& operator=(const templ_t&);
     
+    virtual void vm_output(const char* ptr, size_t data);
+    virtual void vm_debug(const char* ptr, size_t data);
+    virtual void vm_page(const xc::string& name);
+    virtual void vm_dict(const xc::string& name);
+    virtual void vm_value(const xc::string& name);
+
     const env_t& _env;
 
-    std::queue<page_t*> _pages;
+    typedef std::vector<page_t*> _page_list_t;
+    _page_list_t _pagelist;
+
+    typedef std::map<xc::string, page_t*> _page_map_t;
+    _page_map_t _pages;
 };
 
 

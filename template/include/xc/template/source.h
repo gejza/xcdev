@@ -27,12 +27,12 @@ public:
     /**
      * Default constructor
      */
-    source_t();
+    source_t() {}
 
     /**
      * Destructor
      */
-    ~source_t();
+    virtual ~source_t() {}
 
     virtual page_t* get_page(const char* name) = 0;
 

@@ -73,9 +73,30 @@ struct ins_t
     }
 };
 
-struct ins_raw_t : public ins_t
+struct data_ptr_t
 {
+    uint32_t ptr;
     uint16_t size;
+};
+
+struct ins_data_t : public ins_t
+{
+    data_ptr_t data;
+};
+
+struct ins_page_t : public ins_t
+{
+    uint16_t name_size;
+};
+
+struct ins_dict_t : public ins_t
+{
+    uint16_t name_size;
+};
+
+struct ins_value_t : public ins_t
+{
+    uint16_t name_size;
 };
 
 #pragma pack(pop)

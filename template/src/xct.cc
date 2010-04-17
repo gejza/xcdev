@@ -36,14 +36,16 @@ int main(int argc, const char* argv[])
     try {
         // set init
         xc::log::add_stderr("ALL");
-
+        //xc::debug::debug_enable();
 
         // main
-        xc::templ::env_t env(".");
+        xc::templ::env_t env("./test");
         xc::ostream_file_t of(stdout);
         xc::templ::html_output_t out(of);
-        xc::templ::templ_t templ(env, out);
+        xc::templ::templ_t templ(env);
         templ.add_page("layout");
+        templ.set_page("main", "main");
+        templ.generate(out);
 
     } catch (const std::exception& e) {
         std::cerr << "ERROR: " << e.what() << std::endl;

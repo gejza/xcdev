@@ -11,6 +11,8 @@
 #define _XC_TEMPLATE_PAGE_H_
 #pragma once
 
+#include <xc/refobj.h>
+
 namespace xc {
 namespace templ {
 
@@ -24,16 +26,26 @@ public:
     /**
      * Default constructor
      */
-    page_t();
+    page_t() {}
 
     /**
      * Destructor
      */
-    virtual ~page_t();
+    virtual ~page_t() {}
 
+    unsigned char* code() const {
+        return _code;
+    }
+
+    const char* data(unsigned int ptr) const {
+        return _data + ptr;
+    }
 private:
     page_t(const page_t&);
     page_t& operator=(const page_t&);
+protected:
+    unsigned char* _code;
+    const char* _data;
 };
 
 

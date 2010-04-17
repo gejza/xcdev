@@ -11,11 +11,15 @@
 #define _XC_TEMPLATE_ENV_H_
 #pragma once
 
+#include <vector>
+
 #include "fs.h"
 #include "db.h"
 
 namespace xc {
 namespace templ {
+
+class source_t;
 
 /**
  * @short env_t
@@ -34,12 +38,17 @@ public:
      */
     ~env_t();
 
+    page_t* get_page(const char* name) const;
+
+    
 private:
     env_t(const env_t&);
     env_t& operator=(const env_t&);
 
     //files_t _files;
     //db_t _db;
+    typedef std::vector<source_t*> _sources_t;
+    mutable _sources_t _sources;
 };
 
 

@@ -41,6 +41,14 @@ public:
         const char* name() const {
             return ti_name(type);
         }
+
+        xc::string str() const {
+            return xc::string(text, length);
+        }
+
+        xc::string sub(size_t left, size_t right) const {
+            return xc::string(text + left, length - left - right);
+        }
     };
 
     /**

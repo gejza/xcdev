@@ -132,7 +132,7 @@ AC_SUBST([VA_ARGS], [])
 dnl --------------------------------------------------------------------------
 dnl Finally, build config.h and the makefiles
 dnl --------------------------------------------------------------------------
-#AC_CONFIG_FILES([xcprof-config], [chmod +x xcprof-config])
+AC_CONFIG_FILES([xctemplate-config], [chmod +x xctemplate-config])
 AC_CONFIG_FILES([Makefile include/Makefile include/xc/Makefile
                  include/xc/template/Makefile])
 AC_CONFIG_FILES([src/Makefile test/Makefile])

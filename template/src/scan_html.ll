@@ -12,6 +12,7 @@
 #endif
     
 #define XC_DEBUG_IDENT xc::debug::USER
+#define XCLEX(fnc) xct##fnc
 
 }
 %{
@@ -42,6 +43,8 @@ namespace {
 %option verbose
 %option warn
 %option debug
+%option prefix="xct"
+%option outfile="lex.yy.c"
 
 %x COMMENT
 %x PRE

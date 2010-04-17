@@ -48,7 +48,6 @@ public:
 
     scanner_t* open(const char* name, bool all = false);
 
-    page_t* get_page(const char* name);
 private:
     files_t(const files_t&);
     files_t& operator=(const files_t&);
