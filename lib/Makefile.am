@@ -22,7 +22,7 @@ ACLOCAL_AMFLAGS = -I m4
 AUTOMAKE_OPTIONS = dist-bzip2 no-dist-gzip
 DISTCHECK_CONFIGURE_FLAGS = --enable-symcryptrun --enable-mailto
 
-SUBDIRS = include src test po
+SUBDIRS = include src test
 #test include
 EXTRA_DIST = build-aux/config.rpath m4/ChangeLog  libxc.pc.in
 MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess config.h.in \

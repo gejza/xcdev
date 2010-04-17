@@ -13,6 +13,7 @@
 #endif
 
 #define XC_DEBUG_IDENT xc::debug::CONFIG
+#define XCLEX(fnc) xccini##fnc
 #define YY_FATAL_ERROR(msg) ERROR(xc::error_t, "Lex fatal error: %s", msg)
 }
 %{
@@ -22,6 +23,7 @@
 #include <xc/error.h>
 #include <xc/config.h>
 #include <xc/lex.h>
+
 #include <memory>
 
 enum {
@@ -43,6 +45,8 @@ enum {
 %option warn
 %option debug
 %option yylineno
+%option prefix="xccini"
+%option outfile="lex.yy.c"
 
 %x ERR
 
@@ -78,7 +82,6 @@ CMT     [#;].*
 */
 //^%include{WS}{STR1}.*$  return 1;
 //^%include{WS}{STR2}.*$  return 1;
-
 
 namespace {
 

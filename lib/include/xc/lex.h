@@ -12,6 +12,9 @@
 #pragma once
 
 #include <xc/file.h>
+#ifndef XCLEX
+#define XCLEX(fnc) yy##fnc
+#endif
 
 namespace xc {
 
@@ -27,7 +30,7 @@ public:
      * Default constructor
      */
     lex_t() {
-        yylex_init(&_lex);
+        XCLEX(lex_init)(&_lex);
     }
 
     /**
@@ -35,7 +38,7 @@ public:
      * @param file Handle to file
      */
     lex_t(FILE* file) {
-        yylex_init(&_lex);
+        XCLEX(lex_init)(&_lex);
         init(file);
     }
 
@@ -44,7 +47,7 @@ public:
      * @param file Handle to file
      */
     lex_t(file_t& file) {
-        yylex_init(&_lex);
+        XCLEX(lex_init)(&_lex);
         init(file.handle());
     }
 
@@ -52,7 +55,7 @@ public:
      * Destructor
      */
     ~lex_t() {
-        yylex_destroy(_lex);
+        XCLEX(lex_destroy)(_lex);
     }
 
 
@@ -63,7 +66,7 @@ public:
     void init(FILE* file) {
         XC_TRACE("yyrestart flex width FILE=%p", file);
         if (file)
-            yyrestart(file, _lex);
+            XCLEX(restart)(file, _lex);
         else
             LOG_WARN( 1, "Restarting flex width null file handle");
     }
@@ -73,7 +76,7 @@ public:
      * @return 
      */
     int lex() {
-        return yylex(_lex);
+        return XCLEX(lex)(_lex);
     }
 
     /** 
@@ -81,7 +84,7 @@ public:
      * @return 
      */
     const char* text() const {
-        return yyget_text(_lex);
+        return XCLEX(get_text)(_lex);
     }
 
     /** 
@@ -89,7 +92,7 @@ public:
      * @return 
      */
     size_t length() const {
-        return yyget_leng(_lex);
+        return XCLEX(get_leng)(_lex);
     }
 
     /** 
@@ -105,7 +108,7 @@ public:
      * @return 
      */
     int lineno() const {
-        return yyget_lineno(_lex);
+        return XCLEX(get_lineno)(_lex);
     }
 
     /** 
@@ -113,7 +116,7 @@ public:
      * @param enable 
      */
     void debug(bool enable) {
-        yyset_debug(enable ? 1:0, _lex);
+        XCLEX(set_debug)(enable ? 1:0, _lex);
     }
 
 private:

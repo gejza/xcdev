@@ -28,7 +28,7 @@ int xc_test_main(int argc, const char* argv[])
         
     xc::config::load(argv[0]);
 
-    const char* msg = xc::config::get("conf2:xml", "Address");
+    const char* msg = xc::config::get("test", "Message");
     printf("%s\n", msg);
     return 0;
 }
