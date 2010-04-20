@@ -96,8 +96,8 @@ void dump_raw(FILE* out, xc::templ::scanner_t& scan,
 void xc::templ::dump(FILE* out, xc::templ::scanner_t& scan,
         xc::templ::dump_format_t format)
 {
-    xc::templ::preproc_t pre(scan);
-    dump_raw(out, pre, format);
+    //xc::templ::preproc_t pre(scan);
+    dump_raw(out, scan, format);
     //dump_raw(out, scan, format);
 }
 

@@ -12,6 +12,8 @@
 #pragma once
 
 #include <xc/refobj.h>
+#include <xc/string.h>
+#include <stdint.h>
 
 namespace xc {
 namespace templ {
@@ -26,26 +28,25 @@ public:
     /**
      * Default constructor
      */
-    page_t() {}
+    page_t(const xc::string& name) : _name(name) {}
 
     /**
      * Destructor
      */
     virtual ~page_t() {}
 
-    unsigned char* code() const {
-        return _code;
-    }
+    virtual const unsigned char* code(uint32_t addr) const = 0;
 
-    const char* data(unsigned int ptr) const {
-        return _data + ptr;
+    virtual const char* data(unsigned int ptr) const = 0;
+
+    const char* name() const {
+        return _name.c_str();
     }
 private:
     page_t(const page_t&);
     page_t& operator=(const page_t&);
 protected:
-    unsigned char* _code;
-    const char* _data;
+    xc::string _name;
 };
 
 

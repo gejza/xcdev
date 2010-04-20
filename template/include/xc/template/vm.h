@@ -11,11 +11,15 @@
 #define _XC_TEMPLATE_VM_H_
 #pragma once
 
+#include <stdint.h>
+#include "fragment.h"
+
 namespace xc {
 namespace templ {
 
 class page_t;
 class env_t;
+class frag_t;
 
 /**
  * @short vm_t
@@ -34,7 +38,12 @@ public:
      */
     virtual ~vm_t();
 
-    void process(const page_t& page);
+    void process(const page_t& page, const frag_t& frag, uint32_t ci = 0);
+    void process(const page_t& page, const frag_list_t& frag, uint32_t ci) {
+        for (frag_list_t::const_iterator i = frag.begin();i != frag.end(); i++) {
+            process(page, *i, ci);
+        }
+    }
 
     void flush();
 protected:

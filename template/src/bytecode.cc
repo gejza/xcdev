@@ -22,8 +22,10 @@ const char* xc::templ::ti_name(xc::templ::inscode_t term)
     
     T(VALUE)
     T(DICT)
+    T(DICT_VALUE)
     
     T(PAGE)
+    T(PAGE_LIST)
 
     T(FRAG)
 

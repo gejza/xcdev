@@ -12,7 +12,7 @@ libxctemplate_la_SOURCES = \
 	env.cc template.cc debug.cc vm.cc \
 	bytecode.cc preprocess.cc compile.cc scan_html.ll \
 	db.cc fs.cc \
-	output.cc
+	output.cc fragment.cc
 libxctemplate_la_LDFLAGS = -lxc -lxclog -lcdb
 
 bin_PROGRAMS = xct xct-comp xct-dump

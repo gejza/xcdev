@@ -43,8 +43,9 @@ int main(int argc, const char* argv[])
         xc::ostream_file_t of(stdout);
         xc::templ::html_output_t out(of);
         xc::templ::templ_t templ(env);
-        templ.add_page("layout");
-        templ.set_page("main", "main");
+        templ.add_page("test_fragment");
+        templ.root().create_frag("big").create_frag("test1").create_frag("aaa").set("title", "Helllo");
+        //templ.set_page("main", "main");
         templ.generate(out);
 
     } catch (const std::exception& e) {

@@ -20,6 +20,7 @@ namespace templ {
 #pragma pack(push, 4)
 
 typedef uint32_t inscode_t;
+typedef unsigned char bytecode_t;
 
 /**
  * Term instruction
@@ -34,13 +35,16 @@ enum {
 
     TI_VALUE,
     TI_DICT,
+    TI_DICT_VALUE,
 
     TI_PAGE,
+    TI_PAGE_LIST,
 
     TI_FRAG,
 
     TI_DEBUG,
 
+    // helpers
     TI_FRAG_BEGIN,
     TI_FRAG_END,
 
@@ -98,6 +102,14 @@ struct ins_value_t : public ins_t
 {
     uint16_t name_size;
 };
+
+struct ins_frag_t : public ins_t
+{
+    uint16_t name_size;
+    uint32_t addr;
+    uint32_t def;
+};
+
 
 #pragma pack(pop)
 

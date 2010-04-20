@@ -50,7 +50,7 @@ namespace {
 %x PRE
 
 DIGIT   [0-9]
-NAME    [A-Za-z]+
+NAME    [A-Za-z_]+[A-Za-z0-9_-]*
 WS      [\t ]+
 STR1    \"[^\"]*\"
 STR2    '[^']*'
@@ -64,9 +64,12 @@ STR2    '[^']*'
 
 "<!"[^>]+">"            return xc::templ::TI_RAW;
 "<<"{NAME}">>"          return xc::templ::TI_PAGE;
+"[["{NAME}"]]"          return xc::templ::TI_PAGE_LIST;
 
 "#{"[^\}]*"}"           return xc::templ::TI_DICT;
 "${"[^\}]*"}"           return xc::templ::TI_VALUE;
+"#${"[^\}]*"}"          return xc::templ::TI_DICT_VALUE;
+"$#{"[^\}]*"}"          return xc::templ::TI_DICT_VALUE;
 
 "<style>"               m_echo = xc::templ::TI_RAW; return xc::templ::TI_RAW;
 "</style>"              m_echo = xc::templ::TI_TEXT; return xc::templ::TI_RAW;
@@ -76,8 +79,8 @@ STR2    '[^']*'
 
 "</"[^>]*">"            m_echo = xc::templ::TI_TEXT; return xc::templ::TI_RAW;
 
-\*{NAME}\*              return xc::templ::TI_FRAG_BEGIN;
-#{NAME}#                return xc::templ::TI_FRAG_END;
+"*"{NAME}"*"            return xc::templ::TI_FRAG_BEGIN;
+"#"{NAME}"#"            return xc::templ::TI_FRAG_END;
 
 {WS}+                   return m_echo;
 {NAME}                  return m_echo;

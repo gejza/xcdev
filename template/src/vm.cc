@@ -29,13 +29,14 @@ xc::templ::vm_t::~vm_t()
 {
 }
 
-void xc::templ::vm_t::process(const xc::templ::page_t& page)
+void xc::templ::vm_t::process(const xc::templ::page_t& page,
+        const xc::templ::frag_t& data, uint32_t ci)
 {
-    unsigned int ci = 0;
-    unsigned char* bc = page.code();
+    LOG_INFO(1, "Generating page '%s'", page.name());
+    const bytecode_t* bc = page.code(0);
     while (1) {
         const ins_t& i = *reinterpret_cast<const ins_t*>(&bc[ci]);
-        LOG_INFO(1, "Running instruction %s", i.name());
+        XC_TRACE("Running instruction %s", i.name());
         if (i.code == TI_END)
             break;
 
@@ -48,6 +49,7 @@ void xc::templ::vm_t::process(const xc::templ::page_t& page)
                 break;
             }
         case TI_PAGE:
+        case TI_PAGE_LIST:
             {
                 const ins_page_t& page = reinterpret_cast<const ins_page_t&>(i);
                 ci += sizeof(ins_page_t);
@@ -75,7 +77,26 @@ void xc::templ::vm_t::process(const xc::templ::page_t& page)
                 ci += sizeof(ins_value_t);
                 xc::string name((const char*)&bc[ci], (size_t)page.name_size);
                 ci += page.name_size;
-                this->vm_value(name);
+                //this->vm_value(name);
+                xc::string val(data.get_value(name).str);
+                this->vm_output(val.data(), val.size());
+                break;
+            }
+        case TI_DEBUG:
+            {
+                const ins_data_t& data = reinterpret_cast<const ins_data_t&>(i);
+                ci += sizeof(ins_data_t);
+                this->vm_debug(page.data(data.data.ptr), data.data.size);
+                break;
+            }
+        case TI_FRAG:
+            {
+                const ins_frag_t& frag = reinterpret_cast<const ins_frag_t&>(i);
+                ci += sizeof(ins_frag_t);
+                xc::string name((const char*)&bc[ci], (size_t)frag.name_size);
+                LOG_INFO(2, "Run fragment %s at %u", name.c_str(), frag.addr);
+                ci += frag.name_size;
+                this->process(page, data.get_frag(name), frag.addr);
                 break;
             }
         default:

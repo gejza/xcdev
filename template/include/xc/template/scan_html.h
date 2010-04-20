@@ -62,6 +62,10 @@ public:
      * @return 
      */
     virtual const term_t read();
+    
+    virtual const char* file_name() const {
+        return _file.name();
+    }
 private:
     html_file_t(const html_file_t&);
     html_file_t& operator=(const html_file_t&);

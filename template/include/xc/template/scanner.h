@@ -49,6 +49,18 @@ public:
         xc::string sub(size_t left, size_t right) const {
             return xc::string(text + left, length - left - right);
         }
+
+        xc::string get_param() const {
+            size_t b = 0;
+            size_t e = length - 1;
+            while (e && text[e] != '\"' && text[e] != '\'')
+                e--;
+            if (!e)
+                return "";
+            while (b < e && text[b] != '\"' && text[b] != '\'')
+                b++;
+            return sub(b + 1, length - e);
+        }
     };
 
     /**
@@ -66,6 +78,8 @@ public:
      * @return 
      */
     virtual const term_t read() = 0;
+
+    virtual const char* file_name() const = 0;
 private:
     scanner_t(const scanner_t&);
     scanner_t& operator=(const scanner_t&);
