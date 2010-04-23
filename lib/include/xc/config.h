@@ -74,6 +74,21 @@ private:
 const char* get(const char* section, const char* name);
 
 /**
+ * Hodnota konfigu
+ * @param name Jmeno parametru
+ * @return Hodnota
+ */
+template<typename Value_t>
+Value_t get(const char* section, const char* name, Value_t def)
+{
+    try {
+        return get(section, name);
+    } catch (...) {
+        return def;
+    }
+}
+
+/**
  * Hodnota konfigu jako cesta
  * @param name Jmeno parametru
  * @return Hodnota

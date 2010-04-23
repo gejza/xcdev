@@ -51,7 +51,7 @@ enum {
 %x ERR
 
 DIGIT   [0-9]
-NAME    [A-Za-z._]+[A-Za-z0-9]*
+NAME    [A-Za-z._-]+[A-Za-z0-9._-]*
 WS      [\t ]+
 TS      ([^'\\]|\\')
 STR1    \"([^\"\n]|\\\")*\"
