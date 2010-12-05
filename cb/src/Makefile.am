@@ -1,0 +1,39 @@
+
+VERSION_INFO="-version-info 0:0:0"
+
+AM_CXXFLAGS = -W -Wall -g ${AM_CXXEXTRAFLAGS}
+AM_CPPFLAGS = -I$(srcdir)/../include
+AM_LDFLAGS = $(VERSION_INFO)
+
+lib_LTLIBRARIES = libxccb.la libxccbmake.la
+libxccb_la_CPPFLAGS = $(CDB_CFLAGS)
+libxccb_la_SOURCES = cb.cc
+libxccb_la_LDFLAGS = $(VERSION_INFO) -shared $(CDB_LIBS)
+
+libxccbmake_la_CPPFLAGS = $(CDB_CFLAGS)
+libxccbmake_la_SOURCES = cbmake.cc
+libxccbmake_la_LDFLAGS = $(VERSION_INFO) -shared $(CDB_LIBS)
+
+#lib_LTLIBRARIES = libxcusers.la libxcusers-soap.la libxcusers-proxy.la libxcusers-test.la
+#libxcusers_la_SOURCES = users.cc utils.cc
+#libxcusers_la_LDFLAGS = $(VERSION_INFO) -shared -litissien-pgsql -lmhash
+
+#libxcusers_proxy_la_SOURCES = users_proxy.cc
+#libxcusers_proxy_la_LDFLAGS = -weak libxcusers.la -static
+
+#libxcusers_test_la_SOURCES = users_test.cc
+#libxcusers_test_la_LDFLAGS = -weak libxcusers.la -static
+
+#libxcusers_soap_la_SOURCES = users_soap.cc
+#libxcusers_soap_la_LDFLAGS = -static
+
+bin_PROGRAMS = cbc
+cbc_CPPFLAGS = $(XMLXX_CFLAGS)
+cbc_SOURCES = regcomp.cc build.cc parse_xml.cc
+cbc_LDADD = $(XMLXX_LIBS) libxccbmake.la
+
+noinst_PROGRAMS = test
+test_SOURCES = test.cc
+test_LDFLAGS =
+test_LDADD = libxccb.la libxccbmake.la
+
