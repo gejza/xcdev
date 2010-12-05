@@ -5,30 +5,35 @@ AM_CXXFLAGS = -W -Wall -g ${AM_CXXEXTRAFLAGS}
 AM_CPPFLAGS = -I$(srcdir)/../include
 AM_LDFLAGS = $(VERSION_INFO)
 
-lib_LTLIBRARIES = libmfis-registry.la
-libmfis_registry_la_SOURCES = registry.cc
-libmfis_registry_la_LDFLAGS = $(VERSION_INFO) -shared -lcdb
+lib_LTLIBRARIES = libxccb.la libxccbmake.la
+libxccb_la_CPPFLAGS = $(CDB_CFLAGS)
+libxccb_la_SOURCES = cb.cc
+libxccb_la_LDFLAGS = $(VERSION_INFO) -shared $(CDB_LIBS)
 
-#lib_LTLIBRARIES = libmfis-users.la libmfis-users-soap.la libmfis-users-proxy.la libmfis-users-test.la
-#libmfis_users_la_SOURCES = users.cc utils.cc
-#libmfis_users_la_LDFLAGS = $(VERSION_INFO) -shared -litissien-pgsql -lmhash
+libxccbmake_la_CPPFLAGS = $(CDB_CFLAGS)
+libxccbmake_la_SOURCES = cbmake.cc
+libxccbmake_la_LDFLAGS = $(VERSION_INFO) -shared $(CDB_LIBS)
 
-#libmfis_users_proxy_la_SOURCES = users_proxy.cc
-#libmfis_users_proxy_la_LDFLAGS = -weak libmfis-users.la -static
+#lib_LTLIBRARIES = libxcusers.la libxcusers-soap.la libxcusers-proxy.la libxcusers-test.la
+#libxcusers_la_SOURCES = users.cc utils.cc
+#libxcusers_la_LDFLAGS = $(VERSION_INFO) -shared -litissien-pgsql -lmhash
 
-#libmfis_users_test_la_SOURCES = users_test.cc
-#libmfis_users_test_la_LDFLAGS = -weak libmfis-users.la -static
+#libxcusers_proxy_la_SOURCES = users_proxy.cc
+#libxcusers_proxy_la_LDFLAGS = -weak libxcusers.la -static
 
-#libmfis_users_soap_la_SOURCES = users_soap.cc
-#libmfis_users_soap_la_LDFLAGS = -static
+#libxcusers_test_la_SOURCES = users_test.cc
+#libxcusers_test_la_LDFLAGS = -weak libxcusers.la -static
 
-bin_PROGRAMS = regcomp
-regcomp_CPPFLAGS = $(LIBXMLXX_CFLAGS)
-regcomp_SOURCES = regcomp.cc build.cc parse_xml.cc
-regcomp_LDADD = $(LIBXMLXX_LIBS)
+#libxcusers_soap_la_SOURCES = users_soap.cc
+#libxcusers_soap_la_LDFLAGS = -static
+
+bin_PROGRAMS = cbc
+cbc_CPPFLAGS = $(XMLXX_CFLAGS)
+cbc_SOURCES = regcomp.cc build.cc parse_xml.cc
+cbc_LDADD = $(XMLXX_LIBS) libxccbmake.la
 
 noinst_PROGRAMS = test
 test_SOURCES = test.cc
-test_LDFLAGS = -static
-test_LDADD = -lmfis-registry
+test_LDFLAGS =
+test_LDADD = libxccb.la libxccbmake.la
 

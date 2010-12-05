@@ -4,7 +4,7 @@
 AC_PREREQ(2.59)
 # rm -f config.cache
 # initialize autoconf
-AC_INIT([mfis-registry], [1.0.0], [milan@mfis.cz])
+AC_INIT([xccb], [1.0.0], [milan.dunghubel@gmail.com])
 
 # initialize automake(use AC_INIT's arguments)
 AM_INIT_AUTOMAKE(-Wall foreign)
@@ -23,9 +23,6 @@ AC_PROG_LIBTOOL
 dnl --------------------------------------------------------------------------
 dnl Debug/development/test
 dnl --------------------------------------------------------------------------
-AC_MFIS_OPT
-AC_MFIS_DEBUG
-AC_MFIS_WARN
 
 dnl --------------------------------------------------------------------------
 dnl Checks for compiler & standard-library characteristics
@@ -40,15 +37,8 @@ dnl Checks for library configuration (added right-to-left)
 dnl --------------------------------------------------------------------------
 dnl check for libtotest; if it cannot be found or it's too old, PKG_CHECK_MODULES
 dnl macro will automatically print an error message and exit the configure script.
-dnl PKG_CHECK_MODULES([XML2], [libxml-2.0 >= 2.6.19])
-
-PKG_CHECK_MODULES([LIBXMLXX], [libxml++-2.6])
-
-dnl now add the variables LIBXML2_LIBS and LIBXML2_CFLAGS
-dnl (which have been created by PKG_CHECK_MODULES macro)
-dnl to our global LIBS and CFLAGS variables.
-dnl AC_SUBST([XML2_CFLAGS])
-dnl AC_SUBST([XML2_LIBS])
+PKG_CHECK_MODULES([CDB], [libcdb])
+PKG_CHECK_MODULES([XMLXX], [libxml++-2.6])
 
 dnl --------------------------------------------------------------------------
 dnl Checks for library units
@@ -70,6 +60,6 @@ AC_SUBST(VERSION_INFO)
 dnl --------------------------------------------------------------------------
 dnl Finally, build config.h and the makefiles
 dnl --------------------------------------------------------------------------
-AC_CONFIG_FILES([Makefile src/Makefile include/Makefile include/mfis/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile include/Makefile include/xc/Makefile])
 AC_OUTPUT
 

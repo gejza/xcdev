@@ -1,4 +1,4 @@
 
-includedir = @includedir@/mfis
-include_HEADERS =
+includedir = @includedir@/xc
+include_HEADERS = cb.h
 
