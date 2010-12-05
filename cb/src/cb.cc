@@ -10,9 +10,37 @@
 #include "config.h"
 #endif
 
-int test()
+#include <stdint.h>
+
+#include <iostream>
+/*#include <xc/log.h>
+#include <xc/error.h>
+*/
+#include "../include/xc/cb.h"
+#include "dbobj.h"
+#include "constdb.h"
+
+//////////////////////////////////
+xc::CB_t::CB_t()
+    : _db(NULL)
 {
-    return 2;
+    this->_db = new ConstDB_t("test.cb");
+}
+
+xc::CB_t::~CB_t()
+{
+    delete this->_db;
+}
+
+std::string xc::CB_t::string(const StrId_t id, Lang_t lang)
+{
+    StrKey_t key(id, lang);
+    std::string ret = this->_db->get_string(key);
+    if (ret.empty()) {
+        key.lang = xc::MULTI;
+        ret = this->_db->get_string(key);
+    }
+    return ret;
 }
 
 

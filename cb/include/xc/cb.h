@@ -1,28 +1,36 @@
 /*
-   File name:  registry.h
-   Date:       2010/12/03 15:12
+   File name:  cb.h
+   Date:       2010/12/05 23:23
    Subversion: $Id: $
-   Author:     Milan Dunghubel <milan.dunghubel@gmail.com>
+   Author:     Milan Dunghubel <milan@mfis.cz>
 
-   Copyright (C) 2010 Milan Dunghubel <milan.dunghubel@gmail.com>
+   Copyright (C) 2010 Milan Dunghubel <milan@mfis.cz>
 */
 
-#ifndef _MFIS_REGISTRY_H_
-#define _MFIS_REGISTRY_H_
+#ifndef _XC_CB_H_
+#define _XC_CB_H_
 #pragma once
 
-namespace mfis {
+#include <string>
 
-#define MFIS_REGISTRY_VERSION "1.0"
+#include "cbdef.h"
 
-class Registry_t
+class DB_t;
+
+namespace xc {
+
+class CB_t
 {
 public:
-protected:
+    CB_t();
+    virtual ~CB_t();
+    std::string string(const StrId_t id, Lang_t lang);
+private:
+    DB_t* _db;
 };
 
-} // namespace mfis
+} // namespace xc
 
-#endif // _MFIS_REGISTRY_H_
-/* end of registry.h */
+#endif // _XC_CB_H_
+/* end of cb.h */
 
