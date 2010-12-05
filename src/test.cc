@@ -10,12 +10,32 @@
 #include "config.h"
 #endif
 
+#include <stdint.h>
+#include <iostream>
 /*#include <xc/log.h>
 #include <xc/error.h>
 */
+#include <xc/cbmake.h>
+#include <xc/cb.h>
+
 //int xc_test_main(int argc, const char* argv[])
-int main(int argc, const char* argv[])
+//int main(int argc, const char* argv[])
+int main()
 {
+    {
+        xc::CBMake_t cb;
+        cb.set_default(xc::MULTI);
+        xc::Id_t id = cb.string("Hello World!!!");
+        std::cout << id << std::endl;
+        cb.string(id, xc::CS, "Ahoj svete!!!");
+    }
+    {
+        xc::CB_t cb;
+        std::cout << cb.string(1, xc::CS) << std::endl;
+        std::cout << cb.string(1, xc::EN) << std::endl;
+        std::cout << cb.string(1, xc::SK) << std::endl;
+    }
+
     return 0;
 }
 

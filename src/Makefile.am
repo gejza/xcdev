@@ -11,7 +11,7 @@ libxccb_la_SOURCES = cb.cc
 libxccb_la_LDFLAGS = $(VERSION_INFO) -shared $(CDB_LIBS)
 
 libxccbmake_la_CPPFLAGS = $(CDB_CFLAGS)
-libxccbmake_la_SOURCES = cbmake.cc
+libxccbmake_la_SOURCES = cbmake.cc constdb.cc fd.cc
 libxccbmake_la_LDFLAGS = $(VERSION_INFO) -shared $(CDB_LIBS)
 
 #lib_LTLIBRARIES = libxcusers.la libxcusers-soap.la libxcusers-proxy.la libxcusers-test.la
@@ -34,6 +34,6 @@ cbc_LDADD = $(XMLXX_LIBS) libxccbmake.la
 
 noinst_PROGRAMS = test
 test_SOURCES = test.cc
-test_LDFLAGS =
+test_LDFLAGS = -static
 test_LDADD = libxccb.la libxccbmake.la
 
