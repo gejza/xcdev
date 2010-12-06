@@ -41,7 +41,7 @@ public:
     void string(const StrId_t id, Lang_t lang, const char* str);
 
     // hook
-    void hook(const char* name);
+    void hook(const char* name, const Callback_t& cb);
 
     // alias
     void alias(const char* route, Lang_t lang, const char* alias);

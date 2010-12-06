@@ -12,54 +12,9 @@
 #include "StdAfx.h"
 
 #include "xmlparser.h"
+#include "xmlutils.h"
+#include "xmltrans.h"
 #include "utils.h"
-
-namespace {
-    enum NodeTypeId_t
-    {
-        NODE_UNKNOWN = 0,
-        NODE_REGISTRY,
-        NODE_TEMPLATE,
-        NODE_MENU,
-        NODE_ITEM,
-        NODE_FORM,
-    };
-
-    struct NodeType_t
-    {
-        NodeTypeId_t id;
-        const char* name;
-        //void (XMLParser_t::*cb)();
-
-        bool operator==(const std::string& n)
-        {
-            return n == name;
-        }
-    };
-
-    NodeType_t _node_type[] = {
-        { NODE_REGISTRY , "registry" },
-        { NODE_TEMPLATE , "template" },
-        { NODE_MENU , "menu" },
-        { NODE_ITEM , "item" },
-        { NODE_FORM , "form" },
-        { NODE_UNKNOWN, NULL },
-    };
-
-    NodeTypeId_t node_type(const std::string& name)
-    {
-        for (NodeType_t* t = _node_type; t->id; ++t)
-        {
-            if (*t == name)
-                return t->id;
-        }
-    }
-
-    NodeTypeId_t node_type(const xmlpp::Element* node)
-    {
-        return node_type(node->get_name());
-    }
-}
 
 /////////////////////////////////////////////////////////
 XMLParser_t::XMLParser_t(xc::CBMake_t& cb)
@@ -69,25 +24,6 @@ XMLParser_t::XMLParser_t(xc::CBMake_t& cb)
 
 XMLParser_t::~XMLParser_t()
 {
-}
-
-void XMLParser_t::parse_error(const xmlpp::Node* node, const char* fmt, ...)
-{
-    va_list ap;
-    va_start (ap, fmt);
-    std::string buf = xc::vformat(fmt, ap);
-    va_end (ap);
-    std::string info = xc::format("%s:%d: ", _fn.c_str(), node->get_line());
-    throw std::runtime_error(info + buf);
-}
-
-void XMLParser_t::parse_error(const char* fmt, ...)
-{
-    va_list ap;
-    va_start (ap, fmt);
-    std::string buf = xc::vformat(fmt, ap);
-    va_end (ap);
-    throw std::runtime_error(buf);
 }
 
 void XMLParser_t::parse(const char* fn)
@@ -169,64 +105,37 @@ void XMLParser_t::process(const xmlpp::Node::NodeList& list)
 
 void XMLParser_t::process(const xmlpp::Element* node)
 {
-    switch (node_type(node))
+    std::cout << "Process " << node->get_name() << std::endl;
+    switch (type_id(node))
     {
+    case NODE_MODULE:
+    case NODE_THEME:
     case NODE_REGISTRY:
         process(node->get_children());
         return;
     case NODE_TEMPLATE:
-        //process_template(node);
+        process_template(node);
         return;
     case NODE_MENU:
-        menu(node);
+        process_menu(node);
+        return;
+    case NODE_FORM:
+        process_form(node);
         return;
     default:
-        parse_error(node, "Unknown nodetype `%s'", node->get_name().c_str());
+        _xml::error(node, "Element `%s' not allowed here.", node->get_name().c_str());
         return;
     }
 }
 
-const char* XMLParser_t::get_value(const xmlpp::Element* node, const char* name)
-{
-    const xmlpp::Attribute* attr = node->get_attribute(name);
-    if (!attr)
-    {
-        const xmlpp::Node::NodeList& list = node->get_children(name);
-        for(xmlpp::Node::NodeList::const_iterator iter = list.begin(); iter != list.end(); ++iter)
-        {
-            std::cout << (*iter)->get_name() << std::endl;
-            if ((*iter)->get_name() == name)
-            {
-                const xmlpp::TextNode* t = node->get_child_text();
-                return t->get_content().c_str();
-            }
-        }
-        return NULL;
-    }
-    return attr->get_value().c_str();
-}
-
-const char* XMLParser_t::req_value(const xmlpp::Element* node, const char* name)
-{
-    const char* val = get_value(node, name);
-    if (!val)
-        parse_error(node, "Missing attribute `%s'", name);
-    return val;
-}
-
-void XMLParser_t::menu(const xmlpp::Element* node)
+void XMLParser_t::process_menu(const xmlpp::Element* node)
 {
     xc::Menu_t menu;
-    const char* id = get_value(node, "id");
+    const char* id = _xml::get(node, "id");
     if(id)
         menu.id = id;
 
-    const xmlpp::Node::NodeList& list = node->get_children("item");
-    for(xmlpp::Node::NodeList::const_iterator iter = list.begin(); iter != list.end(); ++iter)
-    {
-        menu.items.push_back(menu_item(dynamic_cast<const xmlpp::Element*>(*iter)));
-    }
-
+    _xml::foreach<xc::Menu_t&>(node, menu, process_child);
     _cb.add(menu);
     /*const Glib::ustring nodename = node->get_name();
 
@@ -239,13 +148,18 @@ void XMLParser_t::menu(const xmlpp::Element* node)
 
 }
     
-xc::Menu_t::Item_t XMLParser_t::menu_item(const xmlpp::Element* node)
+void XMLParser_t::process_form(const xmlpp::Element* node)
 {
-    xc::Menu_t::Item_t item;
-    item.title = req_value(node, "title");
-    item.uri = req_value(node, "uri");
-    return item;
+
 }
 
+void XMLParser_t::process_template(const xmlpp::Element* node)
+{
+    xc::Template_t templ;
+    templ.id = _xml::req(node, "id");
+    // node 
+    _xml::foreach<xc::Template_t&>(node, templ, process_child);
+    _cb.add(templ);
+}
 
 

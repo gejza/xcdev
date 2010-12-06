@@ -22,7 +22,7 @@
 
 void test_make_hooks(xc::CBMake_t& cb)
 {
-    cb.hook("exit");
+    //cb.hook("exit");
 }
 
 void test_make_alias(xc::CBMake_t& cb)

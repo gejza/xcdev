@@ -11,7 +11,7 @@ libxccb_la_SOURCES = cb.cc constdb.cc fd.cc
 libxccb_la_LDFLAGS = $(VERSION_INFO) -shared $(CDB_LIBS)
 
 libxccbmake_la_CPPFLAGS = $(CDB_CFLAGS) $(XMLXX_CFLAGS)
-libxccbmake_la_SOURCES = cbmake.cc constdb.cc fd.cc pofile.cc pogen.cc xmlparser.cc
+libxccbmake_la_SOURCES = cbmake.cc constdb.cc fd.cc pofile.cc pogen.cc xmlparser.cc xmlutils.cc xmltrans.cc
 libxccbmake_la_LDFLAGS = $(VERSION_INFO) -shared $(CDB_LIBS) $(XMLXX_LIBS) -lgettextpo
 
 #lib_LTLIBRARIES = libxcusers.la libxcusers-soap.la libxcusers-proxy.la libxcusers-test.la

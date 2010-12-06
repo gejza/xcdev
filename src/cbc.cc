@@ -26,6 +26,7 @@ int main(int argc, const char* argv[])
         //mfis::reg::Build_t b(argv[1]);
         for (int i=2; i < argc; i++)
         {
+            std::cout << "Load file " << argv[i] << std::endl;
             cb.load_xml(argv[i]);
         }
     }
