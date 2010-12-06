@@ -41,3 +41,5 @@ test_SOURCES = test.cc
 test_LDFLAGS = -static
 test_LDADD = libxccb.la libxccbmake.la
 
+testcbc:
+	./cbc test.cb *.xml
