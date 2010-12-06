@@ -11,7 +11,7 @@
 #endif
 #include "StdAfx.h"
 
-#include "../include/xc/cb.h"
+#include "cb.h"
 #include "obj.h"
 #include "constdb.h"
 

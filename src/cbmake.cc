@@ -80,11 +80,11 @@ const char* xc::CBMake_t::get_lang(Lang_t lang)
 }
 
 //////////////////////////////////////////
-void xc::CBMake_t::hook(const char* name, const Callback_t& cb)
+/*void xc::CBMake_t::hook(const char* name, const Callback_t& cb)
 {
     //HookKey_t key(name);
     // table hooks
-}
+}*/
 
 void xc::CBMake_t::alias(const char* route, Lang_t lang, const char* alias)
 {
@@ -106,5 +106,7 @@ const xc::Id_t xc::CBMake_t::add(const Menu_t& menu)
 void xc::CBMake_t::add(const Template_t& templ)
 {
     std::cout << "Template " << templ.id << std::endl;
+    //std::cout << "Script " << templ.call.script << std::endl;
+
     //return seq();
 }

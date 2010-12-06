@@ -40,7 +40,7 @@ struct Callback_t
 struct Template_t
 {
     std::string id;
-    Callback_t call;
+    xc::Callback_t call;
 };
 
 struct Menu_t
