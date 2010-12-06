@@ -1,12 +1,13 @@
-#ifndef PHP_HELLO_H
-#define PHP_HELLO_H 1
+#ifndef PHP_CB_H
+#define PHP_CB_H 1
 
-#define PHP_HELLO_WORLD_VERSION "1.0"
-#define PHP_HELLO_WORLD_EXTNAME "hello"
+#define PHP_CB_VERSION "1.0"
+#define PHP_CB_EXTNAME "cb"
 
-PHP_FUNCTION(hello_world);
+PHP_FUNCTION(cb_get);
+PHP_FUNCTION(cb_string);
 
-extern zend_module_entry hello_module_entry;
-#define phpext_hello_ptr &hello_module_entry
+extern zend_module_entry cb_module_entry;
+#define phpext_cb_ptr &cb_module_entry
 
 #endif
