@@ -17,12 +17,13 @@
 #include <xc/error.h>
 */
 #include "../include/xc/cbmake.h"
-#include "dbobj.h"
+#include "obj.h"
 #include "constdb.h"
+#include "pogen.h"
 
 //////////////////////////////////
 xc::CBMake_t::CBMake_t()
-    : _curid(0), _def_lang(xc::MULTI), _db(NULL)
+    : _curid(0), _def_lang(xc::MULTI), _db(NULL), _po(NULL)
 {
     this->_db = new ConstDBMake_t("test.cb");
 }
@@ -30,12 +31,23 @@ xc::CBMake_t::CBMake_t()
 xc::CBMake_t::~CBMake_t()
 {
     delete this->_db;
+    if (this->_po)
+        delete _po;
+}
+
+void xc::CBMake_t::generate_pot(const char* fn)
+{
+    //TODO
+    _po = new POGen_t(fn);
 }
 
 xc::StrId_t xc::CBMake_t::string(Lang_t lang, const char* str)
 {
     StrId_t id = seq();
     this->string(id, lang, str);
+    if (_po) {
+        _po->add(str);
+    }
     return id;
 }
 
@@ -60,3 +72,17 @@ const char* xc::CBMake_t::get_lang(Lang_t lang)
         return "";
     };
 }
+
+//////////////////////////////////////////
+void xc::CBMake_t::hook(const char* name)
+{
+    //HookKey_t key(name);
+    // table hooks
+}
+
+void xc::CBMake_t::alias(const char* route, Lang_t lang, const char* alias)
+{
+    // table alias:  route-lang => alias
+    // table route:  alias -> route
+}
+

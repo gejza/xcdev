@@ -14,6 +14,7 @@
 namespace xc {
 
 typedef uint32_t Id_t;
+typedef uint32_t ClassId_t;
 typedef uint32_t StrId_t;
 typedef uint32_t LangId_t;
 
