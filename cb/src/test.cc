@@ -18,22 +18,38 @@
 #include <xc/cbmake.h>
 #include <xc/cb.h>
 
+void test_make_hooks(xc::CBMake_t& cb)
+{
+    cb.hook("exit");
+}
+
+void test_make_alias(xc::CBMake_t& cb)
+{
+    cb.alias("login", xc::CS, "prihlaseni");
+}
+
 //int xc_test_main(int argc, const char* argv[])
 //int main(int argc, const char* argv[])
 int main()
 {
+    /*xc::POFile_t po("cs.po");
+    po.read();*/
+
+
     {
         xc::CBMake_t cb;
-        cb.set_default(xc::MULTI);
-        xc::Id_t id = cb.string("Hello World!!!");
+        cb.generate_pot("test.pot");
+        cb.set_default(xc::CS);
+        test_make_alias(cb);
+        /*xc::Id_t id = cb.string("Hello World!!!");
         std::cout << id << std::endl;
-        cb.string(id, xc::CS, "Ahoj svete!!!");
+        cb.string(id, xc::CS, "Ahoj svete!!!");*/
     }
     {
         xc::CB_t cb;
-        std::cout << cb.string(1, xc::CS) << std::endl;
+        /*std::cout << cb.string(1, xc::CS) << std::endl;
         std::cout << cb.string(1, xc::EN) << std::endl;
-        std::cout << cb.string(1, xc::SK) << std::endl;
+        std::cout << cb.string(1, xc::SK) << std::endl;*/
     }
 
     return 0;

@@ -17,7 +17,7 @@
 #include <xc/error.h>
 */
 #include "../include/xc/cb.h"
-#include "dbobj.h"
+#include "obj.h"
 #include "constdb.h"
 
 //////////////////////////////////

@@ -1,10 +1,10 @@
 /*
-   File name:  regcomp.cc
-   Date:       2010/12/03 14:07
+   File name:  cbc.cc
+   Date:       2010/12/06 02:27
    Subversion: $Id: $
-   Author:     Milan Dunghubel <milan.dunghubel@gmail.com>
+   Author:     Milan Dunghubel <milan@mfis.cz>
 
-   Copyright (C) 2010 Milan Dunghubel <milan.dunghubel@gmail.com>
+   Copyright (C) 2010 Milan Dunghubel <milan@mfis.cz>
 */
 #ifdef HAVE_CONFIG_H
 #include "config.h"

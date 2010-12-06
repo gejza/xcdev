@@ -24,7 +24,12 @@ class CB_t
 public:
     CB_t();
     virtual ~CB_t();
+
+    // string
     std::string string(const StrId_t id, Lang_t lang);
+    // hooks
+    // alias
+    // template
 private:
     DB_t* _db;
 };
