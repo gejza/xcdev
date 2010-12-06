@@ -60,7 +60,6 @@ xc::StrId_t xc::CBMake_t::string(Lang_t lang, const char* str)
 
 void xc::CBMake_t::string(const StrId_t id, Lang_t lang, const char* str)
 {
-    std::clog << "Set string " << id << " = (" << this->get_lang(lang) << ")" << str << std::endl;
     StrKey_t key(id, lang);
     this->_db->add(key, str);
 }
@@ -81,7 +80,7 @@ const char* xc::CBMake_t::get_lang(Lang_t lang)
 }
 
 //////////////////////////////////////////
-void xc::CBMake_t::hook(const char* name)
+void xc::CBMake_t::hook(const char* name, const Callback_t& cb)
 {
     //HookKey_t key(name);
     // table hooks
@@ -104,3 +103,8 @@ const xc::Id_t xc::CBMake_t::add(const Menu_t& menu)
     return seq();
 }
 
+void xc::CBMake_t::add(const Template_t& templ)
+{
+    std::cout << "Template " << templ.id << std::endl;
+    //return seq();
+}

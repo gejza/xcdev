@@ -30,11 +30,17 @@ enum Lang_t
 
 struct Callback_t
 {
+    typedef std::vector<std::string> Include_t;
+    Include_t include;
+    std::string script;
+    std::string cls;
+    std::string method;
 };
 
 struct Template_t
 {
     std::string id;
+    Callback_t call;
 };
 
 struct Menu_t

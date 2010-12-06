@@ -51,7 +51,6 @@ FD_t::FD_t(const char* fn, bool create)
 FD_t::~FD_t()
 {
     int ret = ::close(this->_fd);
-    std::cout << "Close file cdb: " << ret << std::endl;
 }
 
 

@@ -23,7 +23,6 @@ ConstDB_t::ConstDB_t(const char* fn)
     : _fd(fn)
 {
     int ret = cdb_init(&this->_db, this->_fd.get());
-    std::cout << "Start cdb: " << ret << std::endl;
 }
 
 ConstDB_t::~ConstDB_t()
@@ -88,18 +87,18 @@ ConstDBMake_t::ConstDBMake_t(const char* fn)
     : _fd(fn, true)
 {
     int ret = cdb_make_start(&this->_db, this->_fd.get());
-    std::cout << "Start cdb: " << ret << std::endl;
+    //std::cout << "Start cdb: " << ret << std::endl;
 }
 
 ConstDBMake_t::~ConstDBMake_t()
 {
     int ret = cdb_make_finish(&this->_db);
-    std::cout << "Finish cdb: " << ret << std::endl;
+    //std::cout << "Finish cdb: " << ret << std::endl;
 }
 
 void ConstDBMake_t::add(const void* key, size_t klen,
                         const void* val, size_t vlen)
 {
     int ret = cdb_make_add(&this->_db, key, klen, val, vlen);
-    std::cout << "Key: " << klen << " Value: " << vlen << " ret:" << ret << std::endl;
+    //std::cout << "Key: " << klen << " Value: " << vlen << " ret:" << ret << std::endl;
 }

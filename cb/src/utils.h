@@ -15,7 +15,7 @@
 
 namespace xc {
 
-std::string vformat(const char *fmt, va_list ap) {
+inline std::string vformat(const char *fmt, va_list ap) {
     // Allocate a buffer on the stack that's big enough for us almost
     // all the time.
     size_t size = 1024;
@@ -44,7 +44,7 @@ std::string vformat(const char *fmt, va_list ap) {
     }
 }
 
-std::string format(const char *fmt, ...) {
+inline std::string format(const char *fmt, ...) {
     va_list ap;
     va_start (ap, fmt);
     std::string buf = vformat (fmt, ap);
