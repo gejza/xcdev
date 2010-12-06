@@ -10,9 +10,9 @@ libxccb_la_CPPFLAGS = $(CDB_CFLAGS)
 libxccb_la_SOURCES = cb.cc constdb.cc fd.cc
 libxccb_la_LDFLAGS = $(VERSION_INFO) -shared $(CDB_LIBS)
 
-libxccbmake_la_CPPFLAGS = $(CDB_CFLAGS)
-libxccbmake_la_SOURCES = cbmake.cc constdb.cc fd.cc pofile.cc pogen.cc
-libxccbmake_la_LDFLAGS = $(VERSION_INFO) -shared $(CDB_LIBS) -lgettextpo
+libxccbmake_la_CPPFLAGS = $(CDB_CFLAGS) $(XMLXX_CFLAGS)
+libxccbmake_la_SOURCES = cbmake.cc constdb.cc fd.cc pofile.cc pogen.cc xmlparser.cc
+libxccbmake_la_LDFLAGS = $(VERSION_INFO) -shared $(CDB_LIBS) $(XMLXX_LIBS) -lgettextpo
 
 #lib_LTLIBRARIES = libxcusers.la libxcusers-soap.la libxcusers-proxy.la libxcusers-test.la
 #libxcusers_la_SOURCES = users.cc utils.cc
@@ -28,9 +28,9 @@ libxccbmake_la_LDFLAGS = $(VERSION_INFO) -shared $(CDB_LIBS) -lgettextpo
 #libxcusers_soap_la_LDFLAGS = -static
 
 bin_PROGRAMS = cbc cbdump
-cbc_CPPFLAGS = $(XMLXX_CFLAGS)
-cbc_SOURCES = cbc.cc build.cc parse_xml.cc
-cbc_LDADD = $(XMLXX_LIBS) libxccbmake.la
+cbc_CPPFLAGS =
+cbc_SOURCES = cbc.cc
+cbc_LDADD = libxccbmake.la
 
 cbdump_CPPFLAGS =
 cbdump_SOURCES = cbdump.cc

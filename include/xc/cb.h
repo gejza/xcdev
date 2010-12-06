@@ -30,6 +30,7 @@ public:
     // hooks
     // alias
     // template
+    void dump();
 private:
     DB_t* _db;
 };

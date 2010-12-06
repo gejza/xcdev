@@ -20,6 +20,7 @@
 #include "obj.h"
 #include "constdb.h"
 #include "pogen.h"
+#include "xmlparser.h"
 
 //////////////////////////////////
 xc::CBMake_t::CBMake_t()
@@ -39,6 +40,12 @@ void xc::CBMake_t::generate_pot(const char* fn)
 {
     //TODO
     _po = new POGen_t(fn);
+}
+    
+void xc::CBMake_t::load_xml(const char* fn)
+{
+    XMLParser_t xml(*this);
+    xml.parse(fn);
 }
 
 xc::StrId_t xc::CBMake_t::string(Lang_t lang, const char* str)
@@ -84,5 +91,16 @@ void xc::CBMake_t::alias(const char* route, Lang_t lang, const char* alias)
 {
     // table alias:  route-lang => alias
     // table route:  alias -> route
+}
+
+const xc::Id_t xc::CBMake_t::add(const Menu_t& menu)
+{
+    std::cout << menu.id << std::endl;
+    for (Menu_t::Items_t::const_iterator i=menu.items.begin();i != menu.items.end(); i++)
+    {
+        this->string(i->title.c_str());
+        std::cout << i->title << ":" << i->uri << std::endl;
+    }
+    return seq();
 }
 

@@ -11,6 +11,8 @@
 #define _XC_CBDEF_H_
 #pragma once
 
+#include <vector>
+
 namespace xc {
 
 typedef uint32_t Id_t;
@@ -24,6 +26,29 @@ enum Lang_t
     EN = 1,
     CS = 2,
     SK = 3,
+};
+
+struct Callback_t
+{
+};
+
+struct Template_t
+{
+    std::string id;
+};
+
+struct Menu_t
+{
+    struct Item_t
+    {
+        std::string uri;
+        std::string title;
+        std::vector<Item_t> submenu;
+    };
+    typedef std::vector<Item_t> Items_t;
+
+    std::string id;
+    Items_t items;
 };
 
 

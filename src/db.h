@@ -35,6 +35,8 @@ public:
     virtual ~DB_t() {}
     
     virtual std::string get_string(const Value_t& key) = 0;
+
+    virtual void dump() = 0;
 };
 
 class DBMake_t

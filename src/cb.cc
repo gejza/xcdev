@@ -9,13 +9,8 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+#include "StdAfx.h"
 
-#include <stdint.h>
-
-#include <iostream>
-/*#include <xc/log.h>
-#include <xc/error.h>
-*/
 #include "../include/xc/cb.h"
 #include "obj.h"
 #include "constdb.h"
@@ -43,5 +38,9 @@ std::string xc::CB_t::string(const StrId_t id, Lang_t lang)
     return ret;
 }
 
+void xc::CB_t::dump()
+{
+    _db->dump();
+}
 
 

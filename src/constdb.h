@@ -22,6 +22,8 @@ public:
     virtual ~ConstDB_t();
     virtual bool get(const Value_t& key, Value_t& val);
     virtual std::string get_string(const Value_t& key);
+    
+    virtual void dump();
 private:
     FD_t _fd;
     struct cdb _db;

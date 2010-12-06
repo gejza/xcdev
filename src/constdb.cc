@@ -55,6 +55,34 @@ std::string ConstDB_t::get_string(const Value_t& key)
     return "";
 }
 
+void ConstDB_t::dump()
+{
+    /*struct cdb_find dbf;
+    cdb_findinit(&dbf, &_db, "", 0);
+    while(cdb_findnext(&dbf) > 0) {
+        uint32_t vpos = cdb_datapos(&dbf);
+        uint32_t vlen = cdb_datalen(&dbf);
+        std::cout << vpos << ":" << vlen << std::endl;
+    }
+    */
+    int ret;
+    unsigned pos;
+    cdb_seqinit(&pos, &_db);
+    while ((ret = cdb_seqnext(&pos, &_db)) > 0)
+    {
+
+        const void* key = cdb_getkey(&_db);
+        uint32_t klen = cdb_keylen(&_db);
+        const void* val = cdb_getdata(&_db);
+        uint32_t vlen = cdb_datalen(&_db);
+        //std::cout << kpos << ":" << klen << "|" << vpos << ":" << vlen << std::endl;
+    }
+    if (ret < 0) {
+
+        std::cout << "error" << std::endl;
+    }
+}
+
 //////////////////////////////////
 ConstDBMake_t::ConstDBMake_t(const char* fn)
     : _fd(fn, true)

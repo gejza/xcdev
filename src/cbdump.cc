@@ -9,10 +9,17 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+#include "StdAfx.h"
 
+#include "cb.h"
 
-int main()
+int main(int argc, const char* argv[])
 {
+    if (argc < 2)
+    {
+    }
+    xc::CB_t cb;
+    cb.dump();
     return 0;
 }
 
