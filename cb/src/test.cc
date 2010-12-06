@@ -18,6 +18,8 @@
 #include <xc/cbmake.h>
 #include <xc/cb.h>
 
+#include "pogen.h"
+
 void test_make_hooks(xc::CBMake_t& cb)
 {
     cb.hook("exit");
@@ -28,30 +30,38 @@ void test_make_alias(xc::CBMake_t& cb)
     cb.alias("login", xc::CS, "prihlaseni");
 }
 
+void test_make()
+{
+    xc::CBMake_t cb;
+    cb.generate_pot("test.pot");
+    cb.set_default(xc::CS);
+    test_make_alias(cb);
+    //xc::Id_t id = cb.string("Hello World!!!");
+    //std::cout << id << std::endl;
+    //cb.string(id, xc::CS, "Ahoj svete!!!");
+}
+
+void test_read()
+{
+    xc::CB_t cb;
+    //std::cout << cb.string(1, xc::CS) << std::endl;
+    //std::cout << cb.string(1, xc::EN) << std::endl;
+    //std::cout << cb.string(1, xc::SK) << std::endl;*/
+}
+
 //int xc_test_main(int argc, const char* argv[])
 //int main(int argc, const char* argv[])
 int main()
 {
-    /*xc::POFile_t po("cs.po");
-    po.read();*/
-
-
-    {
-        xc::CBMake_t cb;
-        cb.generate_pot("test.pot");
-        cb.set_default(xc::CS);
-        test_make_alias(cb);
-        /*xc::Id_t id = cb.string("Hello World!!!");
-        std::cout << id << std::endl;
-        cb.string(id, xc::CS, "Ahoj svete!!!");*/
-    }
-    {
-        xc::CB_t cb;
-        /*std::cout << cb.string(1, xc::CS) << std::endl;
-        std::cout << cb.string(1, xc::EN) << std::endl;
-        std::cout << cb.string(1, xc::SK) << std::endl;*/
-    }
-
+    //xc::POFile_t po("cs.po");
+    //po.read();
+    xc::POGen_t po("test.pot");
+    po.add("Test");
+    po.add("Jedna", "dva");
+    xc::POGen_t::Msg_t msg("Reference");
+    msg.addref("../test.xml", 23);
+    msg.addref("../test.xml", 28);
+    po.add(msg);
     return 0;
 }
 

@@ -11,6 +11,7 @@
 #define _XC_DBOBJ_H_
 #pragma once
 
+
 namespace {
 
 struct CBInfo_t
@@ -42,6 +43,11 @@ struct StrKey_t : CBKey_t
 struct CallBack_t
 {
 
+};
+
+struct MenuItem_t
+{
+    xc::StrId_t title;
 };
 
 } // namespace

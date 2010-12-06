@@ -9,12 +9,9 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+#include "StdAfx.h"
 
-#include <stdio.h>
-
-#include "build.h"
-
-void parse_xml(const char* fn, mfis::reg::Build_t& build);
+#include "cbmake.h"
 
 int main(int argc, const char* argv[])
 {
@@ -24,10 +21,17 @@ int main(int argc, const char* argv[])
         return 1;
     }
 
-    mfis::reg::Build_t b(argv[1]);
-    for (int i=2; i < argc; i++)
+    try {
+        xc::CBMake_t cb;
+        //mfis::reg::Build_t b(argv[1]);
+        for (int i=2; i < argc; i++)
+        {
+            cb.load_xml(argv[i]);
+        }
+    }
+    catch(const std::exception& ex)
     {
-        parse_xml(argv[i], b);
+        std::cout << "Exception caught: " << ex.what() << std::endl;
     }
     return 0;
 }

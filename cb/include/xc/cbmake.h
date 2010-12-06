@@ -31,7 +31,7 @@ public:
         this->_def_lang = lang;
     }
     void generate_pot(const char* fn);
-    void import_xml(const char* fn);
+    void load_xml(const char* fn);
 
     // string
     StrId_t string(const char* str) {
@@ -45,6 +45,9 @@ public:
 
     // alias
     void alias(const char* route, Lang_t lang, const char* alias);
+
+    const Id_t add(const Menu_t& menu);
+    void add(const Template_t& templ);
     // debug
     const char* get_lang(Lang_t lang);
 protected:
