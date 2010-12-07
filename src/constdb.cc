@@ -96,7 +96,7 @@ ConstDBMake_t::~ConstDBMake_t()
     //std::cout << "Finish cdb: " << ret << std::endl;
 }
 
-void ConstDBMake_t::add(const void* key, size_t klen,
+void ConstDBMake_t::add(uint32_t table, const void* key, size_t klen,
                         const void* val, size_t vlen)
 {
     int ret = cdb_make_add(&this->_db, key, klen, val, vlen);

@@ -34,7 +34,7 @@ class ConstDBMake_t : public DBMake_t
 public:
     ConstDBMake_t(const char* fn);
     virtual ~ConstDBMake_t();
-    virtual void add(const void*, size_t, const void*, size_t);
+    virtual void add(uint32_t table, const void*, size_t, const void*, size_t);
 private:
     FD_t _fd;
     struct cdb_make _db;

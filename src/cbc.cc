@@ -24,6 +24,8 @@ int main(int argc, const char* argv[])
     try {
         xc::CBMake_t cb;
         //mfis::reg::Build_t b(argv[1]);
+        cb.string("Error", "chyba", xc::CS);
+        cb.string("Number", "cislo", xc::CS);
         for (int i=2; i < argc; i++)
         {
             std::cout << "Load file " << argv[i] << std::endl;

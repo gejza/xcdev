@@ -61,7 +61,15 @@ xc::StrId_t xc::CBMake_t::string(Lang_t lang, const char* str)
 void xc::CBMake_t::string(const StrId_t id, Lang_t lang, const char* str)
 {
     StrKey_t key(id, lang);
-    this->_db->add(key, str);
+    DBTableMake_t db(*this->_db, 12);
+    //this->_db->add(key, str);
+    db.add(key, str);
+}
+    
+void xc::CBMake_t::string(const std::string& msgid, const std::string& msgstr, Lang_t lang)
+{
+    xc::StrId_t id = this->string(lang, msgstr.c_str());
+    this->_db->add(STR_TABLE, msgid, id);
 }
 
 const char* xc::CBMake_t::get_lang(Lang_t lang)
@@ -103,10 +111,37 @@ const xc::Id_t xc::CBMake_t::add(const Menu_t& menu)
     return seq();
 }
 
+class Stream_t
+{
+public:
+    void add(const void* ptr, size_t size) {
+        _data.append((const char*)ptr, size);
+    }
+    const std::string& str() const {
+        return _data;
+    }
+private:
+    std::string _data;
+};
+
+Stream_t& operator<<(Stream_t& out, const xc::Callback_t& cb)
+{
+    out.add("test", 4);
+    return out;
+}
+
 void xc::CBMake_t::add(const Template_t& templ)
 {
+    // serialize
+    // 
+
+    Stream_t out;
+    out << templ.call;
     std::cout << "Template " << templ.id << std::endl;
     //std::cout << "Script " << templ.call.script << std::endl;
+
+    StrKey_t key(1, xc::CS);
+    this->_db->add(STR_TABLE, key, out.str());
 
     //return seq();
 }
