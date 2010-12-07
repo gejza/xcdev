@@ -21,6 +21,7 @@
 #include "constdb.h"
 #include "pogen.h"
 #include "xmlparser.h"
+#include "serialize.h"
 
 //////////////////////////////////
 xc::CBMake_t::CBMake_t()
@@ -111,20 +112,7 @@ const xc::Id_t xc::CBMake_t::add(const Menu_t& menu)
     return seq();
 }
 
-class Stream_t
-{
-public:
-    void add(const void* ptr, size_t size) {
-        _data.append((const char*)ptr, size);
-    }
-    const std::string& str() const {
-        return _data;
-    }
-private:
-    std::string _data;
-};
-
-Stream_t& operator<<(Stream_t& out, const xc::Callback_t& cb)
+xc::Serialize_t& operator<<(xc::Serialize_t& out, const xc::Callback_t& cb)
 {
     out.add("test", 4);
     return out;
@@ -135,7 +123,7 @@ void xc::CBMake_t::add(const Template_t& templ)
     // serialize
     // 
 
-    Stream_t out;
+    xc::Serialize_t out;
     out << templ.call;
     std::cout << "Template " << templ.id << std::endl;
     //std::cout << "Script " << templ.call.script << std::endl;
