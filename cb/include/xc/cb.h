@@ -25,6 +25,8 @@ public:
     CB_t();
     virtual ~CB_t();
 
+    void add_ns(const char* ns);
+    void set_lang(const char* lang);
     // string
     std::string string(const StrId_t id, Lang_t lang);
     // hooks
@@ -33,6 +35,11 @@ public:
     void dump();
 private:
     DB_t* _db;
+    // string table
+    // alias table  path => alias
+    // route table  route => handler
+    // menu table
+    // template table
 };
 
 } // namespace xc

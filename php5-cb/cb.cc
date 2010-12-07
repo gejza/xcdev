@@ -11,6 +11,8 @@
 static function_entry cb_functions[] = {
     PHP_FE(cb_get, NULL)
     PHP_FE(cb_string, NULL)
+    PHP_FE(cb_add_ns, NULL)
+    PHP_FE(cb_set_lang, NULL)
     {NULL, NULL, NULL}
 };
 
@@ -34,6 +36,14 @@ zend_module_entry cb_module_entry = {
 #ifdef COMPILE_DL_CB
 ZEND_GET_MODULE(cb)
 #endif
+
+PHP_FUNCTION(cb_add_ns)
+{
+}
+
+PHP_FUNCTION(cb_set_lang)
+{
+}
 
 PHP_FUNCTION(cb_get)
 {

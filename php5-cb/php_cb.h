@@ -7,6 +7,9 @@
 PHP_FUNCTION(cb_get);
 PHP_FUNCTION(cb_string);
 
+PHP_FUNCTION(cb_set_lang);
+PHP_FUNCTION(cb_add_ns);
+
 extern zend_module_entry cb_module_entry;
 #define phpext_cb_ptr &cb_module_entry
 

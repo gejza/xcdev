@@ -21,6 +21,12 @@ namespace xc {
 
 class POGen_t;
 
+enum TableId_t
+{
+    NS_TABLE = 2,
+    STR_TABLE = 23,
+};
+
 class CBMake_t
 {
 public:
@@ -39,6 +45,7 @@ public:
     }
     StrId_t string(Lang_t lang, const char* str);
     void string(const StrId_t id, Lang_t lang, const char* str);
+    void string(const std::string& msgid, const std::string& msgstr, Lang_t lang);
 
     // hook
     //void hook(const char* name, const Callback_t& cb);

@@ -23,6 +23,8 @@ struct Value_t
     Value_t() {}
     Value_t(const char* str)
         : ptr(str), size(::strlen(str)) {}
+    Value_t(const std::string& str)
+        : ptr(str.data()), size(str.size()) {}
     template<typename Struct_t>
     Value_t(const Struct_t& o)
         : ptr(&o), size(sizeof(Struct_t)) {}
@@ -49,10 +51,22 @@ public:
     void add(const Key_t& key, const Value_t& value) {
         this->add(key.ptr(), key.size(), value.key(), value.size());
     }*/
-    void add(const Value_t& key, const Value_t& val) {
-        this->add(key.ptr, key.size, val.ptr, val.size);
+    void add(uint32_t table, const Value_t& key, const Value_t& val) {
+        this->add(table, key.ptr, key.size, val.ptr, val.size);
     }
-    virtual void add(const void* key, size_t klen, const void* val, size_t vlen) = 0;
+    virtual void add(uint32_t table, const void* key, size_t klen, const void* val, size_t vlen) = 0;
+};
+
+class DBTableMake_t
+{
+public:
+    DBTableMake_t(DBMake_t& db, uint32_t table) : _db(db), _table(table) {}
+    void add(const Value_t& key, const Value_t& val) {
+        this->_db.add(_table, key.ptr, key.size, val.ptr, val.size);
+    }
+private:
+    DBMake_t& _db;
+    uint32_t _table;
 };
 
 #endif // _DB_H_
