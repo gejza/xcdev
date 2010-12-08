@@ -8,3 +8,6 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess config.h.in \
 test-install:
 	$(MAKE) DESTDIR=`pwd`/tmp install
 
+include aminclude.am
+
+EXTRA_DIST = $(DX_CONFIG) doc/html

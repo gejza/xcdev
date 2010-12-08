@@ -12,8 +12,12 @@
 #pragma once
 
 #include <assert.h>
+#include <map>
+#include <vector>
+#include <string>
 
 namespace xc {
+
 
 class ByteCode_t
 {
