@@ -114,17 +114,26 @@ const xc::Id_t xc::CBMake_t::add(const Menu_t& menu)
 
 xc::Serialize_t& operator<<(xc::Serialize_t& out, const xc::Callback_t& cb)
 {
-    out.add("test", 4);
+    out.write("include", cb.include);
+    out.write("script", cb.script);
+    out.write("class", cb.cls);
+    out.write("method", cb.method);
+    return out;
+}
+
+xc::Serialize_t& operator<<(xc::Serialize_t& out, const xc::Template_t& templ)
+{
+    out << templ.call;
     return out;
 }
 
 void xc::CBMake_t::add(const Template_t& templ)
 {
-    // serialize
-    // 
-
     xc::Serialize_t out;
     out << templ.call;
+
+    xc::Unserialize_t ser(out.str());
+    dump(ser);
     std::cout << "Template " << templ.id << std::endl;
     //std::cout << "Script " << templ.call.script << std::endl;
 

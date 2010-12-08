@@ -28,9 +28,10 @@ enum Lang_t
     SK = 3,
 };
 
+typedef std::vector<std::string> Include_t;
+
 struct Callback_t
 {
-    typedef std::vector<std::string> Include_t;
     Include_t include;
     std::string script;
     std::string cls;
