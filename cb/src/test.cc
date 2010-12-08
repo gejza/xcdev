@@ -28,11 +28,12 @@ void test_serialize()
     xc::Serialize_t out3;
     //out.write("include", cb.include);
     //out.write("script", cb.script);
+    out3.write("t1");
+    out3.write("t1");
+    out3.write("t1");
     out2.write("class", "test2");
+    out2.write("sub", out3);
     out2.write("meth", "metoda");
-    out3.write("t1");
-    out3.write("t1");
-    out3.write("t1");
     out.write("method", "test");
     out.write("obj2", out2);
     out.write("obj3", out3);

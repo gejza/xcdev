@@ -72,22 +72,6 @@ public:
         return _data;
     }
 
-    // structures
-    void begin() {
-        Chunk_t ch = ByteCode_t::chunk(ARRAY, 0);
-        this->_write(ch);
-    }
-
-    void begin(const std::string& key) {
-        this->_write(KEY, key);
-        this->begin();
-    }
-
-    void end() {
-        Chunk_t ch = ByteCode_t::chunk(END, 0);
-        this->_write(ch);
-    }
-
     // data
     void write(const std::string& str) {
         if (!str.empty()) {
@@ -97,26 +81,24 @@ public:
 
     template<typename Value_t>
     void write(const std::vector<Value_t>& objs) {
-        this->begin();
+        Serialize_t ser;
         for (typename std::vector<Value_t>::const_iterator
             i = objs.begin(); i != objs.end(); ++i)
-           this->write(*i);
-        this->end();
+           ser.write(*i);
+        this->write(ser);
     }
 
     template<typename Value_t>
     void write(const std::map<std::string, Value_t>& objs) {
-        this->begin();
+        Serialize_t ser;
         for (typename std::map<std::string, Value_t>::const_iterator
             i = objs.begin(); i != objs.end(); ++i)
-           this->write(i->first, i->second);
-        this->end();
+           ser.write(i->first, i->second);
+        this->write(ser);
     }
 
     void write(const Serialize_t& s) {
-        this->begin();
-        this->write(s.str());
-        this->end();
+        this->_write(ByteCode_t::ARRAY, s.str());
     }
 
     // key values
@@ -181,6 +163,13 @@ public:
         const Chunk_t& chunk = this->_read<Chunk_t>();
         return this->_read(ByteCode_t::size(chunk));
     }
+
+    Unserialize_t array() {
+        const Chunk_t& chunk = this->_read<Chunk_t>();
+        Unserialize_t ret(_data, ByteCode_t::size(chunk));
+        this->_skip(ByteCode_t::size(chunk));
+        return ret;
+    }
 protected:
     Chunk_t chunk() const {
         return _size >= sizeof(Chunk_t) ? *(reinterpret_cast<const Chunk_t*>(_data)) : END;
@@ -211,19 +200,20 @@ private:
 
 inline void dump(Unserialize_t& ser, int level = 0)
 {
-    bool isarr = false;
-    if (ser.id() == ByteCode_t::ARRAY) {
-        ser.next();
-        isarr = true;
-        std::cout << "(" << std::endl;
-    }
     while (ser.id() != ByteCode_t::END) {
         if (ser.id() == ByteCode_t::KEY) {
+            //std::cout << std::hex << ser.id() << std::endl;
             std::cout << ser.key() << " = ";
         }
+        //std::cout << std::hex << ser.id() << std::endl;
         switch (ser.id()) {
         case ByteCode_t::ARRAY:
-            dump(ser, level + 1);
+            {
+                Unserialize_t sub = ser.array();
+                std::cout << "(" << std::endl;
+                dump(sub, level + 1);
+                std::cout << ")\n" << std::endl;
+            }
             break;
         case ByteCode_t::STRING:
             std::cout << ser.string() << std::endl;
@@ -232,10 +222,6 @@ inline void dump(Unserialize_t& ser, int level = 0)
             printf("Unknown id %x\n", (unsigned int)ser.id());
             return;
         };
-    }
-    if (isarr) {
-        ser.next();
-        std::cout << "\n)\n" << std::endl;
     }
 }
 
