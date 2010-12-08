@@ -1,0 +1,12 @@
+#
+# File name:  testinstall.am
+# Date:       2010/12/08 17:19
+# Subversion: $Id: $
+# Author:     Milan Dunghubel <milan@mfis.cz>
+#
+# Copyright (C) 2010 Milan Dunghubel <milan@mfis.cz>
+#
+
+test-install:
+	$(RM) -rf `pwd`/tmp
+	$(MAKE) DESTDIR=`pwd`/tmp install

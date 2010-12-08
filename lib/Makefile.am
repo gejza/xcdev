@@ -24,7 +24,7 @@ DISTCHECK_CONFIGURE_FLAGS = --enable-symcryptrun --enable-mailto
 
 SUBDIRS = include src test
 #test include
-EXTRA_DIST = build-aux/config.rpath m4/ChangeLog  libxc.pc.in
+EXTRA_DIST = build-aux/config.rpath m4/ChangeLog  libxc.pc.in $(DX_CONFIG) doc/html
 MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess config.h.in \
                        config.sub configure depcomp install-sh ltmain.sh missing
 
@@ -34,35 +34,16 @@ pkgconfig_DATA = libxc.pc
 dist-hook:
 	echo "$(VERSION)" > $(distdir)/VERSION
 
-test-install:
-	$(RM) -rf `pwd`/tmp
-	$(MAKE) DESTDIR=`pwd`/tmp install
+## gettext
+include $(top_srcdir)/am/gettext.am
 
-check-gettext:
-	@if test x$(USE_NLS) != "xyes" ; then echo "Missing gettext. Rerun configure and check for" \
-	"'checking whether to use NLS... yes'!" ; exit 1 ; fi
+## doxygen
+include $(top_srcdir)/am/doxygen.am
 
-update-po: check-gettext
-	@find $(srcdir)/src/ -name "*.cpp" -print | sort > $(srcdir)/po/POTFILES.in.2 ; \
-	if diff $(srcdir)/po/POTFILES.in $(srcdir)/po/POTFILES.in.2 >/dev/null 2>&1 ; then \
-		rm -f $(srcdir)/po/POTFILES.in.2 ; \
-	else \
-		mv $(srcdir)/po/POTFILES.in.2 $(srcdir)/po/POTFILES.in ; \
-	fi
-	cd po && $(MAKE) $(AM_MAKEFLAGS) update-po
+## test
+include $(top_srcdir)/am/test.am
 
-update-gmo: check-gettext
-	cd po && $(MAKE) $(AM_MAKEFLAGS) update-gmo
+## includes additional rules
+@INC_AMINCLUDE@
 
-force-update-gmo: check-gettext
-	touch po/*.po
-	cd po && $(MAKE) $(AM_MAKEFLAGS) update-gmo
-
-#force-update-gmo-%: check-gettext
-#	@language=`echo $@ | sed s/force-update-gmo-//` ; \
-#	if test ! -f po/$$language.po ; then echo "file po/$$language.po does not exist" ; exit 1 ; fi ; \
-#	touch po/$$language.po ; \
-#	cd po && $(MAKE) $(AM_MAKEFLAGS) update-gmo
-
-.PHONY: check-gettext update-po update-gmo force-update-gmo
-
+.PHONY: $(DX_PHONY) $(GETTEXT_PHONY)

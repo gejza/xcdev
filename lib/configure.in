@@ -18,6 +18,7 @@ AC_CONFIG_AUX_DIR([build-aux])
 # initialize automake(use AC_INIT's arguments)
 dnl AM_INIT_AUTOMAKE(-Wall foreign)
 AM_INIT_AUTOMAKE(-Wall)
+AX_AM_MACROS
 
 # tell autoconf where to find sources
 AC_CONFIG_SRCDIR([configure.in])
@@ -71,6 +72,7 @@ AC_TYPE_PID_T
 AC_TYPE_SIZE_T
 AC_HEADER_TIME
 AC_STRUCT_TM
+AC_CHECK_HEADER([demangle.h])
 
 dnl --------------------------------------------------------------------------
 dnl Checks for standard headers
@@ -90,7 +92,12 @@ AC_SUBST(LIBCONFIG_CFLAGS)
 AC_SUBST(LIBCONFIG_LIBS)
 AC_SUBST(CXXEXTRAFLAGS)
 
-AX_PATH_LIB_PCRE([A],, AC_MSG_ERROR([libpcre not found.]))
+# pcre 
+AX_PATH_LIB_PCRE([
+        LDFLAGS="$LDFLAGS $PCRE_LIBS"
+        CFLAGS="$CFLAGS $PCRE_CFLAGS"
+        CXXFLAGS="$CXXFLAGS $PCRE_CFLAGS"
+],AC_MSG_ERROR([Couldn't find pcre library. Make sure your pcre path is correct.]))
 
 dnl --------------------------------------------------------------------------
 dnl Checks for library units
@@ -133,6 +140,11 @@ AC_MSG_NOTICE([pkgconfig directory is ${pkgconfigdir}])
 # version info') before touching this. (this is *.so version number).
 VERSION_INFO="-version-info 1:0:0"
 AC_SUBST(VERSION_INFO)
+
+dnl --------------------------------------------------------------------------
+dnl Doxygen
+dnl --------------------------------------------------------------------------
+DX_INIT_DOXYGEN([libxc], [Doxyfile], [doc])
 
 dnl --------------------------------------------------------------------------
 dnl Test features that rely on configure-definitions

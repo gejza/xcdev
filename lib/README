@@ -19,6 +19,8 @@ BUILD INSTRUCTIONS
 
 GnuPG 1.9 depends on the following packages:
 
+    binutils-dev
+
   libgpg-error (ftp://ftp.gnupg.org/gcrypt/libgpg-error/)
   libgcrypt    (ftp://ftp.gnupg.org/gcrypt/libgcrypt/)
   libksba      (ftp://ftp.gnupg.org/gcrypt/libksba/)

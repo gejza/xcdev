@@ -41,12 +41,12 @@ enum {
 %option batch
 %option nounput
 %option noyywrap
-%option verbose
+    //%option verbose
 %option warn
 %option debug
 %option yylineno
 %option prefix="xccini"
-%option outfile="lex.yy.c"
+%option outfile="config_ini.cc"
 
 %x ERR
 
