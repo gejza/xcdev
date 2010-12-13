@@ -4,7 +4,7 @@
 AC_PREREQ(2.59)
 # rm -f config.cache
 # initialize autoconf
-AC_INIT([libxccb], [1.0.0], [milan.dunghubel@gmail.com])
+AC_INIT([libxcregistry], [1.0.0], [milan.dunghubel@gmail.com])
 
 # initialize automake(use AC_INIT's arguments)
 AM_INIT_AUTOMAKE(-Wall foreign)
@@ -71,7 +71,7 @@ DX_RTF_FEATURE(OFF)
 DX_XML_FEATURE(OFF)
 DX_PDF_FEATURE(OFF)
 DX_PS_FEATURE(OFF)
-DX_INIT_DOXYGEN([libxccb], [Doxyfile], [doc])
+DX_INIT_DOXYGEN([libxcregistry], [Doxyfile], [doc])
 
 dnl --------------------------------------------------------------------------
 dnl Finally, build config.h and the makefiles
