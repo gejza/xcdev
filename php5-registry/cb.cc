@@ -6,7 +6,7 @@
 #include "php_ini.h"
 #include "ext/standard/info.h"
 #include "ext/standard/php_string.h"
-#include "php_cb.h"
+#include "php_registry.h"
 #include "utils.h"
 
 #include <stdint.h>
@@ -15,39 +15,39 @@
 #include <xc/serialize.h>
 #include <xc/version.h>
 
-static function_entry cb_functions[] = {
-    PHP_FE(cb_get, NULL)
-    PHP_FE(cb_string, NULL)
-    PHP_FE(cb_add_ns, NULL)
-    PHP_FE(cb_set_lang, NULL)
+static function_entry registry_functions[] = {
+    PHP_FE(registry_get, NULL)
+    PHP_FE(registry_string, NULL)
+    PHP_FE(registry_add_ns, NULL)
+    PHP_FE(registry_set_lang, NULL)
     {NULL, NULL, NULL}
 };
 
-zend_module_entry cb_module_entry = {
+zend_module_entry registry_module_entry = {
 #if ZEND_MODULE_API_NO >= 20010901
     STANDARD_MODULE_HEADER,
 #endif
-    PHP_CB_EXTNAME,
-    cb_functions,
+    PHP_REGISTRY_EXTNAME,
+    registry_functions,
     NULL,
     NULL,
     NULL,
     NULL,
-	PHP_MINFO(cb),
+	PHP_MINFO(registry),
 #if ZEND_MODULE_API_NO >= 20010901
-    PHP_CB_VERSION,
+    PHP_REGISTRY_VERSION,
 #endif
     STANDARD_MODULE_PROPERTIES
 };
 
-#ifdef COMPILE_DL_CB
-ZEND_GET_MODULE(cb)
+#ifdef COMPILE_DL_REGISTRY
+ZEND_GET_MODULE(registry)
 #endif
 
-PHP_MINFO_FUNCTION(cb)
+PHP_MINFO_FUNCTION(registry)
 {
 	php_info_print_table_start();
-	php_info_print_table_header(2, "cb support", "enabled");
+	php_info_print_table_header(2, "xc registry support", "enabled");
 	php_info_print_table_row(2, "Version", xc::get_version());
 	php_info_print_table_row(2, "Built", xc::get_built_info());
 	php_info_print_table_row(2, "Info", xc::get_info());
@@ -57,18 +57,18 @@ PHP_MINFO_FUNCTION(cb)
 	DISPLAY_INI_ENTRIES();
 }
 
-PHP_FUNCTION(cb_add_ns)
+PHP_FUNCTION(registry_add_ns)
 {
 }
 
-PHP_FUNCTION(cb_set_lang)
+PHP_FUNCTION(registry_set_lang)
 {
 }
 
-PHP_FUNCTION(cb_get)
+PHP_FUNCTION(registry_get)
 {
     try {
-        xc::CB_t cb;
+        xc::CB_t registry;
 
         xc::serial_t out;
         xc::serial_t out2;
@@ -88,7 +88,7 @@ PHP_FUNCTION(cb_get)
         xc::unserialize_t ser(out.str());
         load(return_value, ser);
         return;
-    char *mystr;
+    /*char *mystr;
     zval *mysubarray;
     array_init(return_value);
     //add_index_long(return_value, 42, 123);
@@ -105,14 +105,14 @@ PHP_FUNCTION(cb_get)
     add_next_index_string(mysubarray, "hello", 1);
     add_assoc_zval(return_value, "subarray", mysubarray);    
     //RETURN_STRING("Hello World!!!", 1);
-    
+    */
     } catch (const xc::error_t& e) {
         zend_error(E_ERROR, "Error: %s", e.message().c_str());
     }
 
 }
 
-PHP_FUNCTION(cb_string)
+PHP_FUNCTION(registry_string)
 {
     long id;
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &id) == FAILURE) {

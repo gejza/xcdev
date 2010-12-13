@@ -42,6 +42,8 @@ private:
     // template table
 };
 
+
+
 } // namespace xc
 
 #endif // _XC_CB_H_

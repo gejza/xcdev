@@ -5,14 +5,14 @@ AM_CXXFLAGS = -W -Wall -g ${AM_CXXEXTRAFLAGS}
 AM_CPPFLAGS = -I$(srcdir)/../include
 AM_LDFLAGS = $(VERSION_INFO)
 
-lib_LTLIBRARIES = libxccb.la libxccbmake.la
-libxccb_la_CPPFLAGS = $(XC_CFLAGS) $(CDB_CFLAGS)
-libxccb_la_SOURCES = cb.cc constdb.cc
-libxccb_la_LDFLAGS = $(VERSION_INFO) -shared $(XC_LIBS) $(CDB_LIBS)
+lib_LTLIBRARIES = libxcreg.la libxcregmake.la
+libxcreg_la_CPPFLAGS = $(XC_CFLAGS) $(CDB_CFLAGS)
+libxcreg_la_SOURCES = cb.cc constdb.cc
+libxcreg_la_LDFLAGS = $(VERSION_INFO) -shared $(XC_LIBS) $(CDB_LIBS)
 
-libxccbmake_la_CPPFLAGS = $(XC_CFLAGS) $(CDB_CFLAGS) $(XMLXX_CFLAGS)
-libxccbmake_la_SOURCES = cbmake.cc constdb.cc pofile.cc pogen.cc xmlparser.cc xmlutils.cc xmltrans.cc
-libxccbmake_la_LDFLAGS = $(VERSION_INFO) -shared $(XC_LIBS) $(CDB_LIBS) $(XMLXX_LIBS) -lgettextpo
+libxcregmake_la_CPPFLAGS = $(XC_CFLAGS) $(CDB_CFLAGS) $(XMLXX_CFLAGS)
+libxcregmake_la_SOURCES = cbmake.cc constdb.cc pofile.cc pogen.cc xmlparser.cc xmlutils.cc xmltrans.cc
+libxcregmake_la_LDFLAGS = $(VERSION_INFO) -shared $(XC_LIBS) $(CDB_LIBS) $(XMLXX_LIBS) -lgettextpo
 
 #lib_LTLIBRARIES = libxcusers.la libxcusers-soap.la libxcusers-proxy.la libxcusers-test.la
 #libxcusers_la_SOURCES = users.cc utils.cc
@@ -27,14 +27,14 @@ libxccbmake_la_LDFLAGS = $(VERSION_INFO) -shared $(XC_LIBS) $(CDB_LIBS) $(XMLXX_
 #libxcusers_soap_la_SOURCES = users_soap.cc
 #libxcusers_soap_la_LDFLAGS = -static
 
-bin_PROGRAMS = cbc cbdump
-cbc_CPPFLAGS =
-cbc_SOURCES = cbc.cc
-cbc_LDADD = libxccbmake.la
+bin_PROGRAMS = regc regdump
+regc_CPPFLAGS =
+regc_SOURCES = cbc.cc
+regc_LDADD = libxcregmake.la
 
-cbdump_CPPFLAGS =
-cbdump_SOURCES = cbdump.cc
-cbdump_LDADD = libxccb.la
+regdump_CPPFLAGS =
+regdump_SOURCES = cbdump.cc
+regdump_LDADD = libxcreg.la
 
 testcbc:
 	./cbc test.cb *.xml

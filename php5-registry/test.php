@@ -4,7 +4,7 @@
 # Date:      2010/12/06 20:46
 # Author:    
 
-$extension = "cb";
+$extension = "registry";
 $extension_soname = $extension . "." . PHP_SHLIB_SUFFIX;
 $extension_fullname = PHP_EXTENSION_DIR . "/" . $extension_soname;
 
@@ -17,4 +17,4 @@ if (!extension_loaded($extension)) {
 echo cb_string(2);
 echo cb_string(3);
 echo cb_string(4);*/
-var_dump(cb_get());
+var_dump(registry_get());

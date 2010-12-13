@@ -46,7 +46,7 @@ enum {
 %option debug
 %option yylineno
 %option prefix="xccini"
-%option outfile="config_ini.cc"
+    //%option outfile="config_ini.cc"
 
 %x ERR
 
