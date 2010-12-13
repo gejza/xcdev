@@ -37,6 +37,34 @@ private:
 };
 
 /**
+ * @short stream_t
+ */
+class const_stream_t : public istream_t
+{
+public:
+
+    /**
+     * Default constructor
+     */
+    const_stream_t(const uint8_t* data, size_t size)
+        : _data(data), _size(size) {
+    }
+
+    /**
+     * Destructor
+     */
+    virtual ~const_stream_t() {}
+
+    virtual ssize_t read(char* buf, size_t nbyte) = 0;
+private:
+    const_stream_t(const const_stream_t&);
+    const_stream_t& operator=(const const_stream_t&);
+
+    const uint8_t* _data;
+    size_t _size;
+};
+
+/**
  * @short ostream_t
  */
 class ostream_t
@@ -53,12 +81,38 @@ public:
      */
     virtual ~ostream_t() {}
 
-    virtual void write(const char* buf, size_t nbyte) = 0;
+    virtual void write(const void* buf, size_t size) = 0;
+    
+    template<typename Object_t>
+    void write(const Object_t& obj) {
+        this->write(&obj, sizeof(Object_t));
+    }
+
 private:
     ostream_t(const ostream_t&);
     ostream_t& operator=(const ostream_t&);
 };
 
+class ostream_data_t : public ostream_t
+{
+public:
+    ostream_data_t() {}
+
+    virtual ~ostream_data_t() {}
+
+    virtual void write(const void* buf, size_t nbyte) {
+        _out.append((const char*)buf, nbyte);
+    }
+
+    const std::string& str() const {
+        return _out;
+    }
+private:
+    ostream_data_t(const ostream_data_t&);
+    ostream_data_t& operator=(const ostream_data_t&);
+
+    std::string _out;
+};
 
 class ostream_file_t : public ostream_t
 {

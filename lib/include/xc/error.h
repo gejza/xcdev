@@ -10,6 +10,7 @@
 
 #include "string.h"
 #include "log.h"
+#include "text.h"
 
 namespace xc {
 
@@ -27,14 +28,21 @@ private:
     xc::string _message;
 };
 
+class runtime_error_t : public error_t
+{
+public:
+	runtime_error_t(const xc::string& msg);
+};
+
 }
 
 #define ERROR(err, msg...) \
     do { \
-        err e(msg); \
+        err e(xc::format(msg)); \
         LOG_ERROR(1, msg); \
         throw e; \
     } while (0); 
 
+#define RUNTIME_ERROR(msg...) ERROR(xc::runtime_error_t, msg)
 
 #endif // _XC_ERROR_H_

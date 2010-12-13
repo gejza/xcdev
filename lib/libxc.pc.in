@@ -7,6 +7,6 @@ Name: libxc
 Description: xc library.
 Requires:
 Version: @VERSION@
-Libs: -L${libdir} -lxc
+Libs: -L${libdir} -lxc -lxclog
 Cflags: -I${includedir}
 

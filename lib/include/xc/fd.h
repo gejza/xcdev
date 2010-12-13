@@ -37,6 +37,11 @@ public:
     fd_t(const char *filename, int flags = O_RDONLY, mode_t mode = 0);
 
     /**
+     * Copy constructor
+     */
+    fd_t(const fd_t& fd);
+
+    /**
      * Destructor
      */
     ~fd_t();
@@ -59,7 +64,6 @@ public:
     void chown(const char* user, const char* group);
     void chown(uid_t uid, gid_t gid);
 private:
-    fd_t(const fd_t& other);
     fd_t& operator=(const fd_t& other);
 
     int _fd;

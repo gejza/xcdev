@@ -26,5 +26,9 @@ xc::error_t::error_t(const xc::string& msg)
 {
 }
 
+xc::runtime_error_t::runtime_error_t(const xc::string& msg)
+    : error_t(msg)
+{
+}
 
 
