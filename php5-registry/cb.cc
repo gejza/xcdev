@@ -29,8 +29,8 @@ zend_module_entry registry_module_entry = {
 #endif
     PHP_REGISTRY_EXTNAME,
     registry_functions,
-    NULL,
-    NULL,
+    PHP_MINIT(registry),
+    PHP_MSHUTDOWN(registry),
     NULL,
     NULL,
 	PHP_MINFO(registry),
@@ -44,6 +44,24 @@ zend_module_entry registry_module_entry = {
 ZEND_GET_MODULE(registry)
 #endif
 
+PHP_INI_BEGIN()
+PHP_INI_ENTRY("registry.greeting", "Hello World", PHP_INI_ALL, NULL)
+PHP_INI_END()
+
+PHP_MINIT_FUNCTION(registry)
+{
+    REGISTER_INI_ENTRIES();
+
+    return SUCCESS;
+}
+
+PHP_MSHUTDOWN_FUNCTION(registry)
+{
+    UNREGISTER_INI_ENTRIES();
+
+    return SUCCESS;
+}
+
 PHP_MINFO_FUNCTION(registry)
 {
 	php_info_print_table_start();
@@ -56,6 +74,21 @@ PHP_MINFO_FUNCTION(registry)
 
 	DISPLAY_INI_ENTRIES();
 }
+
+PHP_FUNCTION(registry_string)
+{
+    long id;
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &id) == FAILURE) {
+        RETURN_NULL();
+    }
+
+    RETURN_STRING(INI_STR("registry.greeting"), 1);
+    /*xc::CB_t cb;
+    std::string str = cb.string(id, xc::CS);
+    char* ret = estrdup(str.c_str());
+    RETURN_STRING(ret, 0);*/
+}
+
 
 PHP_FUNCTION(registry_add_ns)
 {
@@ -101,8 +134,8 @@ PHP_FUNCTION(registry_get)
 
     ALLOC_INIT_ZVAL(mysubarray);
     array_init(mysubarray);
-    add_next_index_string(mysubarray, "hello", 1);
-    add_next_index_string(mysubarray, "hello", 1);
+    add_next_index_string(mysubarray, "registry", 1);
+    add_next_index_string(mysubarray, "registry", 1);
     add_assoc_zval(return_value, "subarray", mysubarray);    
     //RETURN_STRING("Hello World!!!", 1);
     */
@@ -110,18 +143,5 @@ PHP_FUNCTION(registry_get)
         zend_error(E_ERROR, "Error: %s", e.message().c_str());
     }
 
-}
-
-PHP_FUNCTION(registry_string)
-{
-    long id;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &id) == FAILURE) {
-        RETURN_NULL();
-    }
-
-    xc::CB_t cb;
-    std::string str = cb.string(id, xc::CS);
-    char* ret = estrdup(str.c_str());
-    RETURN_STRING(ret, 0);
 }
 

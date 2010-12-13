@@ -9,7 +9,7 @@
 
 # path to includes
 AM_CPPFLAGS = -I../include $(LIBCONFIG_CFLAGS) -DLOCALEDIR=\"$(localedir)\" -ggdb -DLOGBACKTRACE=1
-AM_LDFLAGS = -static -L../src -lxc -lxclog -lxctest $(top_srcdir)/src/libxccb.la $(top_srcdir)/src/libxccbmake.la -g
+AM_LDFLAGS = -static -L../src -lxc -lxclog -lxctest $(top_srcdir)/src/libxcreg.la $(top_srcdir)/src/libxcregmake.la -g
 
 #noinst_PROGRAMS = test_tree test_file test_st test_string
 noinst_PROGRAMS = po compile test

@@ -13,8 +13,8 @@ if (!extension_loaded($extension)) {
      dl($extension_soname) or die("Can't load extension $extension_fullname\n");
 }
 
-/*echo cb_string(1);
-echo cb_string(2);
+echo registry_string(1);
+/*echo cb_string(2);
 echo cb_string(3);
 echo cb_string(4);*/
 var_dump(registry_get());
