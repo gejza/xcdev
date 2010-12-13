@@ -15,10 +15,11 @@
 #include <stdint.h>
 #include <stdexcept>
 #include <iostream>
-/*#include <xc/log.h>
-#include <xc/error.h>
-*/
+#include <stdlib.h>
 
+#include <xc/log.h>
+#include <xc/error.h>
+#include <xc/text.h>
 
 
 #endif

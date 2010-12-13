@@ -1,6 +1,6 @@
 /*
    File name:  test.cc
-   Date:       2010/05/07 20:47
+   Date:       2010/12/13 07:07
    Subversion: $Id: $
    Author:     Milan Dunghubel <milan@mfis.cz>
 
@@ -12,36 +12,13 @@
 
 #include <stdint.h>
 #include <iostream>
-/*#include <xc/log.h>
+#include <xc/log.h>
 #include <xc/error.h>
-*/
+
 #include <xc/cbmake.h>
 #include <xc/cb.h>
 
-#include "pogen.h"
-#include "serialize.h"
-
-void test_serialize()
-{
-    xc::Serialize_t out;
-    xc::Serialize_t out2;
-    xc::Serialize_t out3;
-    //out.write("include", cb.include);
-    //out.write("script", cb.script);
-    out3.write("t1");
-    out3.write("t1");
-    out3.write("t1");
-    out2.write("class", "test2");
-    out2.write("sub", out3);
-    out2.write("meth", "metoda");
-    out.write("method", "test");
-    out.write("obj2", out2);
-    out.write("obj3", out3);
-    //out << templ.call;
-
-    xc::Unserialize_t ser(out.str());
-    xc::dump(ser);
-}
+//#include "pogen.h"
 
 void test_make_alias(xc::CBMake_t& cb)
 {
@@ -67,11 +44,8 @@ void test_read()
     //std::cout << cb.string(1, xc::SK) << std::endl;*/
 }
 
-//int xc_test_main(int argc, const char* argv[])
-//int main(int argc, const char* argv[])
-int main()
+int xc_test_main(int argc, const char* argv[])
 {
-    test_serialize();
 
     //xc::POFile_t po("cs.po");
     //po.read();
