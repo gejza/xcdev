@@ -7,6 +7,9 @@
    Copyright (C) 2010 Milan Dunghubel <milan@mfis.cz>
 */
 
+/**
+ * @example debug.cc
+ */
 #ifndef _XC_DEBUG_H_
 #define _XC_DEBUG_H_
 #pragma once

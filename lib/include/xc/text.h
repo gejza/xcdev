@@ -3,6 +3,9 @@
 * Copyright
 */
 
+/**
+ * @example text.cc
+ */
 #pragma once
 #ifndef _XC_TEXT_H_
 #define _XC_TEXT_H_

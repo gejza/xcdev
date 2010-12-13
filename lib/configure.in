@@ -163,7 +163,7 @@ AC_DEFINE_UNQUOTED([SVN_VERSION], "$SVN_VERSION", [Actual svn version.])
 #AC_CONFIG_FILES([xcprof-config], [chmod +x xcprof-config])
 AC_CONFIG_FILES([Makefile include/Makefile include/xc/Makefile
                  include/xc/system/Makefile])
-AC_CONFIG_FILES([src/Makefile test/Makefile])
+AC_CONFIG_FILES([src/Makefile tests/Makefile])
 AC_CONFIG_FILES([include/xc/version.h libxc.pc po/Makefile.in Doxyfile])
 # Write config.status and the Makefile
 AC_OUTPUT

@@ -7,6 +7,9 @@
    Copyright (C) 2010 Milan Dunghubel <milan@mfis.cz>
 */
 
+/**
+ * @example system.cc
+ */
 #ifndef _XC_SYSTEM_H_
 #define _XC_SYSTEM_H_
 #pragma once

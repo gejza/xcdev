@@ -7,6 +7,9 @@
    Copyright (C) 2010 Milan Dunghubel <milan@mfis.cz>
 */
 
+/**
+ * @example config.cc
+ */
 #ifndef _XC_CONFIG_H_
 #define _XC_CONFIG_H_
 #pragma once

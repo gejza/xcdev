@@ -7,6 +7,10 @@
    Copyright (C) 2010 Milan Dunghubel <milan@mfis.cz>
 */
 
+/**
+ * @example log.cc
+ */
+
 #ifndef _XC_LOG_H_
 #define _XC_LOG_H_
 #pragma once

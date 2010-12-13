@@ -23,6 +23,7 @@ xc::serialize_t::serialize_t(xc::ostream_t& out)
 
 void xc::serialize_t::_write(bytecode::ChunkId_t id, const void* ptr, size_t size)
 {
+    XC_DBG("Serialize %ld bytes as %x", size, (unsigned int)id);
     bytecode::Chunk_t ch = bytecode::chunk(id, size);
     _out.write(ch);
     _out.write(ptr, size);

@@ -44,6 +44,12 @@ public:
         this->write(obj);
     }
 
+    template<typename Value_t>
+    void write(const std::vector<Value_t>& objs);
+
+    template<typename Value_t>
+    void write(const std::map<std::string, Value_t>& objs);
+
     void write(const std::string& str);
 
     void write(const serial_t& s);
@@ -87,25 +93,25 @@ private:
     xc::ostream_data_t _data;
 };
 
-ostream_t& serialize(ostream_t& out, const std::string& str);
-/*template<typename Value_t>
-void write(const std::vector<Value_t>& objs) {
-    serialize_t ser;
+template<typename Value_t>
+void serialize_t::write(const std::vector<Value_t>& objs) {
+    serial_t ser;
     for (typename std::vector<Value_t>::const_iterator
         i = objs.begin(); i != objs.end(); ++i)
-       ser.write(*i);
+    ser.write(*i);
     this->write(ser);
-}*/
+}
 
-    /*template<typename Value_t>
-    void write(const std::map<std::string, Value_t>& objs) {
-        serialize_t ser;
-        for (typename std::map<std::string, Value_t>::const_iterator
-            i = objs.begin(); i != objs.end(); ++i)
-           ser.write(i->first, i->second);
-        this->write(ser);
-    }*/
+template<typename Value_t>
+void serialize_t::write(const std::map<std::string, Value_t>& objs) {
+    serial_t ser;
+    for (typename std::map<std::string, Value_t>::const_iterator
+        i = objs.begin(); i != objs.end(); ++i)
+       ser.write(i->first, i->second);
+    this->write(ser);
+}
 
+ostream_t& serialize(ostream_t& out, const std::string& str);
 
 
 } // namespace xc
