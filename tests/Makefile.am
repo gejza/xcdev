@@ -12,10 +12,12 @@ AM_CPPFLAGS = -I../include $(LIBCONFIG_CFLAGS) -DLOCALEDIR=\"$(localedir)\" -ggd
 AM_LDFLAGS = -static -L../src -lxc -lxclog -lxctest $(top_srcdir)/src/libxccb.la $(top_srcdir)/src/libxccbmake.la -g
 
 #noinst_PROGRAMS = test_tree test_file test_st test_string
-noinst_PROGRAMS = compile test
+noinst_PROGRAMS = po compile test
 
 #config_SOURCES = config.cc
 #config_LDADD = -lxcconfig
+
+po_SOURCES = po.cc
 
 compile_SOURCES = compile.cc
 
