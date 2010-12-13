@@ -14,7 +14,9 @@ if test "$PHP_CB" != "no"; then
   AC_DEFINE(HAVE_CB, 1, [Whether you have cb])
   PHP_REQUIRE_CXX()
   PHP_ADD_LIBRARY(stdc++, 1, CB_SHARED_LIBADD)
+  PHP_ADD_LIBRARY(xc, 1, CB_SHARED_LIBADD)
+  PHP_ADD_LIBRARY(xclog, 1, CB_SHARED_LIBADD)
   PHP_ADD_LIBRARY(xccb, 1, CB_SHARED_LIBADD)
   PHP_SUBST(CB_SHARED_LIBADD)
-  PHP_NEW_EXTENSION(cb, cb.cc, $ext_shared)
+  PHP_NEW_EXTENSION(cb, cb.cc utils.cc, $ext_shared)
 fi

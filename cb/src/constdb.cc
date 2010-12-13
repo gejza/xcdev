@@ -22,7 +22,7 @@
 ConstDB_t::ConstDB_t(const char* fn)
     : _fd(fn)
 {
-    int ret = cdb_init(&this->_db, this->_fd.get());
+    int ret = cdb_init(&this->_db, this->_fd.fd());
 }
 
 ConstDB_t::~ConstDB_t()
@@ -84,9 +84,9 @@ void ConstDB_t::dump()
 
 //////////////////////////////////
 ConstDBMake_t::ConstDBMake_t(const char* fn)
-    : _fd(fn, true)
+    : _fd(fn, O_RDWR|O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)
 {
-    int ret = cdb_make_start(&this->_db, this->_fd.get());
+    int ret = cdb_make_start(&this->_db, this->_fd.fd());
     //std::cout << "Start cdb: " << ret << std::endl;
 }
 

@@ -3,10 +3,17 @@
 #endif
 
 #include "php.h"
+#include "php_ini.h"
+#include "ext/standard/info.h"
+#include "ext/standard/php_string.h"
 #include "php_cb.h"
+#include "utils.h"
 
 #include <stdint.h>
+#include <xc/error.h>
 #include <xc/cb.h>
+#include <xc/serialize.h>
+#include <xc/version.h>
 
 static function_entry cb_functions[] = {
     PHP_FE(cb_get, NULL)
@@ -26,7 +33,7 @@ zend_module_entry cb_module_entry = {
     NULL,
     NULL,
     NULL,
-    NULL,
+	PHP_MINFO(cb),
 #if ZEND_MODULE_API_NO >= 20010901
     PHP_CB_VERSION,
 #endif
@@ -36,6 +43,19 @@ zend_module_entry cb_module_entry = {
 #ifdef COMPILE_DL_CB
 ZEND_GET_MODULE(cb)
 #endif
+
+PHP_MINFO_FUNCTION(cb)
+{
+	php_info_print_table_start();
+	php_info_print_table_header(2, "cb support", "enabled");
+	php_info_print_table_row(2, "Version", xc::get_version());
+	php_info_print_table_row(2, "Built", xc::get_built_info());
+	php_info_print_table_row(2, "Info", xc::get_info());
+	php_info_print_table_row(2, "Full info", xc::get_full_info());
+	php_info_print_table_end();
+
+	DISPLAY_INI_ENTRIES();
+}
 
 PHP_FUNCTION(cb_add_ns)
 {
@@ -47,8 +67,27 @@ PHP_FUNCTION(cb_set_lang)
 
 PHP_FUNCTION(cb_get)
 {
-    xc::CB_t cb;
+    try {
+        xc::CB_t cb;
 
+        xc::serial_t out;
+        xc::serial_t out2;
+        xc::serial_t out3;
+        //out.write("include", cb.include);
+        //out.write("script", cb.script);
+        out3.write("t1");
+        out3.write("t1");
+        out3.write("t1");
+        out2.write("class", "test2");
+        out2.write("sub", out3);
+        out2.write("meth", "metoda");
+        out.write("method", "test");
+        out.write("obj2", out2);
+        out.write("obj3", out3);
+
+        xc::unserialize_t ser(out.str());
+        load(return_value, ser);
+        return;
     char *mystr;
     zval *mysubarray;
     array_init(return_value);
@@ -66,6 +105,11 @@ PHP_FUNCTION(cb_get)
     add_next_index_string(mysubarray, "hello", 1);
     add_assoc_zval(return_value, "subarray", mysubarray);    
     //RETURN_STRING("Hello World!!!", 1);
+    
+    } catch (const xc::error_t& e) {
+        zend_error(E_ERROR, "Error: %s", e.message().c_str());
+    }
+
 }
 
 PHP_FUNCTION(cb_string)

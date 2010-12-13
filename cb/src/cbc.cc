@@ -15,10 +15,13 @@
 
 int main(int argc, const char* argv[])
 {
+    xc::debug::debug_enable();
+    xc::log::add_stderr("ALL");
+
     if (argc < 3)
     {
         fprintf(stderr, "Usage: %s <db>\n", argv[0]);
-        return 1;
+        return EXIT_FAILURE;
     }
 
     try {
@@ -31,12 +34,17 @@ int main(int argc, const char* argv[])
             std::cout << "Load file " << argv[i] << std::endl;
             cb.load_xml(argv[i]);
         }
+    } catch (const xc::error_t& e) {
+        std::cerr << "Error: " << e.message() << std::endl;
+        return EXIT_FAILURE;
+    } catch (const std::exception& e) {
+        std::cerr << "Std exception: " << e.what() << std::endl;
+        return EXIT_FAILURE;
+    } catch (...) {
+        std::cerr << "Unknown exception" << std::endl;
+        return EXIT_FAILURE;
     }
-    catch(const std::exception& ex)
-    {
-        std::cout << "Exception caught: " << ex.what() << std::endl;
-    }
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 

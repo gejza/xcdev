@@ -13,7 +13,6 @@
 
 #include "xmlutils.h"
 #include "xmltrans.h"
-#include "utils.h"
 
 namespace {
     struct NodeType_t

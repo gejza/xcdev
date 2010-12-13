@@ -14,7 +14,6 @@
 #include "xmlparser.h"
 #include "xmlutils.h"
 #include "xmltrans.h"
-#include "utils.h"
 
 /////////////////////////////////////////////////////////
 XMLParser_t::XMLParser_t(xc::CBMake_t& cb)
@@ -28,6 +27,7 @@ XMLParser_t::~XMLParser_t()
 
 void XMLParser_t::parse(const char* fn)
 {
+    LOG_INFO(3, "Start parse xml file `%s'", fn);
     // Set the global C++ locale to the user-configured locale,
     // so we can use std::cout with UTF-8, via Glib::ustring, without exceptions.
     std::locale::global(std::locale(""));

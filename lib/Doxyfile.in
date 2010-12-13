@@ -115,7 +115,7 @@ FULL_PATH_NAMES        = YES
 # NOTE: This is taken from the srcdir variable, which "make distcheck" plays
 # with. You may need to add subdirectory(s) here, depending on your directory
 # structure. But you almost certainly want the SRCDIR itself to be stripped.
-STRIP_FROM_PATH        = src
+STRIP_FROM_PATH        = src include
 
 # If the SHORT_NAMES tag is set to YES, doxygen will generate much shorter
 # (but less readable) file names. This can be useful is your file systems

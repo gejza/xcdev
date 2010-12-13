@@ -11,9 +11,9 @@
 #define _CONSTDB_H_
 #pragma once
 
+#include <xc/fd.h>
 #include <cdb.h>
 #include "db.h"
-#include "fd.h"
 
 class ConstDB_t : public DB_t
 {
@@ -25,7 +25,7 @@ public:
     
     virtual void dump();
 private:
-    FD_t _fd;
+    xc::fd_t _fd;
     struct cdb _db;
 };
 
@@ -36,7 +36,7 @@ public:
     virtual ~ConstDBMake_t();
     virtual void add(uint32_t table, const void*, size_t, const void*, size_t);
 private:
-    FD_t _fd;
+    xc::fd_t _fd;
     struct cdb_make _db;
 };
 

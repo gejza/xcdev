@@ -37,6 +37,7 @@ dnl Checks for library configuration (added right-to-left)
 dnl --------------------------------------------------------------------------
 dnl check for libtotest; if it cannot be found or it's too old, PKG_CHECK_MODULES
 dnl macro will automatically print an error message and exit the configure script.
+PKG_CHECK_MODULES([XC], [libxc])
 PKG_CHECK_MODULES([CDB], [libcdb])
 PKG_CHECK_MODULES([XMLXX], [libxml++-2.6])
 
@@ -75,6 +76,6 @@ DX_INIT_DOXYGEN([libxccb], [Doxyfile], [doc])
 dnl --------------------------------------------------------------------------
 dnl Finally, build config.h and the makefiles
 dnl --------------------------------------------------------------------------
-AC_CONFIG_FILES([Makefile src/Makefile include/Makefile include/xc/Makefile Doxyfile])
+AC_CONFIG_FILES([Makefile src/Makefile include/Makefile include/xc/Makefile tests/Makefile Doxyfile])
 AC_OUTPUT
 

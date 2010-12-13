@@ -4,6 +4,13 @@
 #define PHP_CB_VERSION "1.0"
 #define PHP_CB_EXTNAME "cb"
 
+//PHP_MINIT_FUNCTION(cb);
+//PHP_MSHUTDOWN_FUNCTION(memcache);
+PHP_MINFO_FUNCTION(cb);
+
+//PHP_NAMED_FUNCTION(zif_memcache_pool_connect);
+//PHP_NAMED_FUNCTION(zif_memcache_pool_addserver);
+
 PHP_FUNCTION(cb_get);
 PHP_FUNCTION(cb_string);
 

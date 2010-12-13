@@ -10,18 +10,19 @@
 #include "config.h"
 #endif
 
+#include <xc/log.h>
+#include <xc/error.h>
+#include <xc/serialize.h>
+#include <xc/unserialize.h>
+
 #include <stdint.h>
 
 #include <iostream>
-/*#include <xc/log.h>
-#include <xc/error.h>
-*/
 #include "../include/xc/cbmake.h"
 #include "obj.h"
 #include "constdb.h"
 #include "pogen.h"
 #include "xmlparser.h"
-#include "serialize.h"
 
 //////////////////////////////////
 xc::CBMake_t::CBMake_t()
@@ -112,7 +113,7 @@ const xc::Id_t xc::CBMake_t::add(const Menu_t& menu)
     return seq();
 }
 
-xc::Serialize_t& operator<<(xc::Serialize_t& out, const xc::Callback_t& cb)
+xc::serialize_t& operator<<(xc::serialize_t& out, const xc::Callback_t& cb)
 {
     out.write("include", cb.include);
     out.write("script", cb.script);
@@ -121,7 +122,7 @@ xc::Serialize_t& operator<<(xc::Serialize_t& out, const xc::Callback_t& cb)
     return out;
 }
 
-xc::Serialize_t& operator<<(xc::Serialize_t& out, const xc::Template_t& templ)
+xc::serialize_t& operator<<(xc::serialize_t& out, const xc::Template_t& templ)
 {
     out << templ.call;
     return out;
@@ -129,10 +130,10 @@ xc::Serialize_t& operator<<(xc::Serialize_t& out, const xc::Template_t& templ)
 
 void xc::CBMake_t::add(const Template_t& templ)
 {
-    xc::Serialize_t out;
+    xc::serial_t out;
     out << templ.call;
 
-    xc::Unserialize_t ser(out.str());
+    xc::unserialize_t ser(out.str());
     dump(ser);
     std::cout << "Template " << templ.id << std::endl;
     //std::cout << "Script " << templ.call.script << std::endl;

@@ -12,7 +12,6 @@
 #include "StdAfx.h"
 
 #include "xmlutils.h"
-#include "utils.h"
 
 void _xml::error(const xmlpp::Node* node, const char* fmt, ...)
 {
