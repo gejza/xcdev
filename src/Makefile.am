@@ -7,7 +7,7 @@ AM_LDFLAGS = $(VERSION_INFO)
 
 lib_LTLIBRARIES = libxcreg.la libxcregmake.la
 libxcreg_la_CPPFLAGS = $(XC_CFLAGS) $(CDB_CFLAGS)
-libxcreg_la_SOURCES = cb.cc constdb.cc
+libxcreg_la_SOURCES = web.cc cb.cc constdb.cc config.cc
 libxcreg_la_LDFLAGS = $(VERSION_INFO) -shared $(XC_LIBS) $(CDB_LIBS)
 
 libxcregmake_la_CPPFLAGS = $(XC_CFLAGS) $(CDB_CFLAGS) $(XMLXX_CFLAGS)
