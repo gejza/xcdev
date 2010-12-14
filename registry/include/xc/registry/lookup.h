@@ -11,6 +11,8 @@
 #define _XC_REGISTRY_LOOKUP_H_
 #pragma once
 
+#include <xc/data.h>
+
 namespace xc {
 namespace registry {
 
@@ -25,7 +27,7 @@ public:
 
     virtual bool exist() const = 0;
     
-    virtual const char* get(const char*) const  = 0;
+    virtual bool lookup(const xc::data_t& key, xc::data_t& value) const  = 0;
 };
 
 } // namespace registry

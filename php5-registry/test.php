@@ -13,6 +13,7 @@ if (!extension_loaded($extension)) {
      dl($extension_soname) or die("Can't load extension $extension_fullname\n");
 }
 
+echo registry_php_class('neco');
 echo registry_string(1);
 /*echo cb_string(2);
 echo cb_string(3);

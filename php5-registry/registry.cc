@@ -15,9 +15,13 @@
 #include <xc/serialize.h>
 #include <xc/version.h>
 
+#include <xc/registry/web.h>
+
 static function_entry registry_functions[] = {
-    PHP_FE(registry_get, NULL)
+    PHP_FE(registry_php_class, NULL)
+
     PHP_FE(registry_string, NULL)
+    PHP_FE(registry_get, NULL)
     PHP_FE(registry_add_ns, NULL)
     PHP_FE(registry_set_lang, NULL)
     {NULL, NULL, NULL}
@@ -73,6 +77,25 @@ PHP_MINFO_FUNCTION(registry)
 	php_info_print_table_end();
 
 	DISPLAY_INI_ENTRIES();
+}
+
+PHP_FUNCTION(registry_php_class)
+{
+    char *name;
+    int name_len;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &name_len) == FAILURE) {
+        RETURN_NULL();
+    }
+
+    php_printf("Search class %s \n", name);
+    xc::registry::PHPIncludeTable_t table(*new xc::registry::Config_t());
+    std::string file = table.find_class(name);
+    if (!file.empty()) {
+        RETURN_STRING(file.c_str(), 1);
+    } else {
+        RETURN_NULL();
+    }
 }
 
 PHP_FUNCTION(registry_string)

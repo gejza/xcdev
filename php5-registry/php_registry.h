@@ -9,6 +9,11 @@ PHP_MSHUTDOWN_FUNCTION(registry);
 PHP_MINFO_FUNCTION(registry);
 
 /**
+ * Lookup include with php class defined
+ */
+PHP_FUNCTION(registry_php_class);
+
+/**
  * Lookup string
  */
 PHP_FUNCTION(registry_string);

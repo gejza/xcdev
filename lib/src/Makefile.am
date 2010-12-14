@@ -19,7 +19,7 @@ libxc_la_LIBADD = -lpcre
 libxclog_la_SOURCES = log.cc
 libxclog_la_LDFLAGS = -shared $(VERSION_INFO) -lxc -ldl -liberty_pic
 
-libxcconfig_la_SOURCES = config.cc config_ini.ll
+libxcconfig_la_SOURCES = config.cc config_ini.cc
 libxcconfig_la_LDFLAGS = -shared $(VERSION_INFO) -lxc $(LIBCONFIG_LIBS)
 
 libxctest_la_SOURCES = test_main.cc

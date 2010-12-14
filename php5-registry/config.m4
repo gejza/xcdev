@@ -18,5 +18,5 @@ if test "$PHP_REGISTRY" != "no"; then
   PHP_ADD_LIBRARY(xclog, 1, REGISTRY_SHARED_LIBADD)
   PHP_ADD_LIBRARY(xcreg, 1, REGISTRY_SHARED_LIBADD)
   PHP_SUBST(REGISTRY_SHARED_LIBADD)
-  PHP_NEW_EXTENSION(registry, cb.cc utils.cc, $ext_shared)
+  PHP_NEW_EXTENSION(registry, registry.cc utils.cc, $ext_shared)
 fi
