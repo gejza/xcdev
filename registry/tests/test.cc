@@ -18,6 +18,7 @@
 #include <xc/cbmake.h>
 #include <xc/cb.h>
 
+#include <xc/registry/env.h>
 //#include "pogen.h"
 
 void test_make_alias(xc::CBMake_t& cb)
@@ -46,7 +47,12 @@ void test_read()
 
 int xc_test_main(int argc, const char* argv[])
 {
-
+    try {
+        xc::registry::Env_t env;
+    } catch (libconfig::ParseException& e) {
+        std::cerr << /*e.getFile() << ":" <<*/ e.getLine() << ": " << e.getError() << std::endl;
+        throw;
+    }
     //xc::POFile_t po("cs.po");
     //po.read();
     /*xc::POGen_t po("test.pot");

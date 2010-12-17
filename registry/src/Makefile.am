@@ -6,9 +6,9 @@ AM_CPPFLAGS = -I$(srcdir)/../include
 AM_LDFLAGS = $(VERSION_INFO)
 
 lib_LTLIBRARIES = libxcreg.la libxcregmake.la
-libxcreg_la_CPPFLAGS = $(XC_CFLAGS) $(CDB_CFLAGS)
-libxcreg_la_SOURCES = web.cc cb.cc constdb.cc config.cc
-libxcreg_la_LDFLAGS = $(VERSION_INFO) -shared $(XC_LIBS) $(CDB_LIBS)
+libxcreg_la_CPPFLAGS = $(XC_CFLAGS) $(LIBCONFIGXX_CFLAGS) $(CDB_CFLAGS)
+libxcreg_la_SOURCES = env.cc web.cc cb.cc constdb.cc config.cc
+libxcreg_la_LDFLAGS = $(VERSION_INFO) -shared $(XC_LIBS) $(LIBCONFIGXX_LIBS) $(CDB_LIBS)
 
 libxcregmake_la_CPPFLAGS = $(XC_CFLAGS) $(CDB_CFLAGS) $(XMLXX_CFLAGS)
 libxcregmake_la_SOURCES = cbmake.cc constdb.cc pofile.cc pogen.cc xmlparser.cc xmlutils.cc xmltrans.cc
