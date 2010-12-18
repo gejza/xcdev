@@ -81,19 +81,24 @@ PHP_MINFO_FUNCTION(registry)
 
 PHP_FUNCTION(registry_php_class)
 {
-    char *name;
-    int name_len;
+    try {
+        char *name;
+        int name_len;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &name_len) == FAILURE) {
-        RETURN_NULL();
-    }
+        if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &name_len) == FAILURE) {
+            RETURN_NULL();
+        }
 
-    php_printf("Search class %s \n", name);
-    xc::registry::PHPIncludeTable_t table(*new xc::registry::Config_t());
-    std::string file = table.find_class(name);
-    if (!file.empty()) {
-        RETURN_STRING(file.c_str(), 1);
-    } else {
+        php_printf("Search class %s \n", name);
+        xc::registry::PHPIncludeTable_t table(*new xc::registry::Config_t());
+        std::string file = table.find_class(name);
+        if (!file.empty()) {
+            RETURN_STRING(file.c_str(), 1);
+        } else {
+            RETURN_NULL();
+        }
+    } catch (const xc::error_t& e) {
+        zend_error(E_ERROR, "Error: %s", e.message().c_str());
         RETURN_NULL();
     }
 }
