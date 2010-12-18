@@ -12,7 +12,7 @@
 #pragma once
 
 #include <libxml++/libxml++.h>
-#include "cbmake.h"
+#include "make.h"
 #include "obj.h"
 
 class XMLParser_t
