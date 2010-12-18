@@ -49,6 +49,7 @@ int xc_test_main(int argc, const char* argv[])
 {
     try {
         xc::registry::Env_t env;
+		env.get();
     } catch (libconfig::ParseException& e) {
         std::cerr << /*e.getFile() << ":" <<*/ e.getLine() << ": " << e.getError() << std::endl;
         throw;

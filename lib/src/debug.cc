@@ -154,7 +154,7 @@ void xc::debug::print(unsigned long ident, const loc_t& loc, const char* format,
     {
         xc::colored_t c(stdout, 30);
         fprintf(stdout, "%s(%s:%d): ", ident_name(ident), loc.filename(), loc.line());
-        vfprintf(stdout, gettext(format), arg);
+        vfprintf(stdout, _(format), arg);
     }
     fprintf(stdout, "\n");
     va_end(arg);
@@ -169,7 +169,7 @@ void xc::debug::trace(unsigned long ident, const loc_t& loc, const char* format,
     {
         xc::colored_t c(stdout, 30);
         fprintf(stdout, "TRACE(%s): ", loc.filename(), loc.line());
-        vfprintf(stdout, gettext(format), arg);
+        vfprintf(stdout, _(format), arg);
     }
     fprintf(stdout, "\n");
     va_end(arg);

@@ -276,7 +276,7 @@ void xc::logv_info(const xc::debug::loc_t& loc, int level, const char* format, v
     for (mod_type::iterator i = _mods.begin(); i != _mods.end(); ++i) {
         if ((*i)->info(level)) {
             if (msg.empty())
-                msg = xc::vformat(::gettext(format), arg);
+                msg = xc::vformat(_(format), arg);
             (*i)->info(loc, level, msg);
         }
     }
@@ -288,7 +288,7 @@ void xc::logv_warn(const xc::debug::loc_t& loc, int level, const char* format, v
     for (mod_type::iterator i = _mods.begin(); i != _mods.end(); ++i) {
         if ((*i)->warn(level)) {
             if (msg.empty())
-                msg = xc::vformat(::gettext(format), arg);
+                msg = xc::vformat(_(format), arg);
             (*i)->warn(loc, level, msg);
         }
     }
@@ -300,7 +300,7 @@ void xc::logv_error(const xc::debug::loc_t& loc, int level, const char* format, 
     for (mod_type::iterator i = _mods.begin(); i != _mods.end(); ++i) {
         if ((*i)->error(level)) {
             if (msg.empty())
-                msg = xc::vformat(::gettext(format), arg);
+                msg = xc::vformat(_(format), arg);
             (*i)->error(loc, level, msg);
         }
     }
@@ -308,7 +308,7 @@ void xc::logv_error(const xc::debug::loc_t& loc, int level, const char* format, 
 
 void xc::logv_fatal(const xc::debug::loc_t& loc, const char* format, va_list arg)
 {
-    xc::string msg = xc::vformat(::gettext(format), arg);
+    xc::string msg = xc::vformat(_(format), arg);
     for (mod_type::iterator i = _mods.begin(); i != _mods.end(); ++i) {
         (*i)->fatal(loc, msg);
     }

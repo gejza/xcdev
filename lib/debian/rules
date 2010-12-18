@@ -20,9 +20,6 @@ else
 CROSS= --build $(DEB_BUILD_GNU_TYPE)
 endif
 
-
-
-
 # shared library versions, option 1
 version=2.0.5
 major=2
@@ -31,6 +28,9 @@ major=2
 # awk '{if (match($$0,/[0-9]+\.[0-9]+\.[0-9]+$$/)) print substr($$0,RSTART)}'`
 #major=`ls src/.libs/lib*.so.* | \
 # awk '{if (match($$0,/\.so\.[0-9]+$$/)) print substr($$0,RSTART+4)}'`
+
+configure:
+	autoreconf --install
 
 config.status: configure
 	dh_testdir
