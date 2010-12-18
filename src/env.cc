@@ -19,3 +19,9 @@ xc::registry::Env_t::Env_t()
     _config.readFile("test.cfg");
     _config.lookup("application");
 }
+
+const xc::registry::Lookup_t& xc::registry::Env_t::get() const
+{
+    RUNTIME_ERROR("Lookup not found.");
+    return *((const xc::registry::Lookup_t*)0);
+}
