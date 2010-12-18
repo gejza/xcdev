@@ -18,11 +18,11 @@
 #include <stdint.h>
 
 #include <iostream>
-#include "../include/xc/cbmake.h"
 #include "obj.h"
-#include "constdb.h"
+#include "makecdb.h"
 #include "pogen.h"
 #include "xmlparser.h"
+#include "make.h"
 
 //////////////////////////////////
 xc::CBMake_t::CBMake_t()
