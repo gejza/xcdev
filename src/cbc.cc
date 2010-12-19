@@ -11,7 +11,7 @@
 #endif
 #include "StdAfx.h"
 
-#include "cbmake.h"
+#include "make.h"
 
 int main(int argc, const char* argv[])
 {

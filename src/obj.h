@@ -11,6 +11,7 @@
 #define _XC_DBOBJ_H_
 #pragma once
 
+#include "cbdef.h"
 
 namespace {
 
