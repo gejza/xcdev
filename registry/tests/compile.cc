@@ -16,8 +16,7 @@
 #include <stdint.h>
 #include <iostream>
 
-#include "../src/cb.h"
-#include "../src/cbmake.h"
+#include "../src/make.h"
 
 int xc_test_main(int argc, const char* argv[])
 {

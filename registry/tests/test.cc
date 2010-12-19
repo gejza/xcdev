@@ -39,7 +39,7 @@ void test_make()
 
 void test_read()
 {
-    xc::CB_t cb;
+    //xc::CB_t cb;
     //std::cout << cb.string(1, xc::CS) << std::endl;
     //std::cout << cb.string(1, xc::EN) << std::endl;
     //std::cout << cb.string(1, xc::SK) << std::endl;*/

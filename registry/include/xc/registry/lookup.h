@@ -25,7 +25,7 @@ public:
     Lookup_t() {}
     virtual ~Lookup_t() {}
 
-    virtual bool exist() const = 0;
+    virtual bool exist(const xc::data_t& key) const = 0;
     
     virtual bool lookup(const xc::data_t& key, xc::data_t& value) const  = 0;
 };

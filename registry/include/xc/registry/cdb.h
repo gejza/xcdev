@@ -26,7 +26,7 @@ public:
     ConstDB_t(const char* fn);
     virtual ~ConstDB_t();
     
-    virtual bool exist() const;
+    virtual bool exist(const xc::data_t& key) const;
     
     virtual bool lookup(const xc::data_t& key, xc::data_t& value) const;
     

@@ -31,6 +31,15 @@ xc::registry::ConstDB_t::~ConstDB_t()
 {
 }
 
+bool xc::registry::ConstDB_t::exist(const xc::data_t& key) const
+{
+    if (cdb_find(const_cast<cdb*>(&this->_db), key.data(), key.size()) > 0)
+    {
+        return true;
+    }
+    return false;
+}
+
 bool xc::registry::ConstDB_t::lookup(const xc::data_t& key, xc::data_t& val) const
 {
     if (cdb_find(const_cast<cdb*>(&this->_db), key.data(), key.size()) > 0)

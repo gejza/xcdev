@@ -13,6 +13,7 @@
 #include "StdAfx.h"
 
 #include "../include/xc/registry/env.h"
+#include "../include/xc/registry/cdb.h"
 
 xc::registry::Env_t::Env_t()
 {
@@ -22,6 +23,7 @@ xc::registry::Env_t::Env_t()
 
 const xc::registry::Lookup_t& xc::registry::Env_t::get() const
 {
+    xc::registry::ConstDB_t db("system.cdb");
     RUNTIME_ERROR("Lookup not found.");
     return *((const xc::registry::Lookup_t*)0);
 }

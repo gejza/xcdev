@@ -14,6 +14,11 @@ PHP_MINFO_FUNCTION(registry);
 PHP_FUNCTION(registry_php_class);
 
 /**
+ * Lookup template
+ */
+PHP_FUNCTION(xcr_template);
+
+/**
  * Lookup string
  */
 PHP_FUNCTION(registry_string);
