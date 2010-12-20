@@ -12,12 +12,9 @@
 #pragma once
 
 #include <memory>
-
 #include "cbdef.h"
 
 class DBMake_t;
-
-namespace xc {
 
 class POGen_t;
 
@@ -27,11 +24,21 @@ enum TableId_t
     STR_TABLE = 23,
 };
 
-class CBMake_t
+using namespace xc;
+
+class Output_t
 {
 public:
-    CBMake_t();
-    virtual ~CBMake_t();
+    virtual ~Output_t() {}
+    
+    virtual void add(uint32_t table, const void*, size_t, const void*, size_t) = 0;
+};
+
+class Make_t
+{
+public:
+    Make_t(Output_t& out);
+    virtual ~Make_t();
 
     void set_default(Lang_t lang) {
         this->_def_lang = lang;
@@ -64,13 +71,11 @@ protected:
     }
 
 private:
+    Output_t& _out;
     Id_t _curid;
     Lang_t _def_lang;
-    DBMake_t* _db;
     POGen_t* _po;
 };
-
-} // namespace xc
 
 #endif // _XC_CBMAKE_H_
 /* end of cbmake.h */

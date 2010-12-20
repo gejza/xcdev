@@ -17,8 +17,6 @@
 #include <vector>
 #include <string>
 
-namespace xc {
-
 class POGen_t
 {
 public:
@@ -54,8 +52,6 @@ private:
     FILE* _file;
 };
 
-
-} // namespace xc
 
 #endif // _XC_POGEN_H_
 /* end of pogen.h */

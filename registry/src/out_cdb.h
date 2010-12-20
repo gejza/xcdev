@@ -1,5 +1,5 @@
 /*
-   File name:  makecdb.h
+   File name:  out_cdb.h
    Date:       2010/12/18 15:11
    Subversion: $Id: $
    Author:     Milan Dunghubel <milan@mfis.cz>
@@ -7,16 +7,16 @@
    Copyright (C) 2010 Milan Dunghubel <milan@mfis.cz>
 */
 
-#ifndef _MAKECDB_H_
-#define _MAKECDB_H_
+#ifndef _OUT_CDB_H_
+#define _OUT_CDB_H_
 #pragma once
 
 #include <xc/fd.h>
 #include <cdb.h>
 
-#include "db.h"
+#include "make.h"
 
-class ConstDBMake_t : public DBMake_t
+class ConstDBMake_t : public Output_t
 {
 public:
     ConstDBMake_t(const char* fn);
@@ -27,6 +27,6 @@ private:
     struct cdb_make _db;
 };
 
-#endif // _MAKECDB_H_
-/* end of makecdb.h */
+#endif // _OUT_CDB_H_
+/* end of out_cdb.h */
 

@@ -11,7 +11,7 @@ libxcreg_la_SOURCES = env.cc php.cc web.cc cdb.cc config.cc
 libxcreg_la_LDFLAGS = $(VERSION_INFO) -shared $(XC_LIBS) $(LIBCONFIGXX_LIBS) $(CDB_LIBS)
 
 libxcregmake_la_CPPFLAGS = $(XC_CFLAGS) $(CDB_CFLAGS) $(XMLXX_CFLAGS)
-libxcregmake_la_SOURCES = make.cc makecdb.cc pofile.cc pogen.cc xmlparser.cc xmlutils.cc xmltrans.cc
+libxcregmake_la_SOURCES = make.cc out_cdb.cc out_debug.cc pofile.cc pogen.cc xmlparser.cc xmlutils.cc xmltrans.cc scan.ll parse.yy
 libxcregmake_la_LDFLAGS = $(VERSION_INFO) -shared $(XC_LIBS) $(CDB_LIBS) $(XMLXX_LIBS) -lgettextpo
 
 #lib_LTLIBRARIES = libxcusers.la libxcusers-soap.la libxcusers-proxy.la libxcusers-test.la
@@ -27,13 +27,17 @@ libxcregmake_la_LDFLAGS = $(VERSION_INFO) -shared $(XC_LIBS) $(CDB_LIBS) $(XMLXX
 #libxcusers_soap_la_SOURCES = users_soap.cc
 #libxcusers_soap_la_LDFLAGS = -static
 
-bin_PROGRAMS = regc regdump
+bin_PROGRAMS = regc reglookup regdump
 regc_CPPFLAGS =
-regc_SOURCES = cbc.cc
+regc_SOURCES = regc.cc
 regc_LDADD = libxcregmake.la
 
+reglookup_CPPFLAGS =
+reglookup_SOURCES = reglookup.cc
+reglookup_LDADD = libxcreg.la
+
 regdump_CPPFLAGS =
-regdump_SOURCES = cbdump.cc
+regdump_SOURCES = regdump.cc
 regdump_LDADD = libxcreg.la
 
 testcbc:

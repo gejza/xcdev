@@ -62,7 +62,7 @@ msgstr[1] "s'han trobat %d errors fatals"
 #include "pogen.h"
 
 ///////////////////////////////////////////
-xc::POGen_t::POGen_t(const char* fn)
+POGen_t::POGen_t(const char* fn)
 {
     _file = ::fopen(fn, "wt");
     if (_file == NULL)
@@ -70,12 +70,12 @@ xc::POGen_t::POGen_t(const char* fn)
     write_header();
 }
 
-xc::POGen_t::~POGen_t()
+POGen_t::~POGen_t()
 {
     ::fclose(_file);
 }
 
-void xc::POGen_t::add(const char* text, const char* plural)
+void POGen_t::add(const char* text, const char* plural)
 {
     Msg_t msg(text);
     if (plural)
@@ -83,7 +83,7 @@ void xc::POGen_t::add(const char* text, const char* plural)
     this->add(msg);
 }
 
-void xc::POGen_t::add(const Msg_t& msg)
+void POGen_t::add(const Msg_t& msg)
 {
     ::fprintf(_file, "\n");
 //#  translator-comments
@@ -109,7 +109,7 @@ void xc::POGen_t::add(const Msg_t& msg)
     }
 }
 
-void xc::POGen_t::write_header()
+void POGen_t::write_header()
 {
     const char head[] =
         "# SOME DESCRIPTIVE TITLE.\n"

@@ -1,0 +1,54 @@
+/*
+   File name:  cbc.cc
+   Date:       2010/12/06 02:27
+   Subversion: $Id: $
+   Author:     Milan Dunghubel <milan@mfis.cz>
+
+   Copyright (C) 2010 Milan Dunghubel <milan@mfis.cz>
+*/
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+#include "StdAfx.h"
+
+#include "make.h"
+#include "out_cdb.h"
+#include "out_debug.h"
+
+int main(int argc, const char* argv[])
+{
+    xc::debug::debug_enable();
+    xc::log::add_stderr("ALL");
+
+    if (argc < 3)
+    {
+        fprintf(stderr, "Usage: %s <db>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    try {
+        ConstDBMake_t out(argv[1]);
+        //DebugOutput_t out;
+        Make_t cb(out);
+        //mfis::reg::Build_t b(argv[1]);
+        cb.string("Error", "chyba", xc::CS);
+        cb.string("Number", "cislo", xc::CS);
+        for (int i=2; i < argc; i++)
+        {
+            std::cout << "Load file " << argv[i] << std::endl;
+            cb.load_xml(argv[i]);
+        }
+    } catch (const xc::error_t& e) {
+        std::cerr << "Error: " << e.message() << std::endl;
+        return EXIT_FAILURE;
+    } catch (const std::exception& e) {
+        std::cerr << "Std exception: " << e.what() << std::endl;
+        return EXIT_FAILURE;
+    } catch (...) {
+        std::cerr << "Unknown exception" << std::endl;
+        return EXIT_FAILURE;
+    }
+    return EXIT_SUCCESS;
+}
+
+

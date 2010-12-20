@@ -16,7 +16,7 @@
 #include "xmltrans.h"
 
 /////////////////////////////////////////////////////////
-XMLParser_t::XMLParser_t(xc::CBMake_t& cb)
+XMLParser_t::XMLParser_t(Make_t& cb)
     : _cb(cb)
 {
 }

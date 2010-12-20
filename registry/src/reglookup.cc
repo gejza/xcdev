@@ -1,6 +1,6 @@
 /*
-   File name:  cbc.cc
-   Date:       2010/12/06 02:27
+   File name:  reglookup.cc
+   Date:       2010/12/20 03:30
    Subversion: $Id: $
    Author:     Milan Dunghubel <milan@mfis.cz>
 
@@ -11,7 +11,8 @@
 #endif
 #include "StdAfx.h"
 
-#include "make.h"
+#include <xc/log.h>
+#include <xc/error.h>
 
 int main(int argc, const char* argv[])
 {
@@ -25,15 +26,9 @@ int main(int argc, const char* argv[])
     }
 
     try {
-        xc::CBMake_t cb;
-        //mfis::reg::Build_t b(argv[1]);
-        cb.string("Error", "chyba", xc::CS);
-        cb.string("Number", "cislo", xc::CS);
-        for (int i=2; i < argc; i++)
-        {
-            std::cout << "Load file " << argv[i] << std::endl;
-            cb.load_xml(argv[i]);
-        }
+        xc::registry::ConstDB_t lookup(argv[1]);
+        
+
     } catch (const xc::error_t& e) {
         std::cerr << "Error: " << e.message() << std::endl;
         return EXIT_FAILURE;
@@ -46,5 +41,8 @@ int main(int argc, const char* argv[])
     }
     return EXIT_SUCCESS;
 }
+
+
+
 
 

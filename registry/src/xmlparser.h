@@ -18,7 +18,7 @@
 class XMLParser_t
 {
 public:
-    XMLParser_t(xc::CBMake_t& cb);
+    XMLParser_t(Make_t& cb);
     ~XMLParser_t();
     void parse(const char* fn);
 protected:
@@ -32,7 +32,7 @@ protected:
     void process_template(const xmlpp::Element* node);
 
 private:
-    xc::CBMake_t& _cb;
+    Make_t& _cb;
     std::string _fn;
 };
 

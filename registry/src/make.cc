@@ -19,38 +19,36 @@
 
 #include <iostream>
 #include "obj.h"
-#include "makecdb.h"
+#include "out_cdb.h"
 #include "pogen.h"
 #include "xmlparser.h"
 #include "make.h"
 
 //////////////////////////////////
-xc::CBMake_t::CBMake_t()
-    : _curid(0), _def_lang(xc::MULTI), _db(NULL), _po(NULL)
+Make_t::Make_t(Output_t& out)
+    : _curid(0), _def_lang(xc::MULTI), _out(out), _po(NULL)
 {
-    this->_db = new ConstDBMake_t("test.cb");
 }
 
-xc::CBMake_t::~CBMake_t()
+Make_t::~Make_t()
 {
-    delete this->_db;
     if (this->_po)
         delete _po;
 }
 
-void xc::CBMake_t::generate_pot(const char* fn)
+void Make_t::generate_pot(const char* fn)
 {
     //TODO
     _po = new POGen_t(fn);
 }
     
-void xc::CBMake_t::load_xml(const char* fn)
+void Make_t::load_xml(const char* fn)
 {
     XMLParser_t xml(*this);
     xml.parse(fn);
 }
 
-xc::StrId_t xc::CBMake_t::string(Lang_t lang, const char* str)
+xc::StrId_t Make_t::string(Lang_t lang, const char* str)
 {
     StrId_t id = seq();
     this->string(id, lang, str);
@@ -60,21 +58,22 @@ xc::StrId_t xc::CBMake_t::string(Lang_t lang, const char* str)
     return id;
 }
 
-void xc::CBMake_t::string(const StrId_t id, Lang_t lang, const char* str)
+void Make_t::string(const StrId_t id, Lang_t lang, const char* str)
 {
     StrKey_t key(id, lang);
-    DBTableMake_t db(*this->_db, 12);
+    //DBTableMake_t db(*this->_db, 12);
     //this->_db->add(key, str);
-    db.add(key, str);
+    //db.add(key, str);
+    //_out.add(12, );
 }
     
-void xc::CBMake_t::string(const std::string& msgid, const std::string& msgstr, Lang_t lang)
+void Make_t::string(const std::string& msgid, const std::string& msgstr, Lang_t lang)
 {
     xc::StrId_t id = this->string(lang, msgstr.c_str());
-    this->_db->add(STR_TABLE, msgid, id);
+    this->_out.add(STR_TABLE, msgid.data(), msgid.size(), &id, sizeof(id));
 }
 
-const char* xc::CBMake_t::get_lang(Lang_t lang)
+const char* Make_t::get_lang(Lang_t lang)
 {
     switch (lang)
     {
@@ -90,19 +89,19 @@ const char* xc::CBMake_t::get_lang(Lang_t lang)
 }
 
 //////////////////////////////////////////
-/*void xc::CBMake_t::hook(const char* name, const Callback_t& cb)
+/*void Make_t::hook(const char* name, const Callback_t& cb)
 {
     //HookKey_t key(name);
     // table hooks
 }*/
 
-void xc::CBMake_t::alias(const char* route, Lang_t lang, const char* alias)
+void Make_t::alias(const char* route, Lang_t lang, const char* alias)
 {
     // table alias:  route-lang => alias
     // table route:  alias -> route
 }
 
-const xc::Id_t xc::CBMake_t::add(const Menu_t& menu)
+const xc::Id_t Make_t::add(const Menu_t& menu)
 {
     std::cout << menu.id << std::endl;
     for (Menu_t::Items_t::const_iterator i=menu.items.begin();i != menu.items.end(); i++)
@@ -128,7 +127,7 @@ xc::serialize_t& operator<<(xc::serialize_t& out, const xc::Template_t& templ)
     return out;
 }
 
-void xc::CBMake_t::add(const Template_t& templ)
+void Make_t::add(const Template_t& templ)
 {
     xc::serial_t out;
     out << templ.call;
@@ -139,7 +138,7 @@ void xc::CBMake_t::add(const Template_t& templ)
     //std::cout << "Script " << templ.call.script << std::endl;
 
     StrKey_t key(1, xc::CS);
-    this->_db->add(STR_TABLE, key, out.str());
+    this->_out.add(STR_TABLE, &key, sizeof(key), out.str().data(), out.str().size());
 
     //return seq();
 }

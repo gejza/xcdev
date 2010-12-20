@@ -11,7 +11,7 @@
 #endif
 #include "StdAfx.h"
 
-#include "makecdb.h"
+#include "out_cdb.h"
 
 //////////////////////////////////
 ConstDBMake_t::ConstDBMake_t(const char* fn)
@@ -27,10 +27,19 @@ ConstDBMake_t::~ConstDBMake_t()
     //std::cout << "Finish cdb: " << ret << std::endl;
 }
 
+std::string key_hash(uint32_t table, const void* data, size_t size)
+{
+    std::string key;
+    key.append(reinterpret_cast<const char*>(&table), sizeof(table));
+    key.append(reinterpret_cast<const char*>(data), size);
+    return key;
+}
+
 void ConstDBMake_t::add(uint32_t table, const void* key, size_t klen,
                         const void* val, size_t vlen)
 {
-    int ret = cdb_make_add(&this->_db, key, klen, val, vlen);
+    std::string k(key_hash(table, key, klen));
+    int ret = cdb_make_add(&this->_db, k.data(), k.size(), val, vlen);
     //std::cout << "Key: " << klen << " Value: " << vlen << " ret:" << ret << std::endl;
 }
 
