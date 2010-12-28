@@ -1,7 +1,7 @@
 Source: libxc
 Priority: extra
 Maintainer: Milan Dunghubel <milan.dunghubel@gmail.com>
-Build-Depends: debhelper (>= 7), autotools-dev, autoconf-archive, autopoint, libconfig++-dev, binutils-dev
+Build-Depends: debhelper (>= 7), autotools-dev, autoconf-archive, autopoint, libconfig++-dev, binutils-dev, libpcre3-dev
 Standards-Version: 3.8.0
 Section: libs
 Homepage: <insert the upstream URL, if relevant>

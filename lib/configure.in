@@ -39,7 +39,7 @@ AC_PROG_INSTALL
 
 dnl AM_GNU_GETTEXT([external])
 dnl AM_GNU_GETTEXT_VERSION([0.17])
-AM_ICONV
+dnl AM_ICONV
 
 PKG_PROG_PKG_CONFIG
 
@@ -164,7 +164,7 @@ AC_DEFINE_UNQUOTED([SVN_VERSION], "$SVN_VERSION", [Actual svn version.])
 AC_CONFIG_FILES([Makefile include/Makefile include/xc/Makefile
                  include/xc/system/Makefile])
 AC_CONFIG_FILES([src/Makefile tests/Makefile])
-AC_CONFIG_FILES([include/xc/version.h libxc.pc po/Makefile.in Doxyfile])
+AC_CONFIG_FILES([include/xc/version.h libxc.pc Doxyfile])
 # Write config.status and the Makefile
 AC_OUTPUT
 
