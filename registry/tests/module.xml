@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<module>
-    <form id="test_form">
-        <edit name="test" label="Test:" />
-        <submit />
-    </form>
-</module>
