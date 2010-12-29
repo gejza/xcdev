@@ -1,0 +1,10 @@
+Changes
+Makefile.PL
+MANIFEST
+ppport.h
+RD.xs
+README
+t/XC-RD.t
+fallback/const-c.inc
+fallback/const-xs.inc
+lib/XC/RD.pm

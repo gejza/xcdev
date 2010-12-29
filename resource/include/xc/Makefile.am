@@ -1,4 +1,4 @@
 
-SUBDIRS = resource
+SUBDIRS = rd
 
 
