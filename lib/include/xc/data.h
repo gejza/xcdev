@@ -11,6 +11,8 @@
 #define _XC_DATA_H_
 #pragma once
 
+#include <xc/types.h>
+
 namespace xc {
 
 template<typename Value_t>
