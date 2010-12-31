@@ -6,7 +6,6 @@ ppport.h
 typemap
 perlobject.map
 README
-t/XC-RD-Make.t
 t/begin.t
 t/insert.t
 lib/XC/RD/Make.pm
