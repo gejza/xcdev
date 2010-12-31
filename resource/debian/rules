@@ -20,8 +20,8 @@ else
 CROSS= --build $(DEB_BUILD_GNU_TYPE)
 endif
 
-
-
+configure:
+	autoreconf --install
 
 # shared library versions, option 1
 version=2.0.5
