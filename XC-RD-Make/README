@@ -1,5 +1,5 @@
-XC-RD version 0.01
-==================
+XC-RD-Make version 0.01
+=======================
 
 The README is used to introduce the module and provide instructions on
 how to install the module, any machine dependencies it may have (for
@@ -31,7 +31,7 @@ COPYRIGHT AND LICENCE
 
 Put the correct copyright and licence information here.
 
-Copyright (C) 2010 by Gejzovo
+Copyright (C) 2010 by Milan Dunghubel
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.10.1 or,

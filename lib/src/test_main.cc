@@ -82,12 +82,15 @@ int main(int argc, char* const* argv)
     try {
         return xc_test_main(argc-optind, (const char**)&argv[optind]);
     } catch (const xc::error_t& e) {
+		xc::colored_t red(stderr, 31);
         std::cerr << e.message() << std::endl;
         return EXIT_FAILURE;
     } catch (const std::exception& e) {
+		xc::colored_t red(stderr, 31);
         std::cerr << e.what() << std::endl;
         return EXIT_FAILURE;
     } catch (...) {
+		xc::colored_t red(stderr, 31);
         std::cerr << "Unknown exception" << std::endl;
         return EXIT_FAILURE;
     }

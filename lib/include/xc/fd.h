@@ -59,7 +59,7 @@ public:
         this->write(str.data(), str.size());
     }
 
-    bool lock(const flock& lck);
+    bool lock(const struct ::flock& lck);
 
     void chown(const char* user, const char* group);
     void chown(uid_t uid, gid_t gid);

@@ -1,12 +1,10 @@
-package XC::RD::Lookup;
+package XC::RD::Make;
 
 use 5.010001;
 use strict;
 use warnings;
-use Carp;
 
 require Exporter;
-use AutoLoader;
 
 our @ISA = qw(Exporter);
 
@@ -14,7 +12,7 @@ our @ISA = qw(Exporter);
 # names by default without a very good reason. Use EXPORT_OK instead.
 # Do not simply export all your public functions/methods/constants.
 
-# This allows declaration	use XC::RD ':all';
+# This allows declaration	use XC::RD::Make ':all';
 # If you do not need this, moving things directly into @EXPORT or @EXPORT_OK
 # will save memory.
 our %EXPORT_TAGS = ( 'all' => [ qw(
@@ -29,35 +27,10 @@ our @EXPORT = qw(
 
 our $VERSION = '0.01';
 
-sub AUTOLOAD {
-    # This AUTOLOAD is used to 'autoload' constants from the constant()
-    # XS function.
-
-    my $constname;
-    our $AUTOLOAD;
-    ($constname = $AUTOLOAD) =~ s/.*:://;
-    croak "&XC::RD::constant not defined" if $constname eq 'constant';
-    my ($error, $val) = constant($constname);
-    if ($error) { croak $error; }
-    {
-	no strict 'refs';
-	# Fixed between 5.005_53 and 5.005_61
-#XXX	if ($] >= 5.00561) {
-#XXX	    *$AUTOLOAD = sub () { $val };
-#XXX	}
-#XXX	else {
-	    *$AUTOLOAD = sub { $val };
-#XXX	}
-    }
-    goto &$AUTOLOAD;
-}
-
 require XSLoader;
-XSLoader::load('XC::RD::Lookup', $VERSION);
+XSLoader::load('XC::RD::Make', $VERSION);
 
 # Preloaded methods go here.
-
-# Autoload methods go after =cut, and are processed by the autosplit program.
 
 1;
 __END__
@@ -65,26 +38,42 @@ __END__
 
 =head1 NAME
 
-XC::RD - Perl extension for blah blah blah
+XC::RD::Make - Perl extension for blah blah blah
 
 =head1 SYNOPSIS
 
-  use XC::RD;
-  blah blah blah
+  use XC::RD::Make;
+  my $m = new XC::RD::Make("test.cdb");
+  $m->insert(1, 'key', 'value');
 
 =head1 DESCRIPTION
 
-Stub documentation for XC::RD, created by h2xs. It looks like the
+Stub documentation for XC::RD::Make, created by h2xs. It looks like the
 author of the extension was negligent enough to leave the stub
 unedited.
 
-Blah blah blah.
+=head2 Methods
+
+=over 4
+
+=item * $object->verbose(true or false)
+
+=item * $object->verbose()
+
+Returns the value of the 'verbose' property.  When called with an
+argument, it also sets the value of the property.  Use a true or false
+Perl value, such as 1 or 0.
+
+=item * $object->hoot()
+
+Returns a hoot if we're supposed to be verbose.  Otherwise it returns
+nothing.
+
+=back
 
 =head2 EXPORT
 
 None by default.
-
-
 
 =head1 SEE ALSO
 
@@ -99,11 +88,11 @@ If you have a web site set up for your module, mention it here.
 
 =head1 AUTHOR
 
-Gejzovo, E<lt>gejza@E<gt>
+Milan Dunghubel, E<lt>gejza@E<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2010 by Gejzovo
+Copyright (C) 2010 by Milan Dunghubel
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.10.1 or,

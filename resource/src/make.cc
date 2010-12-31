@@ -19,7 +19,7 @@
 
 #include <iostream>
 #include "obj.h"
-#include "out_cdb.h"
+#include "include/xc/rd/out_cdb.h"
 #include "make.h"
 
 //////////////////////////////////

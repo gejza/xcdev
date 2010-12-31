@@ -11,23 +11,23 @@
 #endif
 #include "StdAfx.h"
 
-#include "out_cdb.h"
+#include "include/xc/rd/out_cdb.h"
 
 //////////////////////////////////
-ConstDBMake_t::ConstDBMake_t(const char* fn)
+xc::rd::CDBMake_t::CDBMake_t(const char* fn)
     : _fd(fn, O_RDWR|O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)
 {
     int ret = cdb_make_start(&this->_db, this->_fd.fd());
     //std::cout << "Start cdb: " << ret << std::endl;
 }
 
-ConstDBMake_t::~ConstDBMake_t()
+xc::rd::CDBMake_t::~CDBMake_t()
 {
     int ret = cdb_make_finish(&this->_db);
     //std::cout << "Finish cdb: " << ret << std::endl;
 }
 
-void ConstDBMake_t::insert(const xc::rd::ns_t ns, const xc::data_t& key,
+void xc::rd::CDBMake_t::insert(const xc::rd::ns_t ns, const xc::data_t& key,
 			const xc::data_t& value)
 {
 	xc::buffer_t k;

@@ -7,20 +7,23 @@
    Copyright (C) 2010 Milan Dunghubel <milan@mfis.cz>
 */
 
-#ifndef _OUT_CDB_H_
-#define _OUT_CDB_H_
+#ifndef _XC_RD_OUT_CDB_H_
+#define _XC_RD_OUT_CDB_H_
 #pragma once
 
 #include <xc/fd.h>
 #include <cdb.h>
 
-#include "../include/xc/rd/output.h"
+#include "output.h"
 
-class ConstDBMake_t : public xc::rd::Output_t
+namespace xc {
+namespace rd {
+
+class CDBMake_t : public Output_t
 {
 public:
-    ConstDBMake_t(const char* fn);
-    virtual ~ConstDBMake_t();
+    CDBMake_t(const char* fn);
+    virtual ~CDBMake_t();
 
     virtual void insert(const xc::rd::ns_t ns, const xc::data_t& key,
 			const xc::data_t& value);
@@ -29,6 +32,10 @@ private:
     struct cdb_make _db;
 };
 
-#endif // _OUT_CDB_H_
+} // namespace rd
+} // namespace xc
+
+
+#endif // _XC_RD_OUT_CDB_H_
 /* end of out_cdb.h */
 

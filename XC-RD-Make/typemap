@@ -1,0 +1,2 @@
+TYPEMAP
+Make *         O_OBJECT
