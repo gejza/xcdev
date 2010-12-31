@@ -36,12 +36,14 @@ public:
 
 }
 
+#ifndef ERROR
 #define ERROR(err, msg...) \
     do { \
         err e(xc::format(msg)); \
         LOG_ERROR(1, msg); \
         throw e; \
-    } while (0); 
+    } while (0);
+#endif // ERROR
 
 #define RUNTIME_ERROR(msg...) ERROR(xc::runtime_error_t, msg)
 

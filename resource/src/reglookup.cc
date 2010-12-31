@@ -14,7 +14,7 @@
 #include <xc/log.h>
 #include <xc/error.h>
 
-#include "../include/xc/resource/cdb.h"
+#include "../include/xc/rd/cdb.h"
 
 int main(int argc, const char* argv[])
 {
@@ -28,7 +28,7 @@ int main(int argc, const char* argv[])
     }
 
     try {
-        xc::resource::ConstDB_t lookup(argv[1]);
+        xc::rd::ConstDB_t lookup(argv[1]);
         
 
     } catch (const xc::error_t& e) {

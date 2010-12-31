@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<theme>
-    <template id="test">
-        <include>src/test.inc</include>
-        <include>src/test2.inc</include>
-        <script>src/testaaa<!-- komentare  -->.php</script>
-    </template>
-</theme>

@@ -11,7 +11,7 @@
 #endif
 #include "StdAfx.h"
 
-#include "../include/xc/resource/config.h"
+#include "../include/xc/rd/config.h"
 
 extern "C" {
     void xcrd_version()

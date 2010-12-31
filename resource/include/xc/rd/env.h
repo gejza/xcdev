@@ -7,14 +7,14 @@
    Copyright (C) 2010 Milan Dunghubel <milan@mfis.cz>
 */
 
-#ifndef _XC_REGISTRY_ENV_H_
-#define _XC_REGISTRY_ENV_H_
+#ifndef _XC_RD_ENV_H_
+#define _XC_RD_ENV_H_
 #pragma once
 
 #include <libconfig.h++>
 
 namespace xc {
-namespace resource {
+namespace rd {
 
 class Lookup_t;
 
@@ -29,9 +29,9 @@ protected:
     libconfig::Config _config;
 };
 
-} // namespace resource
+} // namespace rd
 } // namespace xc
 
-#endif // _XC_REGISTRY_ENV_H_
+#endif // _XC_RD_ENV_H_
 /* end of env.h */
 

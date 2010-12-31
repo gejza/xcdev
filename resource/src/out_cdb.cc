@@ -27,19 +27,14 @@ ConstDBMake_t::~ConstDBMake_t()
     //std::cout << "Finish cdb: " << ret << std::endl;
 }
 
-std::string key_hash(uint32_t table, const void* data, size_t size)
+void ConstDBMake_t::insert(const xc::rd::ns_t ns, const xc::data_t& key,
+			const xc::data_t& value)
 {
-    std::string key;
-    key.append(reinterpret_cast<const char*>(&table), sizeof(table));
-    key.append(reinterpret_cast<const char*>(data), size);
-    return key;
-}
-
-void ConstDBMake_t::add(uint32_t table, const void* key, size_t klen,
-                        const void* val, size_t vlen)
-{
-    std::string k(key_hash(table, key, klen));
-    int ret = cdb_make_add(&this->_db, k.data(), k.size(), val, vlen);
+	xc::buffer_t k;
+	k << ns << key;
+	xc::buffer_t v;
+	v << value << '\0';
+    int ret = cdb_make_add(&this->_db, k.data(), k.size(), v.data(), v.size());
     //std::cout << "Key: " << klen << " Value: " << vlen << " ret:" << ret << std::endl;
 }
 

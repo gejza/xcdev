@@ -7,11 +7,11 @@ AM_LDFLAGS = $(VERSION_INFO)
 
 lib_LTLIBRARIES = libxcrd.la libxcrdmake.la
 libxcrd_la_CPPFLAGS = $(XC_CFLAGS) $(LIBCONFIGXX_CFLAGS) $(CDB_CFLAGS)
-libxcrd_la_SOURCES = env.cc php.cc web.cc cdb.cc config.cc
+libxcrd_la_SOURCES = env.cc cdb.cc config.cc
 libxcrd_la_LDFLAGS = $(VERSION_INFO) -shared $(XC_LIBS) $(LIBCONFIGXX_LIBS) $(CDB_LIBS)
 
 libxcrdmake_la_CPPFLAGS = $(XC_CFLAGS) $(CDB_CFLAGS) $(XMLXX_CFLAGS)
-libxcrdmake_la_SOURCES = make.cc out_cdb.cc out_debug.cc 
+libxcrdmake_la_SOURCES = make.cc out_cdb.cc out_debug.cc
 libxcrdmake_la_LDFLAGS = $(VERSION_INFO) -shared $(XC_LIBS) $(CDB_LIBS) $(XMLXX_LIBS) -lgettextpo
 
 #lib_LTLIBRARIES = libxcusers.la libxcusers-soap.la libxcusers-proxy.la libxcusers-test.la
@@ -36,6 +36,11 @@ reglookup_LDADD = libxcrd.la
 regdump_CPPFLAGS =
 regdump_SOURCES = regdump.cc
 regdump_LDADD = libxcrd.la
+
+noinst_PROGRAMS = test
+
+test_SOURCES = test.cc
+test_LDADD = libxcrd.la libxcrdmake.la -lxcconfig -lxctest
 
 testcbc:
 	./cbc test.cb *.xml

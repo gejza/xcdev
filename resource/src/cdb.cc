@@ -18,41 +18,49 @@
 #include <memory.h>
 #include <stdlib.h>
 
-#include "../include/xc/resource/cdb.h"
+#include <xc/buffer.h>
+
+#include "../include/xc/rd/cdb.h"
 
 ///////////////////////////////////////////    
-xc::resource::ConstDB_t::ConstDB_t(const char* fn)
+xc::rd::ConstDB_t::ConstDB_t(const char* fn)
     : _fd(fn)
 {
     int ret = cdb_init(&this->_db, this->_fd.fd());
 }
 
-xc::resource::ConstDB_t::~ConstDB_t()
+xc::rd::ConstDB_t::~ConstDB_t()
 {
 }
 
-bool xc::resource::ConstDB_t::exist(const xc::data_t& key) const
+bool xc::rd::ConstDB_t::exist(const xc::rd::ns_t ns, const xc::data_t& key) const
 {
-    if (cdb_find(const_cast<cdb*>(&this->_db), key.data(), key.size()) > 0)
+	xc::buffer_t k;
+	k << ns << key;
+    if (cdb_find(const_cast<cdb*>(&this->_db), k.data(), k.size()) > 0)
     {
         return true;
     }
     return false;
 }
 
-bool xc::resource::ConstDB_t::lookup(const xc::data_t& key, xc::data_t& val) const
+bool xc::rd::ConstDB_t::lookup(const xc::rd::ns_t ns, const xc::data_t& key,
+		xc::data_t& val) const
 {
-    if (cdb_find(const_cast<cdb*>(&this->_db), key.data(), key.size()) > 0)
+	xc::buffer_t k;
+	k << ns << key;
+    if (cdb_find(const_cast<cdb*>(&this->_db), k.data(), k.size()) > 0)
     {
         uint32_t vpos = cdb_datapos(&this->_db);
         uint32_t vlen = cdb_datalen(&this->_db);
-        val = xc::data_t(reinterpret_cast<const uint8_t*>(cdb_get(const_cast<cdb*>(&this->_db), vlen, vpos)), vlen);
+        val = xc::data_t(reinterpret_cast<const uint8_t*>
+				(cdb_get(const_cast<cdb*>(&this->_db), vlen, vpos)), vlen - 1);
         return true;
     }
     return false;
 }
 
-/*std::string xc::resource::ConstDB_t::get_string(const Value_t& key)
+/*std::string xc::rd::ConstDB_t::get_string(const Value_t& key)
 {
     Value_t val;
     if (this->get(key, val))
@@ -64,7 +72,7 @@ bool xc::resource::ConstDB_t::lookup(const xc::data_t& key, xc::data_t& val) con
     return "";
 }*/
 
-void xc::resource::ConstDB_t::dump()
+void xc::rd::ConstDB_t::dump()
 {
     /*struct cdb_find dbf;
     cdb_findinit(&dbf, &_db, "", 0);

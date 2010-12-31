@@ -21,21 +21,40 @@
 #include <xc/text.h>
 #include <xc/error.h>
 
+#include "include/xc/test.h"
+
 extern int xc_test_main(int argc, const char* argv[]);
 
-void print_version()
-{
-    ::fputs(xc::get_full_info(), stderr);
+////////////////////////////////////////////////
+// Test Functions
+
+void xc::test::printf(const char *fmt, ...) {
+    va_list ap;
+    va_start (ap, fmt);
+	xc::test::vprintf(fmt, ap);
+    va_end (ap);
 }
 
-void print_usage(const char* name)
-{
-    fprintf(stderr, "Usage: %s\n", name);
+void xc::test::vprintf(const char *fmt, va_list ap) {
+
+	::vprintf(fmt, ap);
 }
 
-void print_help(const char* name)
-{
-    print_usage(name);
+namespace {
+	void print_version()
+	{
+		::fputs(xc::get_full_info(), stderr);
+	}
+
+	void print_usage(const char* name)
+	{
+		fprintf(stderr, "Usage: %s\n", name);
+	}
+
+	void print_help(const char* name)
+	{
+		print_usage(name);
+	}
 }
 
 int main(int argc, char* const* argv)
@@ -75,7 +94,4 @@ int main(int argc, char* const* argv)
 
     return 0;
 }
-
-
-
 

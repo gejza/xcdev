@@ -11,6 +11,9 @@
 #define _XC_DATA_H_
 #pragma once
 
+//TODO
+#include <string.h>
+
 #include <xc/types.h>
 
 namespace xc {
@@ -26,12 +29,21 @@ Value_t min(const Value_t a, const Value_t b) {
 class data_t
 {
 public:
+	typedef uint8_t value_t;
 
     /**
      * Default constructor
      */
-    data_t(const uint8_t* data, size_t size)
+    data_t()
+        : _data(NULL), _size(0) {
+    }
+
+    data_t(const value_t* data, size_t size)
         : _data(data), _size(size) {
+    }
+
+    data_t(const char* str)
+        : _data(reinterpret_cast<const value_t*>(str)), _size(::strlen(str)) {
     }
 
     data_t(const data_t& data)
@@ -110,7 +122,7 @@ public:
         return *this;
     }
 private:
-    const uint8_t* _data;
+    const value_t* _data;
     size_t _size;
 };
 

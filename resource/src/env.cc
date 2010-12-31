@@ -12,18 +12,18 @@
 
 #include "StdAfx.h"
 
-#include "../include/xc/resource/env.h"
-#include "../include/xc/resource/cdb.h"
+#include "../include/xc/rd/env.h"
+#include "../include/xc/rd/cdb.h"
 
-xc::resource::Env_t::Env_t()
+xc::rd::Env_t::Env_t()
 {
     _config.readFile("test.cfg");
     _config.lookup("application");
 }
 
-const xc::resource::Lookup_t& xc::resource::Env_t::get() const
+const xc::rd::Lookup_t& xc::rd::Env_t::get() const
 {
-    xc::resource::ConstDB_t db("system.cdb");
+    xc::rd::ConstDB_t db("system.cdb");
     RUNTIME_ERROR("Lookup not found.");
-    return *((const xc::resource::Lookup_t*)0);
+    return *((const xc::rd::Lookup_t*)0);
 }
