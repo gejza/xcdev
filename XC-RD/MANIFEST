@@ -2,6 +2,8 @@ Changes
 Makefile.PL
 MANIFEST
 ppport.h
+perlobject.map
+typemap
 RD.xs
 README
 t/XC-RD.t
@@ -10,3 +12,11 @@ t/XC-RD-Lookup.t
 lib/XC/RD.pm
 lib/XC/RD/Make.pm
 lib/XC/RD/Lookup.pm
+debian/changelog
+debian/compat
+debian/control
+debian/copyright
+debian/libxcrd-perl.docs
+debian/rules
+debian/watch
+
