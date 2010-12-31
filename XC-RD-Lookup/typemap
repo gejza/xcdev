@@ -1,0 +1,2 @@
+TYPEMAP
+Lookup *         O_OBJECT

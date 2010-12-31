@@ -1,0 +1,12 @@
+Changes
+Lookup.xs
+Makefile.PL
+MANIFEST
+ppport.h
+typemap
+perlobject.map
+README
+t/begin.t
+t/lookup.t
+lib/XC/RD/Lookup.pm
+
