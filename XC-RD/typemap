@@ -1,2 +1,3 @@
 TYPEMAP
 Make *         O_OBJECT
+Lookup *       O_OBJECT

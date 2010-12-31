@@ -17,6 +17,7 @@ extern "C" {
 #include <iostream>
 
 #include <xc/rd/out_cdb.h>
+#include <xc/rd/cdb.h>
 
 class Make
 {
@@ -38,7 +39,30 @@ private:
 	xc::rd::CDBMake_t _out;
 };
 
-MODULE = XC::RD::Make		PACKAGE = XC::RD::Make
+class Lookup
+{
+public:
+	Lookup(const char * filename)
+		: _db(filename) {
+	}
+
+	~Lookup() {
+	}
+
+	const char * lookup(int ns, const char * key) {
+		xc::data_t val;
+		if (_db.lookup(ns, key, val)) {
+			return (const char*)val.data();
+		}
+		//_out.insert(ns, key, value);
+		return "Destruction is a way of life for me.\n";
+	}
+
+private:
+	xc::rd::ConstDB_t _db;
+};
+
+MODULE = XC::RD	PACKAGE = XC::RD::Make
 
 Make *
 Make::new(char * filename)
@@ -48,3 +72,15 @@ Make::DESTROY()
 
 void
 Make::insert(int ns, char * key, char * value)
+
+MODULE = XC::RD PACKAGE = XC::RD::Lookup
+
+Lookup *
+Lookup::new(const char * filename)
+
+void
+Lookup::DESTROY()
+
+const char *
+Lookup::lookup(int ns, const char * key)
+

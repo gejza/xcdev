@@ -1,0 +1,12 @@
+Changes
+Makefile.PL
+MANIFEST
+ppport.h
+RD.xs
+README
+t/XC-RD.t
+t/XC-RD-Make.t
+t/XC-RD-Lookup.t
+lib/XC/RD.pm
+lib/XC/RD/Make.pm
+lib/XC/RD/Lookup.pm
