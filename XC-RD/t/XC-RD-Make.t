@@ -15,11 +15,6 @@ BEGIN { use_ok('XC::RD') };
 
 use XC::RD;
 my $m = new XC::RD::Make("test.cdb");
-my $ns;
-my $key;
-for ($ns = 1; $ns < 50; $ns++) {
-	for ($key = 1; $key < 50000; $key++) {
-		$m->insert($ns, "$key", "$ns:$key");
-	}
-}
 
+my %skoly = ("pavel" => "FI MUNI", "petr" => "FIT VUT");
+$m->insert(1, "skoly", $skoly);

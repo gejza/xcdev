@@ -45,7 +45,9 @@ PHP_RINIT_FUNCTION(xcrd);
 PHP_RSHUTDOWN_FUNCTION(xcrd);
 PHP_MINFO_FUNCTION(xcrd);
 
-PHP_FUNCTION(confirm_xcrd_compiled);	/* For testing, remove later. */
+PHP_FUNCTION(xcrd_load);
+
+PHP_FUNCTION(xcrd_lookup);
 
 /**
  * Lookup include with php class defined
@@ -69,17 +71,6 @@ PHP_FUNCTION(registry_get);
 
 PHP_FUNCTION(registry_set_lang);
 PHP_FUNCTION(registry_add_ns);
-
-
-/* 
-  	Declare any global variables you may need between the BEGIN
-	and END macros here:     
-
-ZEND_BEGIN_MODULE_GLOBALS(xcrd)
-	long  global_value;
-	char *global_string;
-ZEND_END_MODULE_GLOBALS(xcrd)
-*/
 
 /* In every utility function you add that needs to use variables 
    in php_xcrd_globals, call TSRMLS_FETCH(); after declaring other 

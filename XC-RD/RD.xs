@@ -24,17 +24,23 @@ class Make
 public:
 	Make(char * filename)
 		: _out(filename) {
-		std::cout << "I'm constructin'\n";
 	}
 
 	~Make() {
-		std::cout << "Destruction is a way of life for me.\n";
 	}
 
 	void insert(int ns, char * key, char * value) {
 		_out.insert(ns, key, value);
 	}
 
+	void insert(int ns, char * key, SV* value) {
+		//_out.insert(ns, key, value);
+		/*for (i=0; i<=av_len(array); i++) {
+			      SV** elem = av_fetch(array, i, 0);
+				      if (elem != NULL)
+						        sum += SvNV(*elem);
+								  }*/
+	}
 private:
 	xc::rd::CDBMake_t _out;
 };
@@ -71,7 +77,7 @@ void
 Make::DESTROY()
 
 void
-Make::insert(int ns, char * key, char * value)
+Make::insert(int ns, char * key, SV* value)
 
 MODULE = XC::RD PACKAGE = XC::RD::Lookup
 

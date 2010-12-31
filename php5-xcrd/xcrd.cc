@@ -22,14 +22,46 @@
 #include "config.h"
 #endif
 
+#include <stdint.h>
+#include <xc/error.h>
+#include <xc/version.h>
+#include <list>
+
+#include <xc/rd/cdb.h>
+//#include <xc/registry/web.h>
+
 #include "php.h"
 #include "php_ini.h"
 #include "ext/standard/info.h"
 #include "php_xcrd.h"
 
-/* If you declare any globals in php_xcrd.h uncomment this:
+#undef lookup
+class Env_t
+{
+public:
+	Env_t();
+	~Env_t();
+    
+	void load(const char* fn);
+
+	bool lookup(const xc::rd::ns_t ns, const xc::data_t& key,
+			xc::data_t& value) const;
+
+	void clear();
+protected:
+	typedef std::list<xc::rd::Lookup_t*> Tbs_t;
+	Tbs_t _tbs;
+};
+
+ZEND_BEGIN_MODULE_GLOBALS(xcrd)
+	Env_t env;
+	xc::rd::Lookup_t* table;
+
+	long  global_value;
+	char *global_string;
+ZEND_END_MODULE_GLOBALS(xcrd)
+
 ZEND_DECLARE_MODULE_GLOBALS(xcrd)
-*/
 
 /* True global resources - no need for thread safety here */
 static int le_xcrd;
@@ -39,7 +71,8 @@ static int le_xcrd;
  * Every user visible function must have an entry in xcrd_functions[].
  */
 const zend_function_entry xcrd_functions[] = {
-	PHP_FE(confirm_xcrd_compiled,	NULL)		/* For testing, remove later. */
+	PHP_FE(xcrd_load,	NULL)
+	PHP_FE(xcrd_lookup,	NULL)		/* For testing, remove later. */
 	{NULL, NULL, NULL}	/* Must be the last line in xcrd_functions[] */
 };
 /* }}} */
@@ -70,32 +103,32 @@ ZEND_GET_MODULE(xcrd)
 
 /* {{{ PHP_INI
  */
-/* Remove comments and fill if you need to have entries in php.ini
 PHP_INI_BEGIN()
-    STD_PHP_INI_ENTRY("xcrd.global_value",      "42", PHP_INI_ALL, OnUpdateLong, global_value, zend_xcrd_globals, xcrd_globals)
-    STD_PHP_INI_ENTRY("xcrd.global_string", "foobar", PHP_INI_ALL, OnUpdateString, global_string, zend_xcrd_globals, xcrd_globals)
+    //STD_PHP_INI_ENTRY("xcrd.global_value",      "42", PHP_INI_ALL, OnUpdateLong, global_value, zend_xcrd_globals, xcrd_globals)
+    //STD_PHP_INI_ENTRY("xcrd.global_string", "foobar", PHP_INI_ALL, OnUpdateString, global_string, zend_xcrd_globals, xcrd_globals)
+	PHP_INI_ENTRY("registry.greeting", "Hello World", PHP_INI_ALL, NULL)
 PHP_INI_END()
-*/
+
 /* }}} */
 
 /* {{{ php_xcrd_init_globals
  */
-/* Uncomment this function if you have INI entries
 static void php_xcrd_init_globals(zend_xcrd_globals *xcrd_globals)
 {
+	xcrd_globals->table = NULL;
+
 	xcrd_globals->global_value = 0;
 	xcrd_globals->global_string = NULL;
 }
-*/
 /* }}} */
 
 /* {{{ PHP_MINIT_FUNCTION
  */
 PHP_MINIT_FUNCTION(xcrd)
 {
-	/* If you have INI entries, uncomment these lines 
+	ZEND_INIT_MODULE_GLOBALS(xcrd, php_xcrd_init_globals, NULL);
+
 	REGISTER_INI_ENTRIES();
-	*/
 	return SUCCESS;
 }
 /* }}} */
@@ -104,9 +137,7 @@ PHP_MINIT_FUNCTION(xcrd)
  */
 PHP_MSHUTDOWN_FUNCTION(xcrd)
 {
-	/* uncomment this line if you have INI entries
 	UNREGISTER_INI_ENTRIES();
-	*/
 	return SUCCESS;
 }
 /* }}} */
@@ -116,6 +147,7 @@ PHP_MSHUTDOWN_FUNCTION(xcrd)
  */
 PHP_RINIT_FUNCTION(xcrd)
 {
+	XCRD_G(global_string) = "rinit";
 	return SUCCESS;
 }
 /* }}} */
@@ -135,41 +167,86 @@ PHP_MINFO_FUNCTION(xcrd)
 {
 	php_info_print_table_start();
 	php_info_print_table_header(2, "xcrd support", "enabled");
+	php_info_print_table_row(2, "Version", xc::get_version());
+	php_info_print_table_row(2, "Built", xc::get_built_info());
+	php_info_print_table_row(2, "Info", xc::get_info());
+	php_info_print_table_row(2, "Full info", xc::get_full_info());
 	php_info_print_table_end();
 
-	/* Remove comments if you have entries in php.ini
 	DISPLAY_INI_ENTRIES();
-	*/
 }
 /* }}} */
 
-
-/* Remove the following function when you have succesfully modified config.m4
-   so that your module can be compiled into PHP, it exists only for testing
-   purposes. */
-
-/* Every user-visible function in PHP should document itself in the source */
-/* {{{ proto string confirm_xcrd_compiled(string arg)
-   Return a string to confirm that the module is compiled in */
-PHP_FUNCTION(confirm_xcrd_compiled)
+PHP_FUNCTION(xcrd_load)
 {
-	char *arg = NULL;
-	int arg_len, len;
-	char *strg;
+	try {
+		char *fn = NULL;
+		int fn_len;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &arg, &arg_len) == FAILURE) {
-		return;
-	}
+		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &fn, &fn_len) == FAILURE) {
+			return;
+		}
 
-	len = spprintf(&strg, 0, "Congratulations! You have successfully modified ext/%.78s/config.m4. Module %.78s is now compiled into PHP.", "xcrd", arg);
-	RETURN_STRINGL(strg, len, 0);
+		XCRD_G(env).load(fn);
+
+    } catch (const xc::error_t& e) {
+        zend_error(E_ERROR, "Error: %s", e.message().c_str());
+        RETURN_NULL();
+    }
 }
-/* }}} */
-/* The previous line is meant for vim and emacs, so it can correctly fold and 
-   unfold functions in source code. See the corresponding marks just before 
-   function definition, where the functions purpose is also documented. Please 
-   follow this convention for the convenience of others editing your code.
-*/
+
+Env_t::Env_t()
+{
+}
+Env_t::~Env_t()
+{
+	this->clear();
+}
+
+void Env_t::load(const char* fn)
+{
+	/*if (XCRD_G(table))
+		php_printf("Already loaded\n");
+
+	XCRD_G(table) = new xc::rd::ConstDB_t(fn);*/
+	xc::rd::Lookup_t* look = new xc::rd::ConstDB_t(fn);
+	this->_tbs.push_front(look);
+}
+
+bool Env_t::lookup(const xc::rd::ns_t ns, const xc::data_t& key,
+			xc::data_t& value) const
+{
+	for (Tbs_t::const_iterator l = this->_tbs.begin(); l != this->_tbs.end(); ++l)
+	{
+		if ((*l)->lookup(ns, key, value))
+			return true;
+	}
+	return false;
+}
+
+PHP_FUNCTION(xcrd_lookup)
+{
+    try {
+		long ns;
+        const uint8_t* key;
+        int key_len;
+
+        if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ls", &ns, &key, &key_len) == FAILURE) {
+            RETURN_NULL();
+        }
+
+		xc::data_t val;
+		if (XCRD_G(env).lookup(ns, xc::data_t(key, key_len), val)) {
+			RETURN_STRINGL((const char*)val.data(), val.size(), 1);
+		} else {
+			RETURN_NULL();
+		}
+
+    } catch (const xc::error_t& e) {
+        zend_error(E_ERROR, "Error: %s", e.message().c_str());
+        RETURN_NULL();
+    }
+}
 
 
 /*
@@ -193,13 +270,6 @@ PHP_FUNCTION(confirm_xcrd_compiled)
 #include "php_registry.h"
 #include "utils.h"
 
-#include <stdint.h>
-#include <xc/error.h>
-#include <xc/cb.h>
-#include <xc/serialize.h>
-#include <xc/version.h>
-
-#include <xc/registry/web.h>
 
 static function_entry registry_functions[] = {
     PHP_FE(registry_php_class, NULL)
@@ -231,61 +301,6 @@ zend_module_entry registry_module_entry = {
 #ifdef COMPILE_DL_REGISTRY
 ZEND_GET_MODULE(registry)
 #endif
-
-PHP_INI_BEGIN()
-PHP_INI_ENTRY("registry.greeting", "Hello World", PHP_INI_ALL, NULL)
-PHP_INI_END()
-
-PHP_MINIT_FUNCTION(registry)
-{
-    REGISTER_INI_ENTRIES();
-
-    return SUCCESS;
-}
-
-PHP_MSHUTDOWN_FUNCTION(registry)
-{
-    UNREGISTER_INI_ENTRIES();
-
-    return SUCCESS;
-}
-
-PHP_MINFO_FUNCTION(registry)
-{
-	php_info_print_table_start();
-	php_info_print_table_header(2, "xc registry support", "enabled");
-	php_info_print_table_row(2, "Version", xc::get_version());
-	php_info_print_table_row(2, "Built", xc::get_built_info());
-	php_info_print_table_row(2, "Info", xc::get_info());
-	php_info_print_table_row(2, "Full info", xc::get_full_info());
-	php_info_print_table_end();
-
-	DISPLAY_INI_ENTRIES();
-}
-
-PHP_FUNCTION(registry_php_class)
-{
-    try {
-        char *name;
-        int name_len;
-
-        if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &name_len) == FAILURE) {
-            RETURN_NULL();
-        }
-
-        php_printf("Search class %s \n", name);
-        xc::registry::PHPIncludeTable_t table(*new xc::registry::Config_t());
-        std::string file = table.find_class(name);
-        if (!file.empty()) {
-            RETURN_STRING(file.c_str(), 1);
-        } else {
-            RETURN_NULL();
-        }
-    } catch (const xc::error_t& e) {
-        zend_error(E_ERROR, "Error: %s", e.message().c_str());
-        RETURN_NULL();
-    }
-}
 
 PHP_FUNCTION(registry_string)
 {
