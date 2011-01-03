@@ -14,6 +14,17 @@ BEGIN { use_ok('XC::RD') };
 # its man page ( perldoc Test::More ) for help writing this test script.
 
 use XC::RD;
+my $m = new XC::RD::Make("test.cdb");
+my $ns;
+my $key;
+for ($ns = 1; $ns < 50; $ns++) {
+	for ($key = 1; $key < 50000; $key++) {
+		$m->insert($ns, "$key", "$ns:$key");
+	}
+}
+
+$m = 0;
+
 my $l = new XC::RD::Lookup("test.cdb");
 print $l->lookup(1, 'k1');
 
