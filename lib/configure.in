@@ -1,5 +1,5 @@
 # -*- Autoconf -*-
-# $Id: configure.in 13899 2009-01-15 08:21:30Z michal.bukovsky $
+# $Id$
 # 
 #   Xross Core Library
 #   autoconf requirements and initialization 
