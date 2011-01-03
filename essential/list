@@ -33,8 +33,15 @@ libc6-dev [!alpha !ia64 !hurd-i386] | libc0.3-dev [hurd-i386] | libc6.1-dev [alp
 libc6-dev-sparc64 [sparc]
   Used only on the sparc architecture.
 
+autotools-dev
+
+autopoint
+
 autoconf-archive
     Scripts
+
+debhelper (>= 7)
+    Debian packages
 
 gcc (>= 4:4.4.3)
 g++ (>= 4:4.4.3)
