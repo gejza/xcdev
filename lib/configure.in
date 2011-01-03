@@ -10,7 +10,7 @@
 AC_PREREQ(2.50)
 
 # initialize autoconf
-AC_INIT([libxc], [0.0.1], [milan@ministryofnet.com])
+AC_INIT([libxc], [0.0.1], [milan.dunghubel@gmail.com])
 
 # install autotools scripts to build-aux dir
 AC_CONFIG_AUX_DIR([build-aux])
@@ -140,12 +140,6 @@ AC_MSG_NOTICE([pkgconfig directory is ${pkgconfigdir}])
 # version info') before touching this. (this is *.so version number).
 VERSION_INFO="-version-info 1:0:0"
 AC_SUBST(VERSION_INFO)
-
-dnl --------------------------------------------------------------------------
-dnl Doxygen
-dnl --------------------------------------------------------------------------
-DX_HTML_FEATURE(ON)
-DX_INIT_DOXYGEN([libxc], [Doxyfile], [doc/gen])
 
 dnl --------------------------------------------------------------------------
 dnl Test features that rely on configure-definitions

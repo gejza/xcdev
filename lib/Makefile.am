@@ -37,9 +37,6 @@ dist-hook:
 ## gettext
 include $(top_srcdir)/am/gettext.am
 
-## doxygen
-include $(top_srcdir)/am/doxygen.am
-
 ## test
 include $(top_srcdir)/am/test.am
 
