@@ -14,42 +14,55 @@
 #include "assert.h"
 
 namespace xc {
-namespace bytecode {
 
-    enum ChunkId_t {
-        MASK_ID = 0xFF000000,
-        MASK_SIZE = 0x00FFFFFF,
+	struct chunk_t
+	{
+		enum {
+			//DATA = 0x02000000,
+			STRING = 0x0300,
+			STRID = 0x0400,
+			LONG = 0x0500,
+			FLOAT = 0x0600,
 
-        KEY = 0x01000000,
-        //DATA = 0x02000000,
-        STRING = 0x03000000,
-        STRID = 0x04000000,
-        LONG = 0x05000000,
-        FLOAT = 0x06000000,
+			ARRAY = 0xFF00,
+			END = 0x0000,
+		};
 
-        ARRAY = 0xFF000000,
-        END = 0x00000000,
-    };
+		typedef uint16_t id_t;
 
-    typedef uint32_t Chunk_t;
+		uint16_t _id;
+		uint16_t _keysize;
+		uint32_t _valsize;
 
-    inline ChunkId_t id(Chunk_t ch) {
-        return ChunkId_t(MASK_ID & ch);
-    }
+		id_t id() const {
+			return _id;
+		}
 
-    inline size_t size(Chunk_t ch) {
-        return size_t(MASK_SIZE & ch);
-    }
+		const char* key() const {
+			return _keysize
+				? reinterpret_cast<const char*>(this) + sizeof(chunk_t)
+				: NULL;
+		}
 
-    inline Chunk_t chunk(ChunkId_t id, size_t size) {
-        assert((id & MASK_ID) == id);
-        assert(size < MASK_SIZE);
-        return (id & MASK_ID) | (size & MASK_SIZE);
-    }
-    
-} // namespace bytecode
+		size_t key_size() const {
+			return _keysize;
+		}
 
-namespace bc = bytecode;
+		const void* value() const {
+			return reinterpret_cast<const uint8_t*>(this)
+				+ sizeof(chunk_t) + key_size();
+		}
+
+		size_t value_size() const {
+			return _valsize;
+		}
+
+		size_t size() const {
+			return sizeof(chunk_t) + key_size() + value_size();
+		}
+	};
+
+
 } // namespace xc
 
 #endif // _XC_BYTECODE_H_

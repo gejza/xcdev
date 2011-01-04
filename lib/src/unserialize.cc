@@ -29,41 +29,23 @@ xc::unserialize_t::unserialize_t(const std::string& str)
       //  this->next();
 }
 
+xc::unserialize_t::unserialize_t(const chunk_t& chunk)
+    : _data(reinterpret_cast<const uint8_t*>(chunk.value()), chunk.value_size()) {
+    //_key(NULL), _chunk(xc::bytecode::END), _value(_data) {
+      //  this->next();
+}
 xc::unserialize_t::unserialize_t(const uint8_t* data, size_t size)
     : _data(data, size) {
 }
 
-xc::unserialize_t::value_t xc::unserialize_t::read()
+const xc::chunk_t* xc::unserialize_t::read()
 {
-    return xc::unserialize_t::value_t(_data);
-}
-
-xc::bytecode::Chunk_t read_chunk(xc::data_t& data)
-{
-    if (data.size() < sizeof(xc::bytecode::Chunk_t))
-        return xc::bytecode::END;
-    xc::bytecode::Chunk_t chunk =
-        *reinterpret_cast<const xc::bytecode::Chunk_t*>(data.data());
-    data += sizeof(xc::bytecode::Chunk_t);
+    if (_data.size() < sizeof(xc::chunk_t))
+        return NULL;
+	const xc::chunk_t* chunk = reinterpret_cast<const xc::chunk_t*>(_data.data());
+    _data += chunk->size();
     return chunk;
 }
-
-xc::unserialize_t::value_t::value_t(xc::data_t& data)
-    :_chunk(xc::bytecode::END), _key(NULL),_value(data)
-{
-    _chunk = read_chunk(data);
-    if (xc::bytecode::id(_chunk) == xc::bytecode::KEY) {
-        _key = reinterpret_cast<const char*>(data.data());
-        data += xc::bytecode::size(_chunk);
-        _chunk = read_chunk(data);
-    }
-    _value = data.cut(xc::bytecode::size(_chunk));
-}
-
-xc::unserialize_t xc::unserialize_t::value_t::array() const {
-    return unserialize_t(_value);
-}
-
 
 #if 0
 
@@ -97,25 +79,28 @@ private:
 //TODO: napojit na xc lib
 void xc::dump(xc::unserialize_t& ser, int level)
 {
-    while (xc::unserialize_t::value_t val = ser.read()) {
-        if (val.key()) {
-            std::cout << val.key() << " = ";
+    while (const xc::chunk_t* val = ser.read()) {
+        if (val->key()) {
+            std::cout << val->key() << " = ";
         }
         //std::cout << std::hex << ser.id() << std::endl;
-        switch (val.id()) {
-        case bytecode::ARRAY:
+        switch (val->id()) {
+		case xc::chunk_t::ARRAY:
             {
                 std::cout << "(" << std::endl;
-                xc::unserialize_t arr = val.array();
+                xc::unserialize_t arr(*val);
                 dump(arr, level + 1);
                 std::cout << ")\n" << std::endl;
             }
             break;
-        case bytecode::STRING:
-            std::cout << val.c_str() << std::endl;
+		case xc::chunk_t::STRING:
+            std::cout << (const char*)val->value() << std::endl;
+            break;
+		case xc::chunk_t::LONG:
+            std::cout << *((int*)val->value()) << std::endl;
             break;
         default:
-            RUNTIME_ERROR("Unknown chunk id %x", (unsigned int)val.id());
+            RUNTIME_ERROR("Unknown chunk id %x", (unsigned int)val->id());
             return;
         };
     }

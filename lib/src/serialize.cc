@@ -17,6 +17,39 @@
 #include "xc/serialize.h"
 #include "xc/unserialize.h"
 
+namespace {
+	void write(xc::buffer_t& out,
+			xc::chunk_t::id_t id, const std::string& key, const void* data, size_t size)
+	{
+		xc::chunk_t chunk;
+		chunk._id = id;
+		chunk._keysize = key.size() + 1;
+		chunk._valsize = size;
+		out.append(&chunk, sizeof(xc::chunk_t));
+		if (chunk.key_size())
+			out.append(key.c_str(), key.size() + 1);
+		out.append(data, size);
+	}
+}
+
+void xc::serialize(xc::buffer_t& out, const std::string& key, int value)
+{
+	write(out, xc::chunk_t::LONG, key, &value, sizeof(int));
+	printf("Add %s=%d\n", key.c_str(), value);
+}
+
+void xc::serialize(xc::buffer_t& out, const std::string& key, const std::string& value)
+{
+	write(out, xc::chunk_t::STRING, key, value.c_str(), value.size());
+	printf("Add %s=%s\n", key.c_str(), value.c_str());
+}
+
+void xc::serialize(xc::buffer_t& out, const std::string& key, const serialize_t& ser)
+{
+	write(out, xc::chunk_t::ARRAY, key, ser.data(), ser.size());
+	printf("Array %s=%ld\n", key.c_str(), ser.size());
+}
+/*
 xc::serialize_t::serialize_t(xc::ostream_t& out)
     : _out(out) {
 }

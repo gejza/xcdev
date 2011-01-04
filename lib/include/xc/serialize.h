@@ -19,100 +19,66 @@
 
 #include "bytecode.h"
 #include "stream.h"
+#include "buffer.h"
 
 namespace xc {
 
-class serial_t;
-/**
- * Serialize class
- */
-class serialize_t
-{
-public:
-    /**
-     * Kontruktor
-     * @param out Output stream
-     */
-    serialize_t(xc::ostream_t& out);
+	class serialize_t;
 
-    /**
-     * Write value with key
-     */
-    template<typename Object_t>
-    void write(const std::string& key, const Object_t& obj) {
-        this->_writekey(key);
-        this->write(obj);
-    }
+	void serialize(xc::buffer_t& out, const std::string& key, int value);
+	void serialize(xc::buffer_t& out, const std::string& key, const std::string& value);
+	void serialize(xc::buffer_t& out, const std::string& key, const serialize_t& ser);
 
-    template<typename Value_t>
-    void write(const std::vector<Value_t>& objs);
+	template<typename Value_t>
+	void serialize(xc::buffer_t& out, const Value_t& value) {
+		serialize(out, std::string(), value);
+	}
 
-    template<typename Value_t>
-    void write(const std::map<std::string, Value_t>& objs);
+	template<typename Value_t>
+	xc::buffer_t serialize(const Value_t& value) {
+		xc::buffer_t out;
+		serialize(out, value);
+		return out;
+	}
 
-    void write(const std::string& str);
+	/**
+	 * Serialize class
+	 */
+	class serialize_t : public xc::buffer_t
+	{
+	public:
+		template<typename Value_t>
+		void add(const Value_t& value) {
+			serialize(*this, value);
+		}
 
-    void write(const serial_t& s);
+		template<typename Key_t, typename Value_t>
+		void add(const Key_t& key, const Value_t& value) {
+			serialize(*this, std::string(key), value);
+		}
 
-protected:
-    void _writekey(const std::string& key);
+	protected:
+	};
 
-    void _write(bytecode::ChunkId_t id, const void* ptr, size_t size);
-    
-    void _write(bytecode::ChunkId_t id, const std::string& str) {
-        this->_write(id, str.data(), str.size());
-    }
-private:
-    xc::ostream_t& _out;
-};
+	template<typename Value_t>
+	void serialize(xc::buffer_t& out, const std::map<std::string, Value_t>& value) {
+		xc::serialize_t obj;
+		for (typename std::map<std::string, Value_t>::const_iterator i = value.begin();
+				i != value.end(); i++) {
+			obj.add(i->first, i->second);
+		}
+		serialize(out, obj);
+	}
 
-class serial_t : public serialize_t
-{
-public:
-    serial_t()
-        : serialize_t(_data) {}
-    
-    const std::string& str() const {
-        return _data.str();
-    }
-/*
-
-    const uint8_t* data() const {
-        return reinterpret_cast<const uint8_t*>(_data.data());
-    }
-
-    size_t size() const {
-        return _data.size();
-    }
-
-    const std::string& str() const {
-        return _data;
-    }
-*/
-private:
-    xc::ostream_data_t _data;
-};
-
-template<typename Value_t>
-void serialize_t::write(const std::vector<Value_t>& objs) {
-    serial_t ser;
-    for (typename std::vector<Value_t>::const_iterator
-        i = objs.begin(); i != objs.end(); ++i)
-    ser.write(*i);
-    this->write(ser);
-}
-
-template<typename Value_t>
-void serialize_t::write(const std::map<std::string, Value_t>& objs) {
-    serial_t ser;
-    for (typename std::map<std::string, Value_t>::const_iterator
-        i = objs.begin(); i != objs.end(); ++i)
-       ser.write(i->first, i->second);
-    this->write(ser);
-}
-
-ostream_t& serialize(ostream_t& out, const std::string& str);
-
+	template<typename Value_t>
+	void serialize(xc::buffer_t& out, const std::vector<Value_t>& value) {
+		xc::serialize_t obj;
+		for (typename std::vector<Value_t>::const_iterator i = value.begin();
+				i != value.end(); i++) {
+			obj.add(*i);
+		}
+		serialize(out, obj);
+	}
 
 } // namespace xc
 

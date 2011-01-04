@@ -17,9 +17,5 @@ BEGIN { use_ok('XC::RD') };
 use XC::RD;
 my $m = new XC::RD::Make("test.cdb");
 
-my %skoly = ("pavel" => "FI MUNI", "petr" => "FIT VUT");
-my @pole = [ 1,2,3];
+my %skoly = ("pavel" => "FI MUNI", "petr" => "FIT VUT", "pole" => [ 1,2,3]);
 $m->insert(1, "skoly", \%skoly);
-$m->insert(1, "skoly", \@pole);
-$m->insert(1, "skoly", "aaa");
-$m->insert(1, "skoly", 10);
