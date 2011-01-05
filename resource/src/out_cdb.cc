@@ -27,6 +27,12 @@ xc::rd::CDBMake_t::~CDBMake_t()
     //std::cout << "Finish cdb: " << ret << std::endl;
 }
 
+//TODO: to lib
+xc::string human(const xc::buffer_t& data, size_t limit)
+{
+	return xc::human(data.data(), data.size(), limit);
+}
+
 void xc::rd::CDBMake_t::insert(const xc::rd::ns_t ns, const xc::data_t& key,
 			const xc::data_t& value)
 {
@@ -35,6 +41,8 @@ void xc::rd::CDBMake_t::insert(const xc::rd::ns_t ns, const xc::data_t& key,
 	xc::buffer_t v;
 	v << value << '\0';
     int ret = cdb_make_add(&this->_db, k.data(), k.size(), v.data(), v.size());
+	XC_DBG("Insert new walue ns=%x key=%s data=%s",
+			ns, ::human(k, 20).c_str(), ::human(v, 40).c_str());
     //std::cout << "Key: " << klen << " Value: " << vlen << " ret:" << ret << std::endl;
 }
 

@@ -6,7 +6,7 @@ AM_CPPFLAGS = -I$(srcdir)/../include
 AM_LDFLAGS = $(VERSION_INFO)
 
 lib_LTLIBRARIES = libxcrd.la
-libxcrd_la_CPPFLAGS = $(XC_CFLAGS) $(LIBCONFIGXX_CFLAGS) $(CDB_CFLAGS)
+libxcrd_la_CPPFLAGS = -DDEBUG $(XC_CFLAGS) $(LIBCONFIGXX_CFLAGS) $(CDB_CFLAGS)
 libxcrd_la_SOURCES = env.cc cdb.cc config.cc make.cc out_cdb.cc out_debug.cc
 libxcrd_la_LDFLAGS = $(VERSION_INFO) -shared $(XC_LIBS) $(LIBCONFIGXX_LIBS) $(CDB_LIBS)
 

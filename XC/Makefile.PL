@@ -6,14 +6,14 @@ $CC = 'g++';
 # See lib/ExtUtils/MakeMaker.pm for details of how to influence
 # the contents of the Makefile that is written.
 WriteMakefile(
-    NAME              => 'XC::RD',
-    VERSION_FROM      => 'lib/XC/RD.pm', # finds $VERSION
+    NAME              => 'XC',
+    VERSION_FROM      => 'lib/XC.pm', # finds $VERSION
     PREREQ_PM         => {}, # e.g., Module::Name => 1.1
     ($] >= 5.005 ?     ## Add these new keywords supported since 5.005
-      (ABSTRACT_FROM  => 'lib/XC/RD.pm', # retrieve abstract from module
-       AUTHOR         => 'Milan Dunghubel <milan.dunghubel@gmail.com>') : ()),
-    LIBS              => ['-lxcrd'], # e.g., '-lm'
-    DEFINE            => '-DDEBUG', # e.g., '-DHAVE_SOMETHING'
+      (ABSTRACT_FROM  => 'lib/XC.pm', # retrieve abstract from module
+       AUTHOR         => 'Milan Dunghubel <gejza@>') : ()),
+    LIBS              => ['-lxc'], # e.g., '-lm'
+    DEFINE            => '', # e.g., '-DHAVE_SOMETHING'
 	CC                => $CC,
 	LD          	  => '$(CC)',
     INC               => '-I.', # e.g., '-I. -I/usr/include/other'
@@ -22,3 +22,4 @@ WriteMakefile(
     XSOPT             => '-C++',
 	TYPEMAPS          => ['perlobject.map' ],
 );
+

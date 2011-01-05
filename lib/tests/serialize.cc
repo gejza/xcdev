@@ -52,9 +52,7 @@ int xc_test_main(int argc, const char* argv[])
 	test.push_back(tm);
 	test.push_back(tm);
 	xc::buffer_t out = xc::serialize(test);
-
-    xc::unserialize_t ser(out);
-    xc::dump(ser);
+    xc::dump(xc::chunk(out));
     /*xc::serial_t out;
     xc::serial_t out2;
     xc::serial_t out3;

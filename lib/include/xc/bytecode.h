@@ -12,6 +12,7 @@
 #pragma once
 
 #include "assert.h"
+#include "data.h"
 
 namespace xc {
 
@@ -62,6 +63,7 @@ namespace xc {
 		}
 	};
 
+	const xc::chunk_t& chunk(const xc::data_t& data);
 
 } // namespace xc
 

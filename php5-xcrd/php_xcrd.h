@@ -49,6 +49,10 @@ PHP_FUNCTION(xcrd_load);
 
 PHP_FUNCTION(xcrd_lookup);
 
+PHP_FUNCTION(xcrd_serialize);
+
+PHP_FUNCTION(xcrd_unserialize);
+
 /**
  * Lookup include with php class defined
  */

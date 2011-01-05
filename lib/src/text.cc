@@ -61,8 +61,14 @@ xc::string xc::vformat(const char *fmt, va_list ap) {
 
 xc::string xc::human(const char* str, size_t limit)
 {
+	return xc::human(str, ::strlen(str), limit);
+}
+
+xc::string xc::human(const void* data, size_t size, size_t limit)
+{
     xc::string ret;
-    while (*str) {
+	const char* str = reinterpret_cast<const char*>(data);
+    for (size_t i=0;i < size; i++) {
         const ssize_t rem = limit - ret.size();
         if (rem < 1) {
             // over limit, truncate
@@ -70,18 +76,19 @@ xc::string xc::human(const char* str, size_t limit)
             ret.append("...");
             break;
         }
-        if (::isprint(*str)) {
-            const char* s = str;
+        if (::isprint(str[i])) {
+            /*const char* s = str;
             // skip to all printable
             while (::isprint(*s)) s++;
             size_t len = s - str;
             if (len > rem)
                 len = rem;
             ret.append(str, len);
-            str += len;
+            str += len;*/
+			ret.push_back(str[i]);
             continue;
         }
-        switch (*str++) {
+        switch (str[i]) {
         case '\n':
             ret.append("<CR>");
             break;

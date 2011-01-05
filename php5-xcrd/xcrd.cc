@@ -28,12 +28,13 @@
 #include <list>
 
 #include <xc/rd/cdb.h>
-//#include <xc/registry/web.h>
 
 #include "php.h"
 #include "php_ini.h"
 #include "ext/standard/info.h"
 #include "php_xcrd.h"
+
+#include "utils.h"
 
 #undef lookup
 class Env_t
@@ -73,6 +74,8 @@ static int le_xcrd;
 const zend_function_entry xcrd_functions[] = {
 	PHP_FE(xcrd_load,	NULL)
 	PHP_FE(xcrd_lookup,	NULL)		/* For testing, remove later. */
+	PHP_FE(xcrd_serialize,	NULL)		/* For testing, remove later. */
+	PHP_FE(xcrd_unserialize,	NULL)		/* For testing, remove later. */
 	{NULL, NULL, NULL}	/* Must be the last line in xcrd_functions[] */
 };
 /* }}} */
@@ -237,7 +240,9 @@ PHP_FUNCTION(xcrd_lookup)
 
 		xc::data_t val;
 		if (XCRD_G(env).lookup(ns, xc::data_t(key, key_len), val)) {
-			RETURN_STRINGL((const char*)val.data(), val.size(), 1);
+			const xc::chunk_t& ch = xc::chunk(val);
+			//xc::dump(ch);
+			xc::load(return_value, ch);
 		} else {
 			RETURN_NULL();
 		}
@@ -248,7 +253,43 @@ PHP_FUNCTION(xcrd_lookup)
     }
 }
 
+PHP_FUNCTION(xcrd_serialize)
+{
+    try {
+		zval* val;
 
+        if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &val) == FAILURE) {
+            RETURN_NULL();
+        }
+
+		xc::buffer_t str = Z_TYPE_P(val) == IS_ARRAY ? xc::serialize(Z_ARRVAL_P(val)) : xc::serialize(val);
+		RETURN_STRINGL((const char*)str.data(), str.size(), 1);
+
+    } catch (const xc::error_t& e) {
+        zend_error(E_ERROR, "Error: %s", e.message().c_str());
+        RETURN_NULL();
+    }
+}
+
+PHP_FUNCTION(xcrd_unserialize)
+{
+    try {
+        const uint8_t* str;
+        int str_len;
+
+        if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &str, &str_len) == FAILURE) {
+            RETURN_NULL();
+        }
+
+		const xc::chunk_t& ch = xc::chunk(xc::data_t(str, str_len));
+		//xc::dump(ch);
+		xc::load(return_value, ch);
+
+    } catch (const xc::error_t& e) {
+        zend_error(E_ERROR, "Error: %s", e.message().c_str());
+        RETURN_NULL();
+    }
+}
 /*
  * Local variables:
  * tab-width: 4

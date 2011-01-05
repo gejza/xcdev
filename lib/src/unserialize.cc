@@ -80,31 +80,35 @@ private:
 void xc::dump(xc::unserialize_t& ser, int level)
 {
     while (const xc::chunk_t* val = ser.read()) {
-        if (val->key()) {
-            std::cout << val->key() << " = ";
-        }
-        //std::cout << std::hex << ser.id() << std::endl;
-        switch (val->id()) {
-		case xc::chunk_t::ARRAY:
-            {
-                std::cout << "(" << std::endl;
-                xc::unserialize_t arr(*val);
-                dump(arr, level + 1);
-                std::cout << ")\n" << std::endl;
-            }
-            break;
-		case xc::chunk_t::STRING:
-            std::cout << (const char*)val->value() << std::endl;
-            break;
-		case xc::chunk_t::LONG:
-            std::cout << *((int*)val->value()) << std::endl;
-            break;
-        default:
-            RUNTIME_ERROR("Unknown chunk id %x", (unsigned int)val->id());
-            return;
-        };
+		xc::dump(*val, level);
     }
 }
 
+void xc::dump(const xc::chunk_t& val, int level)
+{
+	if (val.key()) {
+		std::cout << val.key() << " = ";
+	}
+	//std::cout << std::hex << ser.id() << std::endl;
+	switch (val.id()) {
+	case xc::chunk_t::ARRAY:
+		{
+			std::cout << "(" << std::endl;
+			xc::unserialize_t arr(val);
+			dump(arr, level + 1);
+			std::cout << ")\n" << std::endl;
+		}
+		break;
+	case xc::chunk_t::STRING:
+		std::cout << (const char*)val.value() << std::endl;
+		break;
+	case xc::chunk_t::LONG:
+		std::cout << *((int*)val.value()) << std::endl;
+		break;
+	default:
+		RUNTIME_ERROR("Unknown chunk id %x", (unsigned int)val.id());
+		return;
+	};
+}
 
 

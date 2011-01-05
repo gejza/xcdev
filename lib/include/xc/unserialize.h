@@ -49,6 +49,7 @@ private:
  * Dump serialized data
  */
 void dump(unserialize_t& ser, int level = 0);
+void dump(const chunk_t& ser, int level = 0);
 
 } // namespace xc
 

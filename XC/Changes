@@ -1,0 +1,6 @@
+Revision history for Perl extension XC.
+
+0.01  Tue Jan  4 22:59:05 2011
+	- original version; created by h2xs 1.23 with options
+		-A -n XC
+

@@ -16,6 +16,8 @@ extern "C" {
 #include <string>
 #include <iostream>
 
+#include <xc/error.h>
+
 #include <xc/serialize.h>
 #include <xc/unserialize.h>
 
@@ -31,7 +33,7 @@ void serialize(xc::buffer_t& out, const std::string& key, HV* hv)
 	while((he = hv_iternext(hv)) != NULL) {
 		obj.add(hv_iterkey(he, &len), hv_iterval(hv, he));
 	}
-	serialize(out, obj);
+	serialize(out, key, obj);
 }
 
 void serialize(xc::buffer_t& out, const std::string& key, AV* av)
@@ -40,28 +42,34 @@ void serialize(xc::buffer_t& out, const std::string& key, AV* av)
 	xc::serialize_t obj;
     for (I32 i=0; i <= len;i++)
 		obj.add(*av_fetch(av, i, 0));
-	serialize(out, obj);
+	serialize(out, key, obj);
 }
 
 void serialize(xc::buffer_t& out, const std::string& key, SV* value)
 {
     switch (SvTYPE(value)) {
     case SVt_PV:
+		XC_DBG("Serialize perl PV");
         serialize(out, key, SvPVX(value));
         break;
     case SVt_NV:
+		XC_DBG("Serialize perl NV");
         serialize(out, key, SvNVX(value));
         break;
     case SVt_IV:
+		XC_DBG("Serialize perl IV");
         serialize(out, key, SvIVX(value));
         break;
     case SVt_PVHV:
+		XC_DBG("Serialize perl HV");
 		serialize(out, key, (HV*)value);
         break;
     case SVt_PVAV:
+		XC_DBG("Serialize perl AV");
 		serialize(out, key, (AV*)value);
         break;
     case SVt_RV:
+		XC_DBG("Serialize perl RV");
         serialize(out, key, SvRV(value));
         break;
     default:
@@ -79,45 +87,16 @@ public:
 	~Make() {
 	}
 
-	void insert(int ns, char * key, char * value) {
-		_out.insert(ns, key, value);
-	}
-
 	void insert(int ns, char * key, SV* value) {
-        switch (SvTYPE(value)) {
-        case SVt_PV:
-		    _out.insert(ns, key, SvPVX(value));
-            break;
-        case SVt_NV:
-            //printf("Double: %lf\n", SvNVX(value));
-		    //_out.insert(ns, key, SvPVX(value));
-            break;
-        case SVt_IV:
-            //printf("Num: %d\n", SvIVX(value));
-		    //_out.insert(ns, key, SvPVX(value));
-            break;
-        case SVt_PVAV:
-        case SVt_PVHV:
-		_out.insert(ns, key, xc::serialize(value));
-		{ xc::buffer_t buff = xc::serialize(value);
-		xc::unserialize_t un(buff);
-		xc::dump(un); }
-            break;
-        case SVt_RV:
-            insert(ns, key, SvRV(value));
-            break;
-        default:
-            printf("Type %x\n", SvTYPE(value));
-        };
-        //int t = SvTYPE(SvRV(value));
-        /*printf("%s = ", key);
-        I32 len;
-		//_out.insert(ns, key, value);
-		/*for (i=0; i<=av_len(array); i++) {
-			      SV** elem = av_fetch(array, i, 0);
-				      if (elem != NULL)
-						        sum += SvNV(*elem);
-								  }*/
+		try {
+			xc::buffer_t v = xc::serialize(value);
+			XC_DBG("Serialize to %s", xc::human(v.data(), v.size(), 30).c_str());
+			printf("%s = %ld\n", key, v.size());
+			xc::dump(xc::chunk(v));
+			_out.insert(ns, key, xc::data_t(v));
+    	} catch (const xc::error_t& e) {
+        	croak("Exception: %s", e.message().c_str());
+		}
 	}
 private:
 	xc::rd::CDBMake_t _out;

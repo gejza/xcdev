@@ -39,6 +39,7 @@ namespace xc {
      * @param limit Max length. If longer, ending with ...
      * @return Human string
      */
+    string human(const void* data, size_t size, size_t limit);
     string human(const char* str, size_t limit);
 
     inline void i18n(const char* locale)

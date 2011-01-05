@@ -48,6 +48,17 @@ namespace xc {
 			return *this;
 		}
 
+		buffer_t& operator << (char c)
+		{
+			this->append(&c, 1);
+			return *this;
+		}
+
+		buffer_t& operator << (const char* str)
+		{
+			this->append(str, ::strlen(str));
+			return *this;
+		}
     private:
         std::basic_string<value_t> _data;
     };

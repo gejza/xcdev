@@ -93,33 +93,3 @@ const xc::Id_t Make_t::add(const Menu_t& menu)
     return seq();
 }
 
-xc::serialize_t& operator<<(xc::serialize_t& out, const xc::Callback_t& cb)
-{
-    out.write("include", cb.include);
-    out.write("script", cb.script);
-    out.write("class", cb.cls);
-    out.write("method", cb.method);
-    return out;
-}
-
-xc::serialize_t& operator<<(xc::serialize_t& out, const xc::Template_t& templ)
-{
-    out << templ.call;
-    return out;
-}
-
-void Make_t::add(const Template_t& templ)
-{
-    xc::serial_t out;
-    out << templ.call;
-
-    xc::unserialize_t ser(out.str());
-    dump(ser);
-    std::cout << "Template " << templ.id << std::endl;
-    //std::cout << "Script " << templ.call.script << std::endl;
-
-    StrKey_t key(1, xc::CS);
-    this->_out.add(STR_TABLE, &key, sizeof(key), out.str().data(), out.str().size());
-
-    //return seq();
-}
