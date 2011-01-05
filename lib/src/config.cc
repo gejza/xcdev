@@ -9,7 +9,6 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
-#define XC_DEBUG_IDENT xc::debug::CONFIG
 
 #include <memory>
 #include <stdio.h>

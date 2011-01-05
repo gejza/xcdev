@@ -17,18 +17,21 @@
 xc::rd::CDBMake_t::CDBMake_t(const char* fn)
     : _fd(fn, O_RDWR|O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)
 {
-    int ret = cdb_make_start(&this->_db, this->_fd.fd());
-    //std::cout << "Start cdb: " << ret << std::endl;
+    if (::cdb_make_start(&this->_db, this->_fd.fd()) < 0) {
+        ERROR(xc::error_t, "cdb_make_start: %s", ::strerror(errno));
+    }
 }
 
 xc::rd::CDBMake_t::~CDBMake_t()
 {
-    int ret = cdb_make_finish(&this->_db);
-    //std::cout << "Finish cdb: " << ret << std::endl;
+    if (::cdb_make_finish(&this->_db) < 0) {
+        ERROR(xc::error_t, "cdb_make_finish: %s", ::strerror(errno));
+    }
 }
 
 //TODO: to lib
-xc::string human(const xc::buffer_t& data, size_t limit)
+template<typename Data_t>
+xc::string human(const Data_t& data, size_t limit)
 {
 	return xc::human(data.data(), data.size(), limit);
 }
@@ -36,14 +39,17 @@ xc::string human(const xc::buffer_t& data, size_t limit)
 void xc::rd::CDBMake_t::insert(const xc::rd::ns_t ns, const xc::data_t& key,
 			const xc::data_t& value)
 {
+	XC_DBG("Insert ns=%d key=%s data=%s",
+			ns, ::human(key, 20).c_str(), ::human(value, 60).c_str());
+
 	xc::buffer_t k;
 	k << ns << key;
 	xc::buffer_t v;
 	v << value << '\0';
-    int ret = cdb_make_add(&this->_db, k.data(), k.size(), v.data(), v.size());
-	XC_DBG("Insert new walue ns=%x key=%s data=%s",
-			ns, ::human(k, 20).c_str(), ::human(v, 40).c_str());
-    //std::cout << "Key: " << klen << " Value: " << vlen << " ret:" << ret << std::endl;
+
+    if (::cdb_make_add(&this->_db, k.data(), k.size(), v.data(), v.size()) < 0) {
+        ERROR(xc::error_t, "cdb_make_add: %s", ::strerror(errno));
+    }
 }
 
 

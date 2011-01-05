@@ -4,7 +4,6 @@
 #include "config.h"
 #endif
 
-#define XC_DEBUG_IDENT xc::debug::CONFIG
 #define XCLEX(fnc) xccini##fnc
 #define YY_FATAL_ERROR(msg) ERROR(xc::error_t, "Lex fatal error: %s", msg)
 

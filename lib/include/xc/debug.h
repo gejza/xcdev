@@ -21,18 +21,6 @@ namespace xc {
 namespace debug {
 
 /**
- * Debug type inden
- */
-enum {
-    MEMORY = 1,
-    FS,
-    NET,
-    CONFIG,
-    LOG,
-    USER = 10000,
-};
-
-/**
  * @brief trace_t 
  */
 class trace_t
@@ -279,7 +267,14 @@ xc::string demangle(const char* name);
 
 xc::string symbol_name(const void* p);
 
-const char* ident_name(unsigned long idn);
+/** 
+ * @short 
+ * @param ident 
+ * @param loc 
+ * @param format 
+ * @param ... 
+ */
+void print(const loc_t& loc, const char* format, ...);
 
 /** 
  * @short 
@@ -288,27 +283,12 @@ const char* ident_name(unsigned long idn);
  * @param format 
  * @param ... 
  */
-void print(unsigned long ident, const loc_t& loc, const char* format, ...);
-
-/** 
- * @short 
- * @param ident 
- * @param loc 
- * @param format 
- * @param ... 
- */
-void trace(unsigned long ident, const loc_t& loc, const char* format, ...);
+void trace(const loc_t& loc, const char* format, ...);
 
 /** 
  * @short 
  */
 void debug_enable();
-
-/** 
- * @short 
- * @param ident 
- */
-void debug_enable(unsigned long ident);
 
 /** 
  * @short 
@@ -327,17 +307,17 @@ void debug_disable();
 
 #define XC_LOC_FILE ::xc::debug::loc_src_t(__FILE__, __LINE__)
 #define XC_LOC_FUNC ::xc::debug::loc_src_t(__PRETTY_FUNCTION__)
+#define XC_LOC_ALL ::xc::debug::loc_src_t(__FILE__, __LINE__, __FUNCTION__)
 #define XC_LOC_FULL ::xc::debug::loc_src_t(__FILE__, __LINE__, __PRETTY_FUNCTION__)
 #define XC_LOC_TRACE ::xc::debug::loc_trace_t()
 
-#ifndef XC_DEBUG_IDENT
-#define XC_DEBUG_IDENT 0
-#warning "XC_DEBUG_IDENT not defined. Default is USER"
+#ifdef XC_DEBUG_IDENT
+#warning "XC_DEBUG_IDENT is obsolete."
 #endif
 
 #ifdef DEBUG
-#define XC_DBG(msg...) ::xc::debug::print(XC_DEBUG_IDENT, XC_LOC_FULL, msg);
-#define XC_TRACE(msg...) ::xc::debug::trace(XC_DEBUG_IDENT, XC_LOC_FULL, msg);
+#define XC_DBG(msg...) ::xc::debug::print(XC_LOC_ALL, msg);
+#define XC_TRACE(msg...) ::xc::debug::trace(XC_LOC_FULL, msg);
 #else
 #define XC_DBG(msg...)
 #define XC_TRACE(msg...)

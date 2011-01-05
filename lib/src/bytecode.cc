@@ -19,9 +19,9 @@ const xc::chunk_t& xc::chunk(const xc::data_t& data) {
 		return end;
 	const chunk_t& ret = *reinterpret_cast<const chunk_t*>(data.data());
 	if (data.size() < sizeof(chunk_t))
-		RUNTIME_ERROR("Missing data %ld", data.size());
+		RUNTIME_ERROR("Missing data %zu", data.size());
 	if (data.size() != ret.size())
-		RUNTIME_ERROR("Mismatch size (avail: %ld, chunk: %ld)", data.size(), ret.size());
+		RUNTIME_ERROR("Mismatch size (avail: %zu, chunk: %zu)", data.size(), ret.size());
 	return ret;
 }
 

@@ -49,27 +49,21 @@ void serialize(xc::buffer_t& out, const std::string& key, SV* value)
 {
     switch (SvTYPE(value)) {
     case SVt_PV:
-		XC_DBG("Serialize perl PV");
         serialize(out, key, SvPVX(value));
         break;
     case SVt_NV:
-		XC_DBG("Serialize perl NV");
         serialize(out, key, SvNVX(value));
         break;
     case SVt_IV:
-		XC_DBG("Serialize perl IV");
         serialize(out, key, SvIVX(value));
         break;
     case SVt_PVHV:
-		XC_DBG("Serialize perl HV");
 		serialize(out, key, (HV*)value);
         break;
     case SVt_PVAV:
-		XC_DBG("Serialize perl AV");
 		serialize(out, key, (AV*)value);
         break;
     case SVt_RV:
-		XC_DBG("Serialize perl RV");
         serialize(out, key, SvRV(value));
         break;
     default:
@@ -90,9 +84,6 @@ public:
 	void insert(int ns, char * key, SV* value) {
 		try {
 			xc::buffer_t v = xc::serialize(value);
-			XC_DBG("Serialize to %s", xc::human(v.data(), v.size(), 30).c_str());
-			printf("%s = %ld\n", key, v.size());
-			xc::dump(xc::chunk(v));
 			_out.insert(ns, key, xc::data_t(v));
     	} catch (const xc::error_t& e) {
         	croak("Exception: %s", e.message().c_str());
@@ -120,7 +111,7 @@ public:
 			return (const char*)val.data();
 		}
 		//_out.insert(ns, key, value);
-		return "Destruction is a way of life for me.\n";
+		return "";
 	}
 
 private:

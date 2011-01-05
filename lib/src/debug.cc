@@ -129,12 +129,6 @@ void xc::debug::debug_enable()
     _mask.enable();
 }
 
-void xc::debug::debug_enable(unsigned long ident)
-{
-    _mask.enable(ident);
-    fprintf(stdout, "Enable debugging for %s\n", ident_name(ident));
-}
-
 void xc::debug::debug_enable(const char* regex)
 {
     _mask.enable(regex);
@@ -145,24 +139,24 @@ void xc::debug::debug_disable()
     _mask.disable();
 }
 
-void xc::debug::print(unsigned long ident, const loc_t& loc, const char* format, ...)
+void xc::debug::print(const loc_t& loc, const char* format, ...)
 {
-    if (!_mask.test(ident, loc))
+    if (!_mask.test(0, loc))
         return;
     va_list arg;
     va_start(arg, format);
     {
         xc::colored_t c(stdout, 30);
-        fprintf(stdout, "%s(%s:%d): ", ident_name(ident), loc.filename(), loc.line());
+        fprintf(stdout, "DEBUG(%s:%s:%d): ", loc.filename(), loc.func(), loc.line());
         vfprintf(stdout, _(format), arg);
     }
     fprintf(stdout, "\n");
     va_end(arg);
 }
 
-void xc::debug::trace(unsigned long ident, const loc_t& loc, const char* format, ...)
+void xc::debug::trace(const loc_t& loc, const char* format, ...)
 {
-    if (!_mask.test(ident, loc))
+    if (!_mask.test(0, loc))
         return;
     va_list arg;
     va_start(arg, format);
@@ -173,22 +167,6 @@ void xc::debug::trace(unsigned long ident, const loc_t& loc, const char* format,
     }
     fprintf(stdout, "\n");
     va_end(arg);
-}
-
-const char* xc::debug::ident_name(unsigned long idn)
-{
-    switch (idn) {
-#define CASE(n) case n: return #n;
-    case 0: return "DEFAULT";
-    CASE(MEMORY)
-    CASE(FS)
-    CASE(NET)
-    CASE(CONFIG)
-    CASE(LOG)
-    CASE(USER)
-    default:
-        return "";
-    };
 }
 
 
