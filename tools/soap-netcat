@@ -1,0 +1,1395 @@
+#!/usr/bin/python
+#
+
+import string
+import readline
+import base64
+import mx.DateTime
+import sys
+
+_own_services = "/usr/local/etc/services"
+_system_services = "/etc/services"
+
+import SOAPpy
+import socket
+
+class InputParser:
+    """
+    Classs can parse procedure call syntax.
+    """
+    
+    def __init__(self, coder, binary):
+        """
+        Set-up charset encoder.
+        \param coder (object) An UnicodeCoder instance.
+        \param binary (string) Binary data handling ("clear", "base64")
+        """
+        self.coder = coder
+        self.binary = binary
+        
+        
+    def _explicitCast(self, datatype, text):
+        """
+        Part of lexical analyzer.
+        Function detects conversion to explicitly selected type
+        and tries to convert value to that type.
+        Syntax: type(value)
+        \return (dict) Next lexical element {"token", "value"} or None.
+        \param (list of 1 str) Input string passed via reference.
+        """
+        # check param
+        if type(text) != type([]):
+            return { "status": 401, "statusMessage" :
+                    "Input text is not passed via reference",
+                    "token" : "", "value" : None}
+                    
+        # test for type name
+        if datatype not in ("i4",
+                "int",
+                "boolean",
+                "string",
+                "double",
+                "dateTime",
+                "base64",
+                "base64file"):
+            # not a type name
+            return None
+            
+        # open prenthesis
+        le = self._lexicalElement(text)
+        if le["status"] != 200:
+            return le #error
+        elif le["token"] == "(":
+            pass #skip '('
+        else:
+            return { "status" : 401, "statusMessage" : "No argument "
+                    "after explicit typecast to '%s'" % datatype,
+                    "token" : "", "value" : None }
+        # get value
+        le = self._lexicalElement(text)
+        if le["status"] != 200:
+            return le #error
+        elif le["token"] == "v":
+            pass #value
+        elif le["token"] == ")":
+            pass #empty value
+        elif le["token"] == "":
+            return { "status" : 402, "statusMessage" :
+                    "Argument list not closed with ')'",
+                    "token" : "", "value" : None }
+        else:
+            return { "status" : 401, "statusMessage" :
+                    "Unexpected token (%s)" % le["value"],
+                    "token" : "", "value" : None }
+                    
+        # empty or given value?
+        if le["token"] == ")":
+        
+            # convert empty value
+            retval = { "status" : 200, "statusMessage" : "OK",
+                    "token" : "v", "value" : None }
+            try:
+                # switch on type
+                if datatype == "i4" or datatype == "int":
+                    retval["value"] = int(0)
+                elif datatype == "boolean":
+                    retval["value"] = SOAPpy.BooleanType() #false (0)
+                elif datatype == "string":
+                    retval["value"] = self.coder.encode(str(""))
+                elif datatype == "double":
+                    retval["value"] = float(0.0)
+                elif datatype == "dateTime":
+                    retval["value"] = SOAPpy.dateTimeType(mx.DateTime.ISO.str(
+                            mx.DateTime.now())) #actual date/time
+                elif datatype == "base64":
+                    retval["value"] = SOAPpy.binaryType("") #empty
+                elif datatype == "base64file":
+                    retval["value"] = SOAPpy.binaryType("") #emty string
+            except:
+                # conversion error
+                return { "status" : 401, "statusMessage" : "Cannot " \
+                        "create empty instance of '%s' type" % datatype,
+                        "token" : "", "value" : None }
+        else:
+            # convert given value    
+            # remember value
+            retval = le
+            # close parentheses
+            le = self._lexicalElement(text)
+            if le["status"] != 200:
+                return le #error
+            elif le["token"] == ")":
+                pass #skip ')'
+            elif le["token"] == "":
+                return { "status" : 402, "statusMessage" :
+                        "Argument list not closed with ')'",
+                        "token" : "", "value" : None }
+            else:
+                return { "status" : 401, "statusMessage" :
+                        "Unexpected token (%s)" % le["value"],
+                        "token" : "", "value" : None }
+            try:
+                # switch on type
+                if datatype == "i4" or datatype == "int":
+                    retval["value"] = int(retval["value"])
+                elif datatype == "boolean":
+                    retval["value"] = SOAPpy.BooleanType(retval["value"])
+                elif datatype == "string":
+                    retval["value"] = self.coder.encode(str(retval["value"]))
+                elif datatype == "double":
+                    retval["value"] = float(retval["value"])
+                elif datatype == "dateTime":
+                    try:
+                        retval["value"] = SOAPpy.dateTimeType(
+                                mx.DateTime.ISO.str(
+                                mx.DateTime.Parser.DateTimeFromString(
+                                retval["value"])))
+                    except:
+                        retval["value"] = SOAPpy.dateTimeType(
+                                mx.DateTime.ISO.str(
+                                mx.DateTime.Date(1970, 1, 1)))
+                elif datatype == "base64":
+                    if self.binary == "base64":
+                        retval["value"] = SOAPpy.binaryType(
+                                base64.decodestring(str(retval["value"])))
+                    else:
+                        retval["value"] = SOAPpy.binaryType(retval["value"])
+                elif datatype == "base64file":
+                    try:
+                        # read file into return value
+                        f = open(str(retval["value"]))
+                        content = f.read()
+                        f.close()
+                        retval["value"] = SOAPpy.binaryType(content)
+                    except IOError:
+                        return { "status" : 401,
+                             "statusMessage" : "Cannot read file" \
+                             "'%s'" % (retval["value"]),
+                             "token" : "",
+                             "value" : None }
+                    #endtry
+                #endif
+
+            except:
+                # conversion error
+                return { "status" : 401, "statusMessage" : "Cannot convert " \
+                        "'%s' to '%s' type" % (retval["value"], datatype),
+                        "token" : "", "value" : None }
+        # return result
+        return retval
+        
+        
+    def _lexicalElement(self, text):
+        """
+        Parses next lexical element from input stream.
+        On error or end empty token is returned
+        Tokens: { } ( ) , : v
+        \return (dict) Next lexical element {"token", "value"}.
+        \param (list of 1 str) Input string passed via reference.
+        """
+        # check param
+        if type(text) != type([]):
+            return { "status": 401, "statusMessage" :
+                    "Input text is not passed via reference",
+                    "token" : "", "value" : None}
+            
+        i = 0 #pos in text
+        while i < len(text[0]):
+        
+            # switch via first char
+            if text[0][i] in string.whitespace:
+                # whitespace
+                i = i + 1
+            elif text[0][i] == "{":
+                # structure open
+                retval = { "status" : 200, "statusMessage" : "OK",
+                        "token" : "{", "value" : "{" }
+                text[0] = text[0][i+1:]
+                return retval
+            elif text[0][i] == "}":
+                # structure close
+                retval = { "status" : 200, "statusMessage" : "OK",
+                        "token" : "}", "value" : "}" }
+                text[0] = text[0][i+1:]
+                return retval
+            elif text[0][i] == "(":
+                # array open
+                retval = { "status" : 200, "statusMessage" : "OK",
+                        "token" : "(", "value" : "(" }
+                text[0] = text[0][i+1:]
+                return retval
+            elif text[0][i] == ")":
+                # array close
+                retval = { "status" : 200, "statusMessage" : "OK",
+                        "token" : ")", "value" : ")" }
+                text[0] = text[0][i+1:]
+                return retval
+            elif text[0][i] == ",":
+                # array close
+                retval = { "status" : 200, "statusMessage" : "OK",
+                        "token" : ",", "value" : "," }
+                text[0] = text[0][i+1:]
+                return retval
+            elif text[0][i] == ":":
+                # array close
+                retval = { "status" : 200, "statusMessage" : "OK",
+                        "token" : ":", "value" : ":" }
+                text[0] = text[0][i+1:]
+                return retval
+            elif text[0][i] == "\"" or text[0][i] == "'":
+                # string value
+                j = i #start position
+                i = i + 1 #skip open quote
+                while i < len(text[0]) and text[0][i] != text[0][j]:
+                    i = i + 1
+                if i >= len(text[0]):
+                    return { "status" : 402, "statusMessage" :
+                            "Missing string terminating " \
+                            "quote (%s)" % text[0][j],
+                            "token" : "", "value" : None }
+                retval = { "status" : 200, "statusMessage" : "OK",
+                        "token" : "v",
+                        "value" : self.coder.encode(text[0][j+1:i]) }
+                text[0] = text[0][i+1:]
+                return retval
+            else:
+                # string, integer or floating-point value
+                j = i #start position
+                while i < len(text[0]) \
+                        and not (text[0][i] in (string.whitespace + "{}(),:")):
+                    i = i + 1
+                # try get integer
+                try:
+                    val = int(text[0][j:i])
+                except:
+                    # try get double
+                    try:
+                        val = float(text[0][j:i])
+                    except:
+                        # get string
+                        val = text[0][j:i]
+                
+                # cut off input text
+                text[0] = text[0][i:]
+                
+                # if string
+                if type(val) == type(""):
+                    # check for explicit type-cast
+                    retval = self._explicitCast(val, text)
+                    if retval != None:
+                        # converted--return result
+                        return retval
+                    
+                    # check for boolean literals
+                    if val == "true":
+                        val = SOAPpy.BooleanType(1)
+                    elif val == "false":
+                        val = SOAPpy.BooleanType(0)
+                        
+                    # disable string without quotes
+                    # (impossible now--method identifier is not in quotes)
+                    #return { "status" : 401, "statusMessage" :
+                    #        "String must be delimited with quotes",
+                    #        "token" : "", "value" : None }
+                    
+                # prepare retval
+                retval = { "status" : 200, "statusMessage" : "OK",
+                        "token" : "v", "value" : val }
+                return retval
+                
+        # return end
+        text[0] = ""
+        return { "status" : 200, "statusMessage" : "OK",
+                "token" : "", "value" : None }
+    
+    
+    def _array(self, text, array):
+        """
+        Parse an array.
+        Values are added into the array.
+        \return 0=ok, -1=error
+        \param text (list of 1 string) Input text.
+        \param array (list) Array to be appended.
+        """
+        # forever loop
+        while 1:
+            # get next element
+            le = self._lexicalElement(text)
+            if le["status"] != 200:
+                self.retval["status"] = le["status"]
+                self.retval["statusMessage"] = le["statusMessage"]
+                return -1 #error
+            elif le["token"] == ")":
+                break #finish
+            elif le["token"] == "v":
+                array.append(le["value"])
+            elif le["token"] == ",":
+                continue #ignore value delimiter
+            elif le["token"] == "(":
+                # array within array
+                a = []
+                array.append(a)
+                if self._array(text, a) < 0:
+                    return -1
+            elif le["token"] == "{":
+                # struct within array
+                s = {}
+                array.append(s)
+                if self._struct(text, s) < 0:
+                    return -1
+            elif le["token"] == "":
+                self.retval["status"] = 402
+                self.retval["statusMessage"] = \
+                        "Array not closed with ')'"
+                return -1 #error
+            else:
+                self.retval["status"] = 401
+                self.retval["statusMessage"] = \
+                        "Unexpected token (%s)" % le["value"]
+                return -1 #error
+        # ok
+        return 0
+        
+        
+    def _struct(self, text, struct):
+        """
+        Parse a struct.
+        Members are added into the struct.
+        \return 0=ok, -1=error
+        \param text (list of 1 string) Input text.
+        \param array (list) Array to be appended.
+        """
+        # forever loop
+        while 1:
+            # get next element (name)
+            le = self._lexicalElement(text)
+            if le["status"] != 200:
+                self.retval["status"] = le["status"]
+                self.retval["statusMessage"] = le["statusMessage"]
+                return -1 #error
+            elif le["token"] == "}":
+                break #finish
+            elif le["token"] == "v":
+                name = le["value"]
+            elif le["token"] == ",":
+                continue #ignore value delimiter
+            elif le["token"] == "":
+                self.retval["status"] = 402
+                self.retval["statusMessage"] = \
+                        "Structure not closed with '}'"
+                return -1 #error
+            else:
+                self.retval["status"] = 401
+                self.retval["statusMessage"] = \
+                        "Unexpected token (%s)" % le["value"]
+                return -1 #error
+                
+            # get next element (name:value delimiter)
+            le = self._lexicalElement(text)
+            if le["status"] != 200:
+                self.retval["status"] = le["status"]
+                self.retval["statusMessage"] = le["statusMessage"]
+                return -1 #error
+            elif le["token"] == ":":
+                pass #skip name:value delimiter
+            else:
+                self.retval["status"] = 401
+                self.retval["statusMessage"] = \
+                        "Unexpected token (%s)" % le["value"]
+                return -1 #error
+                
+            # get next element (value)
+            le = self._lexicalElement(text)
+            if le["status"] != 200:
+                self.retval["status"] = le["status"]
+                self.retval["statusMessage"] = le["statusMessage"]
+                return -1 #error
+            elif le["token"] == "v":
+                struct[name] = le["value"]
+            elif le["token"] == "(":
+                # array within struct
+                a = []
+                struct[name] = a
+                if self._array(text, a) < 0:
+                    return -1
+            elif le["token"] == "{":
+                # struct within array
+                s = {}
+                struct[name] = s
+                if self._struct(text, s) < 0:
+                    return -1
+            else:
+                self.retval["status"] = 401
+                self.retval["statusMessage"] = \
+                        "Unexpected token (%s)" % le["value"]
+                return -1 #error
+        # ok
+        return 0
+                
+    
+    def parseMethodCall(self, text):
+        """
+        Parse syntax of a procedure call
+        and prepare list of arguments.
+        \return (dict) Return dictionary with parsed out values.
+        \param text (str) Text to parse.
+        """
+        # initialize return value
+        self.retval = { "status": 500,
+                "statusMessage": "Unknown error",
+                "methodName": "",
+                "params": [] }
+                
+        # convert text to "reference" to text
+        text = [text]
+        
+        # get method name
+        le = self._lexicalElement(text)
+        if le["status"] != 200:
+            self.retval["status"] = le["status"]
+            self.retval["statusMessage"] = le["statusMessage"]
+        elif le["token"] == "":
+            self.retval["status"] = 200
+            self.retval["statusMessage"] = "Empty input"
+        elif le["token"] == "v":
+            self.retval["methodName"] = le["value"]
+            
+            # get params list
+            le = self._lexicalElement(text)
+            if le["status"] != 200:
+                self.retval["status"] = le["status"]
+                self.retval["statusMessage"] = le["statusMessage"]
+            elif le["token"] == "(":
+                # parse params
+                if self._array(text, self.retval["params"]) < 0:
+                    # error status & msg already set in self.retval
+                    pass
+                else:
+                    # check eof
+                    le = self._lexicalElement(text)
+                    if le["status"] != 200:
+                        self.retval["status"] = le["status"]
+                        self.retval["statusMessage"] = le["statusMessage"]
+                    elif le["token"] != "":
+                        # parse error
+                        self.retval["status"] = 401
+                        self.retval["statusMessage"] = \
+                                "Extra characters on input end"
+                    else:
+                        self.retval["status"] = 200
+                        self.retval["statusMessage"] = "OK"
+            else:
+                self.retval["status"] = 401
+                self.retval["statusMessage"] = "Missing parameter list"
+        else:
+            self.retval["status"] = 401
+            self.retval["statusMessage"] = \
+                    "Invalid method name (%s)" % le["value"]
+                    
+        # return result
+        return self.retval
+        
+
+class UnicodeCoder:
+    """
+    Encode and decode unicode strings to other charsets.
+    """
+    
+    def __init__(self, encoding):
+        """
+        Set encoding for later operations.
+        \param encoding (str) Name of encoding (utf-8, iso-8859-2, cp1250)
+        """
+        # try encode string
+        try:
+            hw = unicode("hello world") #create unicode string
+            hw.encode(encoding)
+            self.encoding = encoding #set encoding
+        # uff! encode() under some conditions does not throw
+        # LookupError even if it has to do it.
+        except (LookupError, UnicodeError):
+            self.encoding = "iso-8859-1"
+            print "Warning: Encoding '%s' is not known, using " \
+                    "default '%s'" % (encoding, self.encoding)
+        
+        
+    def encode(self, text):
+        """
+        Encode string in charset into unicode.
+        \return (str) String in unicode.
+        \param text (str) String in self.encoding charset.
+        """
+        # "check" if text contains non-ascii characters
+        try:
+            # this should pass only for pure ascii strings
+            unicode(text)
+        except UnicodeError:
+            # convert it to unicode
+            return unicode(text, self.encoding, "replace")
+        # keep it as text
+        return str(text)
+        
+        
+    def decode(self, text):
+        """
+        Decode string from charset into unicode.
+        \return (str) String in self.encoding charset.
+        \param text (str) String in unicode.
+        """
+        # if text is an unicode string
+        if type(text) == type(unicode("")):
+            # convert it to display encoding
+            return text.encode(self.encoding, "replace")
+        else:
+            # keep it as string
+            return str(text)
+        
+        
+class HumanOutputRender:
+    """
+    Render given value into human readable form.
+    """
+    # tabulator character for nesting structures
+    _tab = "  "
+    
+    def __init__(self, coder, binary):
+        """
+        Set-up charset decoder.
+        \param coder (object) An UnicodeCoder instance.
+        \param binary (string) Binary data handling ("clear", "base64")
+        """
+        self.coder = coder
+        self.binary = binary
+        
+        
+    def _array(self, prefix, array):
+        """
+        Render an array.
+        \param prefix (str) Prefix to display before each value.
+        \param array (list) Dump this array entries.
+        """
+        # open array
+        self.retval["valueString"].append("= (\n")
+        # render items
+        i = 0
+        while i < len(array):
+            self.retval["valueString"].append(\
+                prefix + self._tab + "[%d]" % i + " ")
+            self._switch(prefix + self._tab, array[i])
+            i = i + 1 #next item
+        # close array
+        self.retval["valueString"].append(prefix + ")\n")
+    
+
+    def _struct(self, prefix, struct):
+        """
+        Render a structure.
+        \param prefix (str) Prefix to display before each value.
+        \param struct (dict) Dump this structure entries.
+        """
+        # open struct
+        self.retval["valueString"].append("= {\n")
+        # sort entries
+        strctkeys = struct.keys()
+        strctkeys.sort()
+        # render entries
+        for key in strctkeys:
+            self.retval["valueString"].append(\
+                prefix + self._tab + str(key) + " ")
+            self._switch(prefix + self._tab, struct[key])
+        # close struct
+        self.retval["valueString"].append(prefix + "}\n")
+    
+
+    def _switch(self, prefix, value):
+        """
+        Determine value type and execute proper method/action.
+        \param prefix (str) Prefix to display before each value.
+        \param value (*) Value to display.
+        """
+        # determine type
+        if type(value) == type([]) or type(value) == type(()):
+            # array
+            self._array(prefix, value)
+        elif type(value) == type({}):
+            # structure
+            self._struct(prefix, value)
+        elif type(value) == type(""):
+            # string value
+            self.retval["valueString"].append(\
+                    "= \"" + str(value) + "\"\n")
+        elif type(value) == type(unicode("")):
+            # unicode string value
+            self.retval["valueString"].append(\
+                    "= \"" + self.coder.decode(value) + "\"\n")
+        elif isinstance(value, SOAPpy.BooleanType):
+            # boolean
+            if value:
+                val= "true"
+            else:
+                val = "false"
+            self.retval["valueString"].append("= " + val + "\n")
+        elif isinstance(value, SOAPpy.dateTimeType):
+            # DateTime
+            try:
+                val = mx.DateTime.ISO.ParseDateTime(value.value)
+            except:
+                val = mx.DateTime.Date(1970, 1, 1) #unix day-zero time
+            # print date
+            self.retval["valueString"].append("= " + str(val) + "\n")
+        elif isinstance(value, SOAPpy.binaryType):
+            # binary (base64) data
+            if self.binary == "base64":
+                # base64 data
+                self.retval["valueString"].append(\
+                        "= \"" + str(base64.encodestring(str(value.data))) \
+                        + "\"\n")
+            else:
+                # clear data
+                self.retval["valueString"].append("= \"" + str(value.data) + "\"\n")
+        else:
+            # others
+            self.retval["valueString"].append("= " + str(value) + "\n")
+            
+            
+    def renderValue(self, value):
+        """
+        Render given value into the string.
+        \return (dict) Return value and status.
+        \param mode (int) Output type: 1=human, 2=computer.
+        \param value (*) Value to render.
+        """
+        # initialize return value
+        self.retval = { "status": 500,
+                "statusMessage": "Unknown error",
+                "valueString": [] }
+        
+        # step into recursion
+        self._switch("", value)
+        
+        # success
+        self.retval["status"] = 200
+        self.retval["statusMessage"] = "OK"
+        self.retval["valueString"] = "".join(self.retval["valueString"])
+        return self.retval
+
+
+class ComputerOutputRender:
+    """
+    Render given value into form suitable for computer processing.
+    """
+
+    def __init__(self, coder, binary):
+        """
+        Set-up charset decoder.
+        \param coder (object) An UnicodeCoder instance.
+        \param binary (string) Binary data handling ("clear", "base64").
+        """
+        self.coder = coder
+        self.binary = binary
+        
+        
+    def _array(self, prefix, array):
+        """
+        Render an array.
+        \param prefix (str) Prefix to display before each value.
+        \param array (list) Dump this array entries.
+        """
+        # render items
+        i = 0
+        while i < len(array):
+            self._switch(prefix + "." + str(i), array[i])
+            i = i + 1 #next item
+    
+
+    def _struct(self, prefix, struct):
+        """
+        Render a structure.
+        \param prefix (str) Prefix to display before each value.
+        \param array (dict) Dump this structure entries.
+        """
+        # sort keys
+        strctkeys = struct.keys()
+        strctkeys.sort()
+        # render entries
+        for key in strctkeys:
+            self._switch(prefix + "." + str(key), struct[key])
+    
+
+    def _switch(self, prefix, value):
+        """
+        Determine value type and execute proper method/action.
+        \param prefix (str) Prefix to display before each value.
+        \param value (*) Show this value.
+        """
+        # determine type
+        if type(value) == type([]) or type(value) == type(()):
+            # array
+            self._array(prefix, value)
+        elif type(value) == type({}):
+            # structure
+            self._struct(prefix, value)
+        elif type(value) == type(""):
+            # string value
+            self.retval["valueString"].append(prefix + "=" + str(value) + "\n")
+        elif type(value) == type(unicode("")):
+            # unicode string value
+            self.retval["valueString"].append(\
+                                prefix + "=" + self.coder.decode(value) + "\n")
+        elif isinstance(value, SOAPpy.BooleanType):
+            # boolean
+            if value:
+                val= "true"
+            else:
+                val = "false"
+            self.retval["valueString"].append(prefix + "=" + val + "\n")
+        elif isinstance(value, SOAPpy.dateTimeType):
+            # DateTime
+            try:
+                val = mx.DateTime.ISO.ParseDateTime(value.value)
+            except:
+                val = mx.DateTime.Date(1970, 1, 1) #unix day-zero time
+            self.retval["valueString"].append("= " + str(val) + "\n")
+        elif isinstance(value, SOAPpy.binaryType):
+            # binary (base64) data
+            if self.binary == "base64":
+                # base64 data
+                self.retval["valueString"].append(
+                        prefix + "=" \
+                        + str(base64.encodestring(str(value.data))) + "\n")
+            else:
+                # clear data
+                self.retval["valueString"].append(
+                        prefix + "=" + str(value.data) + "\n")
+        else:
+            # trivial solution--display value using prefix
+            self.retval["valueString"].append(
+                    prefix + "=" + str(value) + "\n")
+            
+            
+    def renderValue(self, value):
+        """
+        Render given value into the string.
+        \return (dict) Return value and status.
+        \param mode (int) Output type: 1=human, 2=computer.
+        \param value (*) Value to render.
+        """
+        # initialize return value
+        self.retval = { "status": 500,
+                "statusMessage": "Unknown error",
+                "valueString": [] }
+        
+        # step into recursion
+        self._switch("", value)
+        
+        # success
+        self.retval["status"] = 200
+        self.retval["statusMessage"] = "OK"
+        self.retval["valueString"] = "".join(self.retval["valueString"])
+        return self.retval
+
+
+class SoapRpcClient:
+    """
+    Methods for communication with Soap-rpc server.
+    Communication is done only here.
+    """
+    def __init__(self, config):
+        """
+        Create Soap-rpc server object.
+        \param url (str) An url to Soap-rpc server.
+        """
+        #if (config['proxy']):
+        #    self.server = SOAPpy.SOAPProxy(config['url'],
+        #            proxyVia=config['proxy'] namespace=config['ns'])
+        #else:
+        self.server = SOAPpy.SOAPProxy(config['url'], namespace = config['urn'])
+        #endif
+    def listMethods(self):
+        """
+        List methods available on server.
+        \return (list) Array of supported method names.
+        """
+        # be ready for unsupported method
+        try:
+            # try to call
+            methods = self.server.system.listMethods()
+        except (SOAPpy.Error, socket.error), fault:
+            # on error supply empty method list
+            print "Warning: Cannot list methods on server (" + str(fault) + ")"
+            methods = []
+        # return result
+        return methods
+        
+        
+    def getSignature(self, method):
+        """
+        Get method signature.
+        Signature is a function call "prototype".
+        Method can have more signatures, i.e. "overloaded methods".
+        \return (list of lists of strings) Method signature.
+        \return (str) Method name.
+        """
+        # be ready for unsupported method
+        try:
+            # try to call
+            signatures = self.server.system.methodSignature(method)
+        except (SOAPpy.Error, SOAPpy.ProtocolError), fault:
+            # on error supply empty signature list
+            print "Warning: Cannot get method signature (" + str(fault) + ")"
+            signatures = []
+        # return result
+        return signatures
+        
+        
+    def getHelp(self, method):
+        """
+        Get help for single method on server.
+        \return (str) Method description.
+        \param (str) Method name.
+        """
+        # be ready for unsupported method
+        try:
+            # try to call
+            help = self.server.system.methodHelp(method)
+        except (SOAPpy.Fault, SOAPpy.ProtocolError), fault:
+            # on error supply empty help string
+            print "Warning: Cannot get method help (" + str(fault) + ")"
+            help = ""
+        # return result
+        return help
+        
+        
+    def executeMethod(self, method, params):
+        """
+        Execute given method with params and return result.
+        Fail dictionary contain "faultCode" and "faultString" keys.
+        \return (dict or list) Dict=error, list=success.
+        \param method (str) Name of the method to call.
+        \param params (list) List of method params.
+        """
+        # execute a call
+        try:
+        #    try:
+        #        # if system.* method
+        #        if method[0:7] == "system.":
+        #            # do not use multicall
+        #            raise SOAPpy.Fault("300", "do not use multicall call",)
+        #        # take result for first call [0]
+        #        ret = self.server.system.multicall(
+        #                [{"methodName" : method, "params" : params}]) [0]
+        #    except (SOAPpy.Fault, SOAPpy.ProtocolError, socket.error), fault:
+                # error multicall not supported--try direct call
+                try:
+                    # put result in array--means success
+                    ret = [ apply(eval("self.server." + method), params) ]
+                except (SOAPpy.Fault, SOAPpy.ProtocolError), fault:
+                    # probably persistent error
+                    print "Error: Cannot execute method on server (" + str(fault) + ")"
+                    return None
+        except Exception, exc:
+            # Soap error
+            print "Soap error: Cannot parse server result (" + str(exc) + ")"
+            return None
+        # return result
+        return ret
+    
+
+class UserInterface:
+    """
+    Handles typical user interface tasks.
+    """
+    
+    def __init__(self, config):
+        """
+        Initialize object and pre-set user interface behaviour.
+        Config dictionary should contain "render", "url", "server" keys.
+        \param config (dict) Some configuration options.
+        """
+        # remember config options
+        self.config = config
+        # create connection to server
+        self.server = SoapRpcClient(config)
+
+        # method list (only iff output is teletype)
+        if (sys.stdin.isatty() and sys.stdout.isatty()):
+                self.methods = self.server.listMethods()
+        else:
+                self.methods = []
+        #endif
+                
+        # add build-in commands
+        for method in ("exit", "help"):
+            self.methods.append(method)
+        # add data types
+        for datatype in ("int", "boolean", "string", "double",
+                "dateTime", "base64"):
+            self.methods.append(datatype)
+        
+        
+    def _completeMethodName(self, text, state):
+        """
+        The completer function is called as function(text, state),
+        for state in 0, 1, 2, ..., until it returns a non-string value.
+        It should return the next possible completion starting with text.
+        \return (str or None) Method name alternative or None on end.
+        \param text (str) Method name prefix.
+        \param state (int) Requested alternative number.
+        """
+        i = 0 #array index
+        num = 0 #number of matching entries
+        txtlen = len(text) #length of the prefix
+        while i < len(self.methods):
+            if self.methods[i][:txtlen] == text:
+                # matching name
+                if num >= state:
+                    # found
+                    return self.methods[i]
+                # count valid entry
+                num = num + 1
+            # next array index
+            i = i + 1
+        # no more matching names
+        return None
+        
+        
+    def readCommand(self, coder, binary):
+        """
+        Read whole command (Soap-rpc call) from stdin.
+        \return (str) Input command stored into string..
+        \param coder (object) An UnicodeCoder instance.
+        \param binary (string) Binary data handling ("clear", "base64").
+        """
+        # create temporary parser instance
+        parser = InputParser(coder, binary)
+        
+        # read lines until end
+        text = ""
+        num = 0
+        while 1:
+            # prepare prompt string
+            if self.config["stdin"] == "tty":
+                # terminal input
+                if num == 0:
+                    prompt = self.config["server"] + "> " #first line
+                else:
+                    prompt = "> " #next lines
+            else:
+                # input from file (no prompt)
+                prompt = ""
+                
+            # read single line
+            try:
+                line = raw_input(prompt)
+                if num == 0:
+                    text = line #first line
+                else:
+                    text = text + "\n" + line #next lines
+            except KeyboardInterrupt:
+                # interrupted by ctrl + c
+                if self.config["stdin"] == "tty":
+                    # terminate broken line
+                    print
+                    if len(text) > 0 or len(readline.get_line_buffer()) > 0:
+                        # abort reading command
+                        return ""
+                # quit UI
+                return None
+            except:
+                # error--ignore previous input
+                if self.config["stdin"] == "tty":
+                    print #produce linefeed
+                return None
+            # increment line count
+            num = num + 1
+            
+            # test for complete input (try to parse input). parser returns:
+            # 200=ok, 401=syntax error, 402=unterminated input
+            ret = parser.parseMethodCall(text)
+            if ret["status"] != 402:
+                # done
+                return text
+    
+    
+    def serve(self):
+        """
+        Wait for input, read and parse commands,
+        execute actions and display results.
+        """
+        # set completer function
+        readline.set_completer(self._completeMethodName)
+        # bind complete() function to tab
+        readline.parse_and_bind("tab: complete")
+        
+        # create unicode decoder object
+        unicoder = UnicodeCoder(self.config["charset"])
+        
+        # forever loop
+        while 1:
+        
+            # read command
+            cmd = self.readCommand(unicoder, self.config["binary"])
+            if cmd == None:
+                break #exit
+                
+            # switch on command
+            cmd = string.strip(cmd)
+            if cmd == "":
+                #ignore empty line
+                pass
+                
+            elif cmd == "exit":
+                break #exit
+                
+            elif cmd == "help":
+                # list commands
+                methods = self.server.listMethods()
+                methods.sort()
+                for method in methods:
+                    # get signature
+                    signatures = self.server.getSignature(method)
+                    if type(signatures) == type([]) and len(signatures) > 0:
+                        # for overloaded functions
+                        for sign in signatures:
+                            # create function prototype
+                            proto = sign[0] + " " + method + " ("
+                            # add params
+                            i = 1
+                            while i <len(sign):
+                                if i > 1:
+                                    proto = proto + ", "
+                                proto = proto + sign[i]
+                                i = i + 1
+                            proto = proto + ")"
+                            # print prototype
+                            print proto
+                    else:
+                        # cannot get signature
+                        print "??? " + method + " (???)"
+                # set 'exitstatus' to success
+                self.config["exitstatus"] = 0
+                
+            elif cmd[:5] == "help ":
+                # show help on command
+                method = string.strip(cmd[5:])
+                if method == "exit":
+                    ret = "Exit from interface. Built-in command."
+                elif method == "help":
+                    ret = "Show list of commads (help) or help " \
+                            "on command (help <command>). Built-in command."
+                elif method == "int" or method == "i4":
+                    ret = "Integer number type for explicit data cast. " \
+                            "Example: int(123). As an alternative, " \
+                            "integer literals (1, 234, -42) can be used. " \
+                            "Built-in command."
+                elif method == "boolean":
+                    ret = "Logic value type for explicit data cast. " \
+                            "Example: boolean(1). As an alternative, " \
+                            "boolean literals (true, false) can be used. " \
+                            "Built-in command."
+                elif method == "string":
+                    ret = "Character string type for explicit data cast. " \
+                            "Example: string(\"hello\"). As an alternative, " \
+                            "string literals (\"hello\", 'world') can be used. " \
+                            "Built-in command."
+                elif method == "double":
+                    ret = "Real number type for explicit data cast. " \
+                            "Example: double(3.14). As an alternative, " \
+                            "double literals (0.00, -3.12, 32.9) can be used. " \
+                            "Built-in command."
+                elif method == "dateTime":
+                    ret = "Date/time type for explicit data cast. " \
+                            "Example: dateTime(\"2003-04-28\"). " \
+                            "Built-in command."
+                elif method == "base64":
+                    ret = "Binary data type for explicit data cast. " \
+                            "Example: base64(\"Iambindata\") or " \
+                            "base64(\"SWFtYmluZGF0YQo=\") depending on " \
+                            "'-b' command line option. " \
+                            "Built-in command."
+                elif method == "base64file":
+                    ret = "Binary data type for explicit data cast. " \
+                            "Data are read from given file. " \
+                            "Example: base64file(\"/etc/serices\"). " \
+                            "Built-in command."
+                else:
+                    # help on method
+                    ret = self.server.getHelp(method)
+                # test result
+                if len(ret) > 0:
+                    print unicoder.decode(ret)
+                else:
+                    print "(help not available)"
+                # set 'exitstatus' to success
+                self.config["exitstatus"] = 0
+                
+            else:
+                # parse command
+                parser = InputParser(unicoder, self.config["binary"])
+                ret = parser.parseMethodCall(cmd)
+                if ret["status"] != 200:
+                    #error
+                    print "Parse error: %d (%s)" \
+                            % (ret["status"], ret["statusMessage"])
+                    pass
+                else:
+                    try:
+                        # execute command
+                        ret = self.server.executeMethod(
+                                ret["methodName"], ret["params"])
+                    except KeyboardInterrupt:
+                        # ctrl + c
+                        print "Execution interrupted"
+                        ret = None
+                    
+                    # check for error list=ok, dict=error
+                    if type(ret) == type({}):
+                        # error
+                        print "Execution error: %d (%s)" \
+                                % (ret["faultCode"], ret["faultString"])
+                    elif type(ret) == type([]):
+                        # success--render output
+                        if self.config["render"] == "computer":
+                            render = ComputerOutputRender(unicoder,
+                                    self.config["binary"])
+                        elif self.config["render"] == "human":
+                            render = HumanOutputRender(unicoder,
+                                    self.config["binary"])
+                        else:
+                            render = HumanOutputRender(unicoder,
+                                    self.config["binary"]) #default
+                        # render return value
+                        ret = render.renderValue(ret[0])
+                        print ret["valueString"],
+                        # set 'exitstatus' to success
+                        self.config["exitstatus"] = 0
+                    else:
+                        # method was not executed
+                        pass
+
+
+def usage():
+    """
+    Print usage.
+    """
+    print "Usage: Soaprpc-netcat [-b<encoding>][-c][-h][-x<charset>] {<url>|<host> <port>}"
+    print "Options:"
+    print " -b<encoding>  Encoding for in/out binary data (clear, base64)."
+    print " -h            Show this help message."
+    print " -r<render>    Set render for output data (human, computer)."
+    print " -x<charset>   Charset for in/out strings (utf-8, iso-8859-2, cp1250)."
+    print " -p<proxy>     URL of HTTP proxy."
+    print "               You can use also HTTP_PROXY environmental varieble."
+    
+
+class Services:
+        """
+        Load service(5) file.
+        """
+        def __init__(self, path):
+                """
+                Load file -- ignore errors.
+                """
+                self.services = {}
+                self.ports = {}
+                try:
+                        f = open(path)
+                        
+                        for line in f.xreadlines():
+                                # ignore empty lines and comments
+                                pound = line.find('#')
+                                if (pound > -1): line = line[0:pound]
+                                line = line.strip()
+                                if not line: continue
+                                parts = line.split()
+                                if len(parts) < 2: continue
+
+                                # ignore corrupted port or non-tcp ports
+                                port = parts[1].split('/')
+                                if (len(port) != 2) or (port[1] != "tcp"):
+                                        continue
+
+                                # convert port to int and ignore
+                                try:
+                                        port = int(port[0])
+                                except ValueError: pass
+
+                                self.ports[port] = parts[0]
+                                self.services[parts[0]] = port
+
+                                # get rid of name and port definition and remember aliases
+                                del parts[0]; del parts[0]
+                                for part in parts: self.services[part] = port
+                        #endfor
+                except IOError:
+                        pass
+                #endtry
+        #enddef
+        
+        def serviceToPort(self, service):
+                """
+                Convert service name to port. When service is not known
+                return None.
+                """
+                return self.services.get(service)
+        #enddef
+#endclass
+
+def portscan(host, config, path):
+        """
+        Scan ports from services file on given host.
+        Print report of found functional Soap-RPC hosts
+        """
+
+        # get services from service file and issue error when no services found
+        ports = Services(path).ports.items()
+        if not ports:
+                print "Error: %s has no services defined." % (services, )
+                sys.exit(-1)
+        #endif
+
+        # process all services
+        for port in ports:
+            config['url'] = "http://%s:%d/RPC2" % (host, port[0])
+            try:
+                # call system.listMethods
+                client = SoapRpcClient(config)
+                client.server.system.listMethods()
+            except SOAPpy.Fault:
+                # ignore fastrc Fault
+                pass
+            except (SOAPpy.ProtocolError), fault:
+                continue
+            #endtry
+
+            # print report
+            print "%s @ %s" % (port[1], config['url'])
+        #endfor
+#enddef
+
+                
+# program entry point    
+if __name__ == "__main__":
+    
+    import sys
+    import getopt
+    import os
+    
+    # default values
+    config = { "binary" : "clear",
+            "render" : "human",
+            "charset" : "utf-8",
+            "urn" : "urn:examples",
+            "exitstatus" : 1,
+            "proxy": None } #by default set false error code
+
+    # parse params
+    try:
+        options, arguments = getopt.getopt(sys.argv[1:], 'b:hr:x:p:')
+    except:
+        # bad option
+        print "Error: Bad option."
+        usage()
+        sys.exit(1)
+    # process options
+    for opt, val in options:
+        if opt == "-b":
+            if val not in ("base64", "clear"):
+                print "Error: Bad binary data encoding type '%s'." % val
+                usage()
+                sys.exit(1)
+            config["binary"] = val
+        elif opt == "-h":
+            print "A Soap-RPC netcat-like interface by Solamyl."
+            usage()
+            sys.exit(0)
+        elif opt == "-r":
+            if val not in ("human", "computer"):
+                print "Error: Bad output render type '%s'." % val
+                usage()
+                sys.exit(1)
+            config["render"] = val
+        elif opt == "-x":
+            config["charset"] = val
+        elif opt == "-p":
+            config["proxy"] = val
+
+    # check args
+    if len(arguments) == 1:
+        # argument should be full server url
+        server = arguments[0]
+    elif len(arguments) == 2:
+        # host and port/service/portscan given
+                if arguments[1] == "portscan":
+                        # portscan
+                        portscan(arguments[0], config, _own_services)
+                        sys.exit(0)
+                #endif
+                
+                try:
+                        port = int(arguments[1])
+                except ValueError:
+                        port = (Services(_own_services).serviceToPort(arguments[1])
+                                or Services(_system_services).serviceToPort(arguments[1]))
+                #endtry
+
+                if (not port):
+                        print "Error: '%s' not port or service." % arguments[1]
+                        usage()
+                        sys.exit(1)
+                #endif
+
+                server = "http://%s:%d/RPC2" % (arguments[0], port)
+    else:
+        print "Error: Missing URL to a Soap-RPC server."
+        usage()
+        sys.exit(1)
+    
+    # check for proxy settings
+    if not config['proxy']:
+        if (os.environ.has_key("HTTP_PROXY")):
+            config['proxy'] = os.environ["HTTP_PROXY"];
+
+    # get server name from url
+    config["url"] = server
+    if server[:7] != "http://":
+        print "Error: Invalid URL (URL must start with 'http://')."
+        sys.exit(1)
+    server = server[7:]
+    i = string.find(server, "/")
+    if i < 0:
+        print "Error: Invalid URL (server name must end with '/')."
+        sys.exit(1)
+    #endif
+
+    config["server"] = server[:i]
+
+    # input from stdin?
+    if os.isatty(sys.stdin.fileno()):
+        config["stdin"] = "tty"
+    else:
+        config["stdin"] = "file"
+
+    # if defined "HOME" environment variable
+    histfile = ""
+    if os.environ.has_key("HOME"):
+        # read history file
+        histfile = os.path.join(os.environ["HOME"], ".Soaprpc_history")
+        try:
+            readline.read_history_file(histfile)
+        except IOError:
+            pass #ignore read error
+
+    # create UI object
+    ui = UserInterface(config)
+    ui.serve()
+    
+    # save history only for terminal input
+    if histfile and config["stdin"] == "tty":
+        # write history file
+        readline.write_history_file(histfile)
+    
+    # return return code
+    sys.exit(config["exitstatus"])
+    
+# end.
