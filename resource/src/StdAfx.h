@@ -20,7 +20,16 @@
 #include <xc/log.h>
 #include <xc/error.h>
 #include <xc/text.h>
+#include <xc/debug.h>
 
+//TODO: to lib
+namespace xc {
+    template<typename Data_t>
+    xc::string human(const Data_t& data, size_t limit)
+    {
+        return xc::human(data.data(), data.size(), limit);
+    }
+}
 
 #endif
 

@@ -98,6 +98,11 @@ public:
         return data_t(_data + off, xc::min(size, _size - off));
     }
 
+    void shift(size_t size) {
+        _data += size;
+        _size -= size;
+    }
+
     /**
      * Podobne jako sub ale vnitrni ukazatel se posune na konec techto dat.
      * @param size Velikost dat
@@ -107,8 +112,7 @@ public:
         if (size > _size)
             size = _size;
         data_t ret(this->sub(0, size));
-        _data += size;
-        _size -= size;
+        this->shift(size);
         return ret;
     }
 
@@ -117,10 +121,21 @@ public:
     }
 
     data_t& operator += (size_t size) {
-        _data += size;
-        _size -= size;
+        this->shift(size);
         return *this;
     }
+
+    template<typename Value_t>
+    data_t& operator >> (Value_t& value)
+    {
+        //TODO: check
+        if (sizeof(Value_t) > _size)
+            return *this;
+        value = *reinterpret_cast<const Value_t*>(_data);
+        this->shift(sizeof(Value_t));
+        return *this;
+    }
+
 private:
     const value_t* _data;
     size_t _size;

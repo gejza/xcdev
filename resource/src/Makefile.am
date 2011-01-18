@@ -10,15 +10,15 @@ libxcrd_la_CPPFLAGS = -DDEBUG $(XC_CFLAGS) $(LIBCONFIGXX_CFLAGS) $(CDB_CFLAGS)
 libxcrd_la_SOURCES = env.cc cdb.cc config.cc make.cc out_cdb.cc out_debug.cc
 libxcrd_la_LDFLAGS = $(VERSION_INFO) -shared $(XC_LIBS) $(LIBCONFIGXX_LIBS) $(CDB_LIBS)
 
-bin_PROGRAMS = reglookup regdump
+bin_PROGRAMS = xcrdlookup xcrddump
 
-reglookup_CPPFLAGS =
-reglookup_SOURCES = reglookup.cc
-reglookup_LDADD = libxcrd.la
+xcrdlookup_CPPFLAGS = $(READLINE_CFLAGS)
+xcrdlookup_SOURCES = lookup.cc
+xcrdlookup_LDADD = libxcrd.la $(READLINE_CLIBS)
 
-regdump_CPPFLAGS =
-regdump_SOURCES = regdump.cc
-regdump_LDADD = libxcrd.la
+xcrddump_CPPFLAGS =
+xcrddump_SOURCES = dump.cc
+xcrddump_LDADD = libxcrd.la
 
 noinst_PROGRAMS = test
 

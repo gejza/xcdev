@@ -1,7 +1,7 @@
 Source: libxcrd
 Priority: extra
 Maintainer: Milan Dunghubel <milan.dunghubel@gmail.com>
-Build-Depends: debhelper (>= 7.0.50~), autotools-dev, libxc-dev, libcdb-dev, libconfig++-dev
+Build-Depends: debhelper (>= 7.0.50~), autotools-dev, libxc-dev, libcdb-dev, libconfig++-dev, libreadline-dev
 Standards-Version: 3.8.4
 Section: libs
 Homepage: <insert the upstream URL, if relevant>

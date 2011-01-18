@@ -1,6 +1,6 @@
 /*
-   File name:  reglookup.cc
-   Date:       2010/12/20 03:30
+   File name:  cbdump.cc
+   Date:       2010/12/06 02:31
    Subversion: $Id: $
    Author:     Milan Dunghubel <milan@mfis.cz>
 
@@ -11,32 +11,31 @@
 #endif
 #include "StdAfx.h"
 
-#include <xc/log.h>
-#include <xc/error.h>
-
-#include <xc/unserialize.h>
-
+//#include "cb.h"
 #include "../include/xc/rd/cdb.h"
+
+void d(const xc::rd::ns_t ns, const xc::data_t& key,
+                    const xc::data_t& value)
+{
+	printf("ns=%d key=%s data=%s\n",
+			ns, xc::human(key, 20).c_str(), xc::human(value, 60).c_str());
+
+}
 
 int main(int argc, const char* argv[])
 {
     xc::debug::debug_enable();
     xc::log::add_stderr("ALL");
 
-    if (argc <= 3)
+    if (argc <= 1)
     {
-        fprintf(stderr, "Usage: %s <db> <ns> <key>\n", argv[0]);
+        fprintf(stderr, "Usage: %s <db>\n", argv[0]);
         return EXIT_FAILURE;
     }
 
     try {
-		int ns = atoi(argv[2]);
-		const char* key = argv[3];
         xc::rd::ConstDB_t lookup(argv[1]);
-    	xc::data_t val;
-		if (lookup.lookup(ns, key, val)) {
-			xc::dump(xc::chunk(val));
-		}
+        lookup.dump(d);
 
     } catch (const xc::error_t& e) {
         std::cerr << "Error: " << e.message() << std::endl;
@@ -49,9 +48,6 @@ int main(int argc, const char* argv[])
         return EXIT_FAILURE;
     }
     return EXIT_SUCCESS;
+
+    return 0;
 }
-
-
-
-
-

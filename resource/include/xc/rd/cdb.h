@@ -23,6 +23,8 @@ namespace rd {
 class ConstDB_t : public Lookup_t
 {
 public:
+    class Cursor_t;
+
     ConstDB_t(const char* fn);
     virtual ~ConstDB_t();
     
@@ -30,11 +32,69 @@ public:
     
     virtual bool lookup(const xc::rd::ns_t ns, const xc::data_t& key,
 			xc::data_t& value) const;
-    
-    virtual void dump();
+
+    Cursor_t cursor() const;
+
+    typedef void (*Iterator_t)(const xc::rd::ns_t ns, const xc::data_t& key,
+            const xc::data_t& value);
+    virtual void dump(Iterator_t iter) const;
+protected:
+    struct cdb* _get() const {
+        return const_cast<cdb*>(&this->_db);
+    }
+
+    struct cdb* _get() {
+        return &this->_db;
+    }
+
 private:
     xc::fd_t _fd;
     struct cdb _db;
+};
+
+class ConstDB_t::Cursor_t
+{
+public:
+    const bool valid() const {
+        return this->_db != NULL;
+    }
+
+    const xc::rd::ns_t ns() const;
+    const xc::data_t key() const;
+    const xc::data_t value() const;
+
+    void next();
+
+    operator bool() const {
+        return this->valid();
+    }
+
+    const Cursor_t& operator++(int) {
+        printf("post");
+        this->next();
+        return *this;
+    }
+
+    const Cursor_t& operator++() {
+        this->next();
+        return *this;
+    }
+protected:
+    struct cdb* _get() const {
+        return const_cast<cdb*>(this->_db);
+    }
+
+    struct cdb* _get() {
+        return this->_db;
+    }
+
+private:
+    Cursor_t(struct cdb* db);
+
+    friend Cursor_t ConstDB_t::cursor() const;
+
+    struct cdb* _db;
+    unsigned int _ctx;
 };
 
 } // namespace rd

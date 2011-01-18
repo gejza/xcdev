@@ -19,14 +19,57 @@
 #include <stdlib.h>
 
 #include <xc/buffer.h>
+#include <xc/data.h>
 
 #include "../include/xc/rd/cdb.h"
+
+////////////////////////////////////////////
+xc::rd::ConstDB_t::Cursor_t::Cursor_t(struct cdb* db)
+    : _db(db), _ctx(0)
+{
+    cdb_seqinit(&_ctx, this->_db);
+    /*while ((ret = ::cdb_seqnext(&pos, this->_get())) > 0)
+    {
+        xc::rd::ns_t ns;
+        xc::data_t k(reinterpret_cast<const uint8_t*>(
+				cdb_getkey(const_cast<cdb*>(&this->_db))), cdb_keylen(const_cast<cdb*>(&this->_db)));
+        k >> ns;
+        const xc::data_t v(reinterpret_cast<const uint8_t*>(
+				cdb_getdata(const_cast<cdb*>(&this->_db))), cdb_datalen(const_cast<cdb*>(&this->_db)));
+        iter(ns, k, v);
+    }*/
+}
+
+void xc::rd::ConstDB_t::Cursor_t::next()
+{
+    int ret = ::cdb_seqnext(&_ctx, this->_get());
+    if (ret <= 0) {
+        _db = NULL;
+    }
+}
+
+const xc::rd::ns_t xc::rd::ConstDB_t::Cursor_t::ns() const
+{
+    return *reinterpret_cast<const xc::rd::ns_t*>(cdb_getkey(this->_get()));
+}
+
+const xc::data_t xc::rd::ConstDB_t::Cursor_t::key() const
+{
+    return xc::data_t(reinterpret_cast<const uint8_t*>(cdb_getkey(this->_get())),
+                        cdb_keylen(this->_get())) += sizeof(xc::rd::ns_t);
+}
+
+const xc::data_t xc::rd::ConstDB_t::Cursor_t::value() const
+{
+    return xc::data_t(reinterpret_cast<const uint8_t*>(cdb_getdata(this->_get())),
+            cdb_datalen(this->_get()));
+}
 
 ///////////////////////////////////////////    
 xc::rd::ConstDB_t::ConstDB_t(const char* fn)
     : _fd(fn)
 {
-    int ret = cdb_init(&this->_db, this->_fd.fd());
+    cdb_init(&this->_db, this->_fd.fd());
 }
 
 xc::rd::ConstDB_t::~ConstDB_t()
@@ -60,6 +103,11 @@ bool xc::rd::ConstDB_t::lookup(const xc::rd::ns_t ns, const xc::data_t& key,
     return false;
 }
 
+xc::rd::ConstDB_t::Cursor_t xc::rd::ConstDB_t::cursor() const
+{
+    return xc::rd::ConstDB_t::Cursor_t(this->_get());
+}
+
 /*std::string xc::rd::ConstDB_t::get_string(const Value_t& key)
 {
     Value_t val;
@@ -72,7 +120,7 @@ bool xc::rd::ConstDB_t::lookup(const xc::rd::ns_t ns, const xc::data_t& key,
     return "";
 }*/
 
-void xc::rd::ConstDB_t::dump()
+void xc::rd::ConstDB_t::dump(Iterator_t iter) const
 {
     /*struct cdb_find dbf;
     cdb_findinit(&dbf, &_db, "", 0);
@@ -84,16 +132,18 @@ void xc::rd::ConstDB_t::dump()
     */
     int ret;
     unsigned pos;
-    cdb_seqinit(&pos, &_db);
-    while ((ret = cdb_seqnext(&pos, &_db)) > 0)
+    cdb_seqinit(&pos, const_cast<cdb*>(&this->_db));
+    while ((ret = ::cdb_seqnext(&pos, this->_get())) > 0)
     {
-
-        const void* key = cdb_getkey(&_db);
-        uint32_t klen = cdb_keylen(&_db);
-        const void* val = cdb_getdata(&_db);
-        uint32_t vlen = cdb_datalen(&_db);
-        //std::cout << kpos << ":" << klen << "|" << vpos << ":" << vlen << std::endl;
+        xc::rd::ns_t ns;
+        xc::data_t k(reinterpret_cast<const uint8_t*>(
+				cdb_getkey(const_cast<cdb*>(&this->_db))), cdb_keylen(const_cast<cdb*>(&this->_db)));
+        k >> ns;
+        const xc::data_t v(reinterpret_cast<const uint8_t*>(
+				cdb_getdata(const_cast<cdb*>(&this->_db))), cdb_datalen(const_cast<cdb*>(&this->_db)));
+        iter(ns, k, v);
     }
+
     if (ret < 0) {
 
         std::cout << "error" << std::endl;

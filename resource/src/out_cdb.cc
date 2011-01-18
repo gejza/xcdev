@@ -29,18 +29,11 @@ xc::rd::CDBMake_t::~CDBMake_t()
     }
 }
 
-//TODO: to lib
-template<typename Data_t>
-xc::string human(const Data_t& data, size_t limit)
-{
-	return xc::human(data.data(), data.size(), limit);
-}
-
 void xc::rd::CDBMake_t::insert(const xc::rd::ns_t ns, const xc::data_t& key,
 			const xc::data_t& value)
 {
 	XC_DBG("Insert ns=%d key=%s data=%s",
-			ns, ::human(key, 20).c_str(), ::human(value, 60).c_str());
+			ns, xc::human(key, 20).c_str(), xc::human(value, 60).c_str());
 
 	xc::buffer_t k;
 	k << ns << key;
