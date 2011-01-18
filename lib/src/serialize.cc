@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <iostream>
 
+#include "xc/debug.h"
 #include "xc/error.h"
 #include "xc/serialize.h"
 #include "xc/unserialize.h"
@@ -34,16 +35,19 @@ namespace {
 
 void xc::serialize(xc::buffer_t& out, const std::string& key, int value)
 {
+    XC_DBG("Serialize: %s=%d", key.c_str(), value);
 	write(out, xc::chunk_t::LONG, key, &value, sizeof(int));
 }
 
 void xc::serialize(xc::buffer_t& out, const std::string& key, const std::string& value)
 {
+    XC_DBG("Serialize: %s=%s", key.c_str(), value.c_str());
 	write(out, xc::chunk_t::STRING, key, value.c_str(), value.size());
 }
 
 void xc::serialize(xc::buffer_t& out, const std::string& key, const serialize_t& ser)
 {
+    XC_DBG("Serialize: Array %s=%zu", key.c_str(), ser.size());
 	write(out, xc::chunk_t::ARRAY, key, ser.data(), ser.size());
 }
 /*

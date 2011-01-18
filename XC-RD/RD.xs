@@ -17,6 +17,7 @@ extern "C" {
 #include <iostream>
 
 #include <xc/error.h>
+#include <xc/debug.h>
 
 #include <xc/serialize.h>
 #include <xc/unserialize.h>
@@ -24,30 +25,69 @@ extern "C" {
 #include <xc/rd/out_cdb.h>
 #include <xc/rd/cdb.h>
 
+const char* get_type(SV* value)
+{
+    switch (SvTYPE(value)) {
+#define TOSTR(type) case type: return #type;
+    TOSTR(SVt_NULL)	/* 0 */
+    TOSTR(SVt_BIND)	/* 1 */
+    TOSTR(SVt_IV)		/* 2 */
+    TOSTR(SVt_NV)		/* 3 */
+    TOSTR(SVt_RV)		/* 4 */
+    TOSTR(SVt_PV)		/* 5 */
+    TOSTR(SVt_PVIV)	/* 6 */
+    TOSTR(SVt_PVNV)	/* 7 */
+    TOSTR(SVt_PVMG)	/* 8 */
+    TOSTR(SVt_PVGV)	/* 9 */
+    TOSTR(SVt_PVLV)	/* 10 */
+    TOSTR(SVt_PVAV)	/* 11 */
+    TOSTR(SVt_PVHV)	/* 12 */
+    TOSTR(SVt_PVCV)	/* 13 */
+    TOSTR(SVt_PVFM)	/* 14 */
+    TOSTR(SVt_PVIO)	/* 15 */
+    default:
+        return "unknown";
+    };
+}
+
 void serialize(xc::buffer_t& out, const std::string& key, HV* hv)
 {
+    XC_DBG("XC::RD: Begin hash %s", key.c_str());
 	xc::serialize_t obj;
 	HE *he;
 	I32 len;
 	hv_iterinit(hv);
 	while((he = hv_iternext(hv)) != NULL) {
-		obj.add(hv_iterkey(he, &len), hv_iterval(hv, he));
+        const char* k = hv_iterkey(he, &len);
+        SV* val = hv_iterval(hv, he);
+		obj.add(k, val);
 	}
 	serialize(out, key, obj);
+    XC_DBG("XC::RD: End hash %s", key.c_str());
 }
 
 void serialize(xc::buffer_t& out, const std::string& key, AV* av)
 {
+    XC_DBG("XC::RD: Begin array %s", key.c_str());
     I32 len = av_len(av);
 	xc::serialize_t obj;
-    for (I32 i=0; i <= len;i++)
-		obj.add(*av_fetch(av, i, 0));
+    for (I32 i=0; i <= len;i++) {
+        SV* val = *av_fetch(av, i, 0);
+		obj.add(val);
+    }
 	serialize(out, key, obj);
+    XC_DBG("XC::RD: End array %s", key.c_str());
 }
 
 void serialize(xc::buffer_t& out, const std::string& key, SV* value)
 {
+    if (SvROK(value)) {
+        value = SvRV(value);
+    }
+
+    XC_DBG("XC::RD: %s=%s", key.c_str(), get_type(value));
     switch (SvTYPE(value)) {
+    case SVt_PVMG:
     case SVt_PV:
         serialize(out, key, SvPVX(value));
         break;
@@ -66,8 +106,10 @@ void serialize(xc::buffer_t& out, const std::string& key, SV* value)
     case SVt_RV:
         serialize(out, key, SvRV(value));
         break;
+    /*case :
+        if (!SvUPGRADE(value, SVt_PVMG))*/
     default:
-        printf("Type %x\n", SvTYPE(value));
+        printf("Type %s\n", get_type(value));
     };
 }
 

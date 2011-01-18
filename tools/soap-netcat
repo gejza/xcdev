@@ -803,6 +803,7 @@ class SoapRpcClient:
         #    self.server = SOAPpy.SOAPProxy(config['url'],
         #            proxyVia=config['proxy'] namespace=config['ns'])
         #else:
+        self.wsdl = SOAPpy.WSDL.Proxy(config['url'] + '?wsdl')
         self.server = SOAPpy.SOAPProxy(config['url'], namespace = config['urn'])
         #endif
     def listMethods(self):
@@ -813,7 +814,8 @@ class SoapRpcClient:
         # be ready for unsupported method
         try:
             # try to call
-            methods = self.server.system.listMethods()
+            methods = self.wsdl.methods.keys()
+            #methods = self.server.system.listMethods()
         except (SOAPpy.Error, socket.error), fault:
             # on error supply empty method list
             print "Warning: Cannot list methods on server (" + str(fault) + ")"
