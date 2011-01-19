@@ -2,21 +2,19 @@ Source: libxc
 Priority: extra
 Maintainer: Milan Dunghubel <milan.dunghubel@gmail.com>
 Build-Depends: debhelper (>= 7), autotools-dev, autoconf-archive, autopoint, libconfig++-dev, binutils-dev, libpcre3-dev
-Standards-Version: 3.8.0
+Standards-Version: 3.9.1
 Section: libs
-Homepage: <insert the upstream URL, if relevant>
+#Homepage: <insert the upstream URL, if relevant>
 
 Package: libxc0
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: <insert up to 60 chars description>
- <insert long description, indented with spaces>
+Description: Xross Core Library
 
 Package: libxc-dev
 Section: libdevel
 Architecture: any
-Depends: libxc0 (= ${binary:Version})
-Description: <insert up to 60 chars description>
- <insert long description, indented with spaces>
+Depends: libxc0 (= ${binary:Version}), ${misc:Depends}
+Description: Xross Core Library - Devel files
 

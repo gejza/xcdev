@@ -1,5 +1,5 @@
-libxc (0.0.1-1) unstable; urgency=low
+libxc (1.0.0-1) unstable; urgency=low
 
   * Initial release 
 
- -- Milan Dunghubel <milan.dunghubel@gmail.com>  Sun, 19 Dec 2010 20:47:39 +0100
+ -- Milan Dunghubel <milan.dunghubel@gmail.com>  Wed, 19 Jan 2011 01:04:59 +0100

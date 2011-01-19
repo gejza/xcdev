@@ -1,21 +1,13 @@
 This package was debianized by Milan Dunghubel <milan@ministrofnet.com> on
 Mon, 30 Nov 2009 23:29:34 +0100.
 
-It was downloaded from <url://example.com>
-
-Upstream Author(s):
-
-    <put author's name and email here>
-    <likewise for another author>
-
 Copyright:
 
-    <Copyright (C) YYYY Name OfAuthor>
-    <likewise for another author>
+    Copyright (C) 2011 Milan Dunghubel
 
 License:
 
-    <Put the license of the package here indented by 4 spaces>
+    Private
 
 The Debian packaging is copyright 2009, Milan Dunghubel <milan@ministrofnet.com> and
 is licensed under the GPL, see `/usr/share/common-licenses/GPL'.
