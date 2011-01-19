@@ -18,3 +18,11 @@ Architecture: any
 Depends: libxc0 (= ${binary:Version}), ${misc:Depends}
 Description: Xross Core Library - Devel files
 
+Package: libxc-dbg
+Architecture: any
+Section: debug
+Priority: extra
+Depends: libxc0 (= ${binary:Version}), ${misc:Depends}
+Description: Xross Core Library - Debug symbols
+ This package contains debugging symbols for binaries in libxc.
+
