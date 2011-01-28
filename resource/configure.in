@@ -29,7 +29,6 @@ dnl --------------------------------------------------------------------------
 dnl --------------------------------------------------------------------------
 dnl Checks for compiler & standard-library characteristics
 dnl --------------------------------------------------------------------------
-VL_LIB_READLINE
 
 dnl --------------------------------------------------------------------------
 dnl Checks for standard headers
@@ -40,10 +39,6 @@ dnl Checks for library configuration (added right-to-left)
 dnl --------------------------------------------------------------------------
 dnl check for libtotest; if it cannot be found or it's too old, PKG_CHECK_MODULES
 dnl macro will automatically print an error message and exit the configure script.
-PKG_CHECK_MODULES([XC], [libxc])
-PKG_CHECK_MODULES([LIBCONFIGXX], [libconfig++ >= 1.3.2],, AC_MSG_ERROR([libconfig++ 1.3.2 or newer not found.]))
-PKG_CHECK_MODULES([CDB], [libcdb])
-PKG_CHECK_MODULES(LIBEDIT, libedit)
 
 dnl --------------------------------------------------------------------------
 dnl Checks for library units

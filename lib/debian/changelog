@@ -1,3 +1,9 @@
+libxc (1.0.0-1ubuntu1) maverick; urgency=low
+
+  * Slouceni s resource 
+
+ -- Milan Dunghubel <milan.dunghubel@gmail.com>  Fri, 28 Jan 2011 21:15:32 +0100
+
 libxc (1.0.0-1) unstable; urgency=low
 
   * Initial release 

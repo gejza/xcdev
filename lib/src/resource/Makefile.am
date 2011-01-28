@@ -14,7 +14,7 @@ bin_PROGRAMS = xcrdlookup xcrddump
 
 xcrdlookup_CPPFLAGS = $(READLINE_CFLAGS)
 xcrdlookup_SOURCES = lookup.cc
-xcrdlookup_LDADD = libxcrd.la $(READLINE_CLIBS)
+xcrdlookup_LDADD = libxcrd.la $(READLINE_CLIBS) -lxclog
 
 xcrddump_CPPFLAGS =
 xcrddump_SOURCES = dump.cc

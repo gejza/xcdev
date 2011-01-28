@@ -1,4 +1,6 @@
 
+SUBDIRS = resource
+
 # current[:revision[:age]]
 VERSION_INFO="-version-info 1:0:0"
 
