@@ -1353,8 +1353,8 @@ if __name__ == "__main__":
 
     # get server name from url
     config["url"] = server
-    if server[:7] != "http://":
-        print "Error: Invalid URL (URL must start with 'http://')."
+    if server[:7] != "http://" and server[:8] != "https://":
+        print "Error: Invalid URL (URL must start with 'http(s)://')."
         sys.exit(1)
     server = server[7:]
     i = string.find(server, "/")
