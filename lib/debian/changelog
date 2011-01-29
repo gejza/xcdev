@@ -1,3 +1,9 @@
+libxc (1.0.0-1ubuntu2) maverick; urgency=low
+
+  * Rebuild 
+
+ -- Milan Dunghubel <milan.dunghubel@gmail.com>  Sat, 29 Jan 2011 00:25:03 +0100
+
 libxc (1.0.0-1ubuntu1) maverick; urgency=low
 
   * Slouceni s resource 
