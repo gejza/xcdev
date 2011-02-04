@@ -42,16 +42,18 @@ namespace xc {
     string human(const void* data, size_t size, size_t limit);
     string human(const char* str, size_t limit);
 
+#ifdef ENABLE_NLS
     inline void i18n(const char* locale)
     {
-#ifdef ENABLE_NLS
 #ifdef LOCALEDIR
         ::bindtextdomain(PACKAGE, LOCALEDIR);
 #endif
         ::textdomain(PACKAGE);
         ::setlocale(LC_ALL, locale);
-#endif
     }
+#else
+    inline void i18n(const char*) {}
+#endif
 
     class colored_t
     {

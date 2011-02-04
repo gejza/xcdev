@@ -47,19 +47,21 @@ void test_lookup(xc::rd::Lookup_t& look)
 
 void test_output(const char* filename)
 {
-	xc::rd::CDBMake_t out("test.cdb");
+	xc::rd::CDBMake_t out(filename);
 	test_output(out);
 }
 
 void test_lookup(const char* filename)
 {
 	//TODO: tmp file
-	xc::rd::ConstDB_t look("test.cdb");
+	xc::rd::ConstDB_t look(filename);
 	test_lookup(look);
 }
 
 int xc_test_main(int argc, const char* argv[])
 {
+	(void)argc;
+	(void)argv;
 	const char* fn = "/tmp/test.cdb";
 	OUT("Test cdb file %s\n", fn);
 	test_output(fn);

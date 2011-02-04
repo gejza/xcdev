@@ -16,8 +16,6 @@
 
 #include <xc/unserialize.h>
 
-#include <histedit.h>
-
 #include "../include/xc/rd/cdb.h"
 
 #define HISTORY "~/.xcrdlookup"
@@ -33,7 +31,7 @@ extern char *readline ();
 char *cmdline = NULL;
 #else /* !defined(HAVE_READLINE_READLINE_H) */
  /* no readline */
-static const char* readline() {
+static const char* readline(const char*) {
     static xc::string line;
     std::cin >> line;
     return line.c_str();
@@ -54,7 +52,9 @@ extern int read_history ();
 #endif /* HAVE_READLINE_HISTORY */
 
 xc::rd::ConstDB_t* db = NULL;
-int ns = 0;
+xc::rd::ns_t ns = 0;
+
+#ifdef HAVE_LIBREADLINE
 /* Generator function for command completion.  STATE lets us know whether
    to start from scratch; without any state (i.e. STATE == 0), then we
    start at the top of the list. */
@@ -62,7 +62,6 @@ char* key_generator (const char* text, int state)
 {
     static xc::rd::ConstDB_t::Cursor_t cursor = db->cursor();
     static int list_index, len;
-    char *name;
 
     /* If this is a new word to complete, initialize now.  This includes
      saving the length of TEXT for efficiency, and initializing the index
@@ -102,7 +101,7 @@ char* key_generator (const char* text, int state)
    the word to complete.  We can use the entire contents of rl_line_buffer
    in case we want to do some simple parsing.  Return the array of matches,
    or NULL if there aren't any. */
-char** key_completion (const char* text, int start, int end)
+char** key_completion (const char* text, int start, int /*end*/)
 {
   char **matches;
   matches = (char **)NULL;
@@ -115,6 +114,7 @@ char** key_completion (const char* text, int start, int end)
 
   return (matches);
 }
+#endif /* HAVE_LIBREADLINE */
 
 int main(int argc, const char* argv[])
 {
@@ -127,14 +127,17 @@ int main(int argc, const char* argv[])
         return EXIT_FAILURE;
     }
 
+#ifdef HAVE_LIBREADLINE
     /* Allow conditional parsing of the ~/.inputrc file. */
     rl_readline_name = "XCRDLookup";
     /* Tell the completer that we want a crack first. */
     rl_attempted_completion_function = key_completion;
-
+#endif /* HAVE_LIBREADLINE */
+#ifdef HAVE_READLINE_HISTORY
     ::using_history();
     ::read_history(HISTORY);
-
+#endif /* HAVE_READLINE_HISTORY */
+    
     try {
         xc::rd::ConstDB_t lookup(argv[1]);
         db = &lookup;
@@ -152,7 +155,9 @@ int main(int argc, const char* argv[])
                 const char* line = ::readline("test> ");
                 if (!line)
                     break;
+#ifdef HAVE_READLINE_HISTORY
                 ::add_history(line);
+#endif /* HAVE_READLINE_HISTORY */
                 key = line;
                 while (*key.rend() == ' ')
                     key.erase(key.end()-1);
@@ -181,7 +186,11 @@ int main(int argc, const char* argv[])
         std::cerr << "Unknown exception" << std::endl;
         return EXIT_FAILURE;
     }
+    
+#ifdef HAVE_READLINE_HISTORY
     ::write_history(HISTORY);
+#endif /* HAVE_READLINE_HISTORY */
+
     return EXIT_SUCCESS;
 }
 

@@ -57,7 +57,7 @@ public:
     // alias
     void alias(const char* route, Lang_t lang, const char* alias);
 
-    const Id_t add(const Menu_t& menu);
+    Id_t add(const Menu_t& menu);
     void add(const Template_t& templ);
     // debug
     const char* get_lang(Lang_t lang);
@@ -69,8 +69,8 @@ protected:
 
 private:
     Output_t& _out;
-    Id_t _curid;
     Lang_t _def_lang;
+    Id_t _curid;
 };
 
 #endif // _XC_CBMAKE_H_

@@ -48,7 +48,7 @@ void xc::rd::ConstDB_t::Cursor_t::next()
     }
 }
 
-const xc::rd::ns_t xc::rd::ConstDB_t::Cursor_t::ns() const
+xc::rd::ns_t xc::rd::ConstDB_t::Cursor_t::ns() const
 {
     return *reinterpret_cast<const xc::rd::ns_t*>(cdb_getkey(this->_get()));
 }
@@ -135,7 +135,7 @@ void xc::rd::ConstDB_t::dump(Iterator_t iter) const
     cdb_seqinit(&pos, const_cast<cdb*>(&this->_db));
     while ((ret = ::cdb_seqnext(&pos, this->_get())) > 0)
     {
-        xc::rd::ns_t ns;
+        xc::rd::ns_t ns = 0;
         xc::data_t k(reinterpret_cast<const uint8_t*>(
 				cdb_getkey(const_cast<cdb*>(&this->_db))), cdb_keylen(const_cast<cdb*>(&this->_db)));
         k >> ns;

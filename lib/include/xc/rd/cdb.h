@@ -55,11 +55,11 @@ private:
 class ConstDB_t::Cursor_t
 {
 public:
-    const bool valid() const {
+    bool valid() const {
         return this->_db != NULL;
     }
 
-    const xc::rd::ns_t ns() const;
+    xc::rd::ns_t ns() const;
     const xc::data_t key() const;
     const xc::data_t value() const;
 

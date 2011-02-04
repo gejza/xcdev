@@ -4,7 +4,7 @@ libdir=@libdir@
 includedir=@includedir@
 
 Name: libxc
-Description: xc library.
+Description: xc library configured by @configure_input@.
 Requires:
 Version: @VERSION@
 Libs: -L${libdir} -lxc -lxclog

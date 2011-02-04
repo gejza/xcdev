@@ -24,7 +24,7 @@
 
 //////////////////////////////////
 Make_t::Make_t(Output_t& out)
-    : _curid(0), _def_lang(xc::MULTI), _out(out)
+    : _out(out), _def_lang(xc::MULTI), _curid(0)
 {
 }
 
@@ -39,7 +39,7 @@ xc::StrId_t Make_t::string(Lang_t lang, const char* str)
     return id;
 }
 
-void Make_t::string(const StrId_t id, Lang_t lang, const char* str)
+void Make_t::string(const StrId_t id, Lang_t lang, const char* /*str*/)
 {
     StrKey_t key(id, lang);
     //DBTableMake_t db(*this->_db, 12);
@@ -76,13 +76,13 @@ const char* Make_t::get_lang(Lang_t lang)
     // table hooks
 }*/
 
-void Make_t::alias(const char* route, Lang_t lang, const char* alias)
+void Make_t::alias(const char* /*route*/, Lang_t /*lang*/, const char* /*alias*/)
 {
     // table alias:  route-lang => alias
     // table route:  alias -> route
 }
 
-const xc::Id_t Make_t::add(const Menu_t& menu)
+xc::Id_t Make_t::add(const Menu_t& menu)
 {
     std::cout << menu.id << std::endl;
     for (Menu_t::Items_t::const_iterator i=menu.items.begin();i != menu.items.end(); i++)

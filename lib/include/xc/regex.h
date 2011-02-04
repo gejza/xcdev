@@ -56,6 +56,7 @@ public:
      */
     regex_t& operator=(const char* regex) {
         this->_compile(regex);
+        return *this;
     }
 
     /** 

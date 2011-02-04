@@ -141,7 +141,7 @@ public:
      * Default constructor
      */
     loc_src_t()
-        : _func(0x0), _filename(0x0), _line(0) {}
+        : _filename(0x0), _line(0), _func(0x0) {}
 
     /** 
      * Constructor
@@ -149,14 +149,14 @@ public:
      * @param line 
      */
     loc_src_t(const char* filename, int line)
-        : _func(0x0), _filename(filename), _line(line) {}
+        : _filename(filename), _line(line), _func(0x0) {}
 
     /** 
      * Constructor
      * @param func 
      */
     loc_src_t(const char* func)
-        : _func(func), _filename(0x0), _line(0) {}
+        : _filename(0x0), _line(0), _func(func) {}
 
     /** 
      * Constructor
@@ -165,7 +165,7 @@ public:
      * @param func 
      */
     loc_src_t(const char* filename, int line, const char* func)
-        : _func(func), _filename(filename), _line(line) {}
+        : _filename(filename), _line(line), _func(func) {}
 
     loc_src_t(const void* p);
 
