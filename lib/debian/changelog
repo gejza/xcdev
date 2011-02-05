@@ -1,3 +1,9 @@
+libxc (1.0.2) maverick; urgency=low
+
+  * Rebuild 
+
+ -- Milan Dunghubel <milan.dunghubel@gmail.com>  Sat, 05 Feb 2011 02:15:34 +0100
+
 libxc (1.0.1-2ubuntu2) maverick; urgency=low
 
   * Odstraneni warningu 
