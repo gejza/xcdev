@@ -1,7 +1,7 @@
 Source: libxcrd-perl
 Section: perl
 Priority: optional
-Build-Depends: debhelper (>= 7), perl, libxcrd-dev
+Build-Depends: debhelper (>= 7), perl, libxc-dev
 Maintainer: Milan Dunghubel <milan.dunghubel@gmail.com>
 Standards-Version: 3.8.4
 Homepage: http://search.cpan.org/dist/XC-RD/

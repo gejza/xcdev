@@ -1,3 +1,9 @@
+libxcrd-perl (1.0.0-1) maverick; urgency=low
+
+  * Rebuild with libxc 
+
+ -- Milan Dunghubel <milan.dunghubel@gmail.com>  Sat, 05 Feb 2011 04:28:24 +0100
+
 libxcrd-perl (0.01-1) unstable; urgency=low
 
   * Initial Release.
