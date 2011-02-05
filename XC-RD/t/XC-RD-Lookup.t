@@ -24,6 +24,15 @@ use XC::RD;
 #}
 
 #$m = 0;
+sub makedata {
+    my $m = new XC::RD::Make("test.cdb");
+
+    $m->insert(1, "str", "str");
+    my %skoly = ("pavel" => "FI MUNI", "petr" => "FIT VUT", "pole" => [ 1,2,3]);
+    $m->insert(1, "skoly", \%skoly);
+}
+
+makedata;
 
 my $l = new XC::RD::Lookup("test.cdb");
 print $l->lookup(1, 'skoly');
