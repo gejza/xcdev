@@ -12,6 +12,10 @@ Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Conflicts: libxcrd0 
 Description: Xross Core Library
+ $Rev$:     Revision of last commit
+ $Author$:  Author of last commit
+ $Date$:    Date of last commit
+ $Id$
 
 Package: libxc-dev
 Section: libdevel
@@ -19,6 +23,10 @@ Architecture: any
 Depends: libxc0 (= ${binary:Version}), ${misc:Depends}
 Conflicts: libxcrd-dev
 Description: Xross Core Library - Devel files
+ $Rev$:     Revision of last commit
+ $Author$:  Author of last commit
+ $Date$:    Date of last commit
+ $Id$
 
 Package: libxc-dbg
 Architecture: any
@@ -27,7 +35,8 @@ Priority: extra
 Depends: libxc0 (= ${binary:Version}), ${misc:Depends}
 Description: Xross Core Library - Debug symbols
  This package contains debugging symbols for binaries in libxc.
-    $Rev$:     Revision of last commit
-    $Author$:  Author of last commit
-    $Date$:    Date of last commit
-    $Id$
+ $Rev$:     Revision of last commit
+ $Author$:  Author of last commit
+ $Date$:    Date of last commit
+ $Id$
+
