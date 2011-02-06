@@ -10,7 +10,7 @@
 AC_PREREQ(2.50)
 
 # initialize autoconf
-AC_INIT([libxc], [1.0.2], [milan.dunghubel@gmail.com])
+AC_INIT([libxc], [1.0.3], [milan.dunghubel@gmail.com])
 
 # install autotools scripts to build-aux dir
 AC_CONFIG_AUX_DIR([build-aux])
