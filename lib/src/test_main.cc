@@ -60,22 +60,33 @@ namespace {
 int main(int argc, char* const* argv)
 {
     int opt;
-    while ((opt = getopt(argc, argv, "VdM:")) != -1) {
-           switch (opt) {
-           case 'V':
+    bool debug = false;
+    const char* mask = "ALL";
+    //TODO default parameters do ~/.xc
+
+    while ((opt = getopt(argc, argv, "VdqM:")) != -1) {
+        switch (opt) {
+        case 'V':
                print_version();
                return EXIT_SUCCESS;
-           case 'd':
-                xc::debug::debug_enable();
-               break;
-           case 'M':
-               xc::log::add_stderr(optarg);
-               break;
-           default: /* '?' */
+        case 'd':
+            debug = true;
+            break;
+        case 'q':
+            debug = false;
+            mask = NULL;
+            break;
+        case 'M':
+            mask = optarg;
+            break;
+        default: /* '?' */
                print_usage(argv[0]);
                exit(EXIT_FAILURE);
            }
     }
+
+    if (mask) xc::log::add_stderr(optarg);
+    if (debug) xc::debug::debug_enable();
 
     xc::i18n("cs_CZ.UTF-8");
 

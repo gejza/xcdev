@@ -1,3 +1,9 @@
+libxc (1.0.2-1) maverick; urgency=low
+
+  * Defaultni zobrazeni xc test 
+
+ -- Milan Dunghubel <milan.dunghubel@gmail.com>  Sun, 06 Feb 2011 23:20:43 +0100
+
 libxc (1.0.1+dfsg) maverick; urgency=low
 
   * Rebuild 
