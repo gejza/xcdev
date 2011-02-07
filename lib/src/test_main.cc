@@ -85,7 +85,7 @@ int main(int argc, char* const* argv)
            }
     }
 
-    if (mask) xc::log::add_stderr(optarg);
+    if (mask) xc::log::add_stderr(mask);
     if (debug) xc::debug::debug_enable();
 
     xc::i18n("cs_CZ.UTF-8");
