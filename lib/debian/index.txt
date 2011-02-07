@@ -1,0 +1,22 @@
+Clipper Libraries for Crystallographic Computing
+================================================
+
+The aim of the clipper project is to produce a set of object-oriented
+libraries for the organisation of crystallographic data and the performance
+of crystallographic computation. The clipper libraries are written by Kevin
+Cowtan, University of York, UK.
+
+This is the top index, with links to the core clipper interface, plus
+links to the various optional interfaces.
+
+* file:///usr/share/doc/libclipper-doc/html/index.html[Core clipper classes]
+* file:///usr/share/doc/libclipper-doc/html/mmdb/index.html[MMDB interface]
+* file:///usr/share/doc/libclipper-doc/html/contrib/index.html[Contributed classes]
+* file:///usr/share/doc/libclipper-doc/html/ccp4/index.html[CCP4 interface]
+* file:///usr/share/doc/libclipper-doc/html/cif/index.html[mmCIF interface]
+* file:///usr/share/doc/libclipper-doc/html/cns/index.html[CNS interface]
+* file:///usr/share/doc/libclipper-doc/html/phs/index.html[Shelx interface]
+
+This file is part of the Ubuntu distribution of Clipper. For bugs and/or
+comments concerning these packages, please email the maintainer
+mailto:mok0@ubuntu.com[Morten Kjeldgaard]
