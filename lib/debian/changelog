@@ -1,3 +1,9 @@
+libxc (1.0.4~svn170) maverick; urgency=low
+
+  * Oprava verze a nove cislovani 
+
+ -- Milan Dunghubel <gejza@pc>  Mon, 07 Feb 2011 02:32:46 +0100
+
 libxc (1.0.3-2) maverick; urgency=low
 
   * doc balik
