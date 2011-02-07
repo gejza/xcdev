@@ -1,4 +1,5 @@
 Source: libxc
+Section: libs
 Priority: extra
 Maintainer: Milan Dunghubel <milan.dunghubel@gmail.com>
 Homepage: http://xcdev.ministryofnet.com/
