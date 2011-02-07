@@ -1,3 +1,9 @@
+libxc (1.0.3-2) maverick; urgency=low
+
+  * doc balik
+
+ -- Milan Dunghubel <milan.dunghubel@gmail.com>  Mon, 07 Feb 2011 01:52:08 +0100
+
 libxc (1.0.3-1) maverick; urgency=low
 
   * Defaultni zobrazeni xc test 

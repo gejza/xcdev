@@ -35,7 +35,7 @@ DOXYFILE_ENCODING      = UTF-8
 # NOTE: These are taken from the configure.ac file. The output looks better
 # when placing the version in the PROJECT_NAME. Thje PROJECT_NUMBER seems
 # intended more for things like the RCS version.
-PROJECT_NAME           = @DX_PROJECT@-@VERSION@
+PROJECT_NAME           = @PACKAGE_STRING@
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number.
 # This could be handy for archiving the generated documentation or
@@ -393,7 +393,7 @@ WARN_LOGFILE           = doxygen.log
 # limit the search, and forget to clean up, then doxygen start seeing double...
 # It is important to root all paths with SRCDIR - again, because of "make
 # distcheck". So usually this would be something like "$(SRCDIR)/src".
-INPUT                  = dox include src
+INPUT                  = doc/doxygen include src
 
 # If the value of the INPUT tag contains directories, you can use the
 # FILE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp
@@ -451,7 +451,7 @@ EXAMPLE_RECURSIVE      = NO
 # directories that contain image that are included in the documentation (see
 # the \image command).
 
-IMAGE_PATH             = dox/
+IMAGE_PATH             = doc/doxygen
 
 # The INPUT_FILTER tag can be used to specify a program that doxygen should
 # invoke to filter for each input file. Doxygen will invoke the filter program
@@ -588,7 +588,7 @@ HTML_ALIGN_MEMBERS     = YES
 
 # NOTE: You can turn this off by running "configure --disable-doxygen-chm".
 # TODO: to configure
-GENERATE_HTMLHELP      = $(GENERATE_HTMLHELP)
+GENERATE_HTMLHELP      = NO
 
 # If the GENERATE_HTMLHELP tag is set to YES, the CHM_FILE tag can
 # be used to specify the file name of the resulting .chm file. You
@@ -609,7 +609,7 @@ CHM_FILE               = ../$(PROJECT).chm
 # NOTE: configure finds HHC automatically for you; if it can't, it will turn
 # CHM generation off.
 # TODO: to configure
-HHC_LOCATION           = $(HHC_PATH)
+HHC_LOCATION           = NO
 
 # If the GENERATE_HTMLHELP tag is set to YES, the GENERATE_CHI flag
 # controls if a separate .chi index file is generated (YES) or that
@@ -617,7 +617,7 @@ HHC_LOCATION           = $(HHC_PATH)
 
 # NOTE: You can generate the CHI by running "configure # --doxygen-enable-chi"
 # TODO: to configure
-GENERATE_CHI           = $(GENERATE_CHI)
+GENERATE_CHI           = NO
 
 # If the GENERATE_HTMLHELP tag is set to YES, the BINARY_TOC flag
 # controls whether a binary table of contents is generated (YES) or a
@@ -666,7 +666,7 @@ TREEVIEW_WIDTH         = 250
 # NOTE: This is automatically YES if you generate PS or PDF output. You can
 # disable it by running "configure --disable-doxygen-ps --disable-doxygen-pdf"
 # TODO: to configure
-GENERATE_LATEX         = $(GENERATE_LATEX)
+GENERATE_LATEX         = NO
 
 # The LATEX_OUTPUT tag is used to specify where the LaTeX docs will be put.
 # If a relative path is entered the value of OUTPUT_DIRECTORY will be
@@ -731,7 +731,7 @@ PDF_HYPERLINKS         = NO
 
 # NOTE: You can disable this by running "configure --disable-doxygen-pdf"
 # TODO: to configure
-USE_PDFLATEX           = $(GENERATE_PDF)
+USE_PDFLATEX           = NO
 
 # If the LATEX_BATCHMODE tag is set to YES, doxygen will add the \\batchmode.
 # command to the generated LaTeX files. This will instruct LaTeX to keep
@@ -832,7 +832,7 @@ MAN_LINKS              = NO
 
 # NOTE: You can enable this by running "configure --enable-doxygen-xml"
 # TODO: to configure
-GENERATE_XML           = $(GENERATE_XML)
+GENERATE_XML           = NO
 
 # The XML_OUTPUT tag is used to specify where the XML pages will be put.
 # If a relative path is entered the value of OUTPUT_DIRECTORY will be
@@ -871,7 +871,7 @@ XML_PROGRAMLISTING     = YES
 # and incomplete at the moment.
 
 # NOTE: There's no support for this in the Makefile yet.
-GENERATE_AUTOGEN_DEF   = NO
+GENERATE_AUTOGEN_DEF   = YES
 
 #---------------------------------------------------------------------------
 # configuration options related to the Perl module output
@@ -1046,7 +1046,7 @@ HIDE_UNDOC_RELATIONS   = YES
 # NOTE: This is computed automatically by "configure". Use the --disable-dot
 # flag if you have it but don't want to use it.
 # TODO: to configure
-HAVE_DOT               = $(HAVE_DOT)
+HAVE_DOT               = NO
 
 # If the CLASS_GRAPH and HAVE_DOT tags are set to YES then doxygen
 # will generate a graph for each documented class showing the direct and
