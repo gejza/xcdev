@@ -122,7 +122,7 @@ install-arch:
 
 	# install the arch part of the package into debian/tmp.
 	$(MAKE) DESTDIR=$(CURDIR)/debian/tmp install
-	install -D -m644 debian/libclipper2.lintian debian/tmp/usr/share/lintian/overrides/libclipper2
+	#install -D -m644 debian/libclipper2.lintian debian/tmp/usr/share/lintian/overrides/libclipper2
 
 	dh_install -s
 
