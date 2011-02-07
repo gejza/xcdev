@@ -376,7 +376,7 @@ WARN_FORMAT            = "$file:$line: $text"
 # and error messages should be written. If left blank the output is written
 # to stderr.
 
-WARN_LOGFILE           =
+WARN_LOGFILE           = doxygen.log
 
 #---------------------------------------------------------------------------
 # configuration options related to the input files
@@ -393,7 +393,7 @@ WARN_LOGFILE           =
 # limit the search, and forget to clean up, then doxygen start seeing double...
 # It is important to root all paths with SRCDIR - again, because of "make
 # distcheck". So usually this would be something like "$(SRCDIR)/src".
-INPUT                  = include src
+INPUT                  = dox include src
 
 # If the value of the INPUT tag contains directories, you can use the
 # FILE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp
@@ -402,7 +402,7 @@ INPUT                  = include src
 # *.c *.cc *.cxx *.cpp *.c++ *.java *.ii *.ixx *.ipp *.i++ *.inl *.h *.hh *.hxx *.hpp
 # *.h++ *.idl *.odl *.cs *.php *.php3 *.inc
 
-FILE_PATTERNS          = *.h *.hh *.c *.cc *.tcc *.txt
+FILE_PATTERNS          = *.dox *.h *.hh *.c *.cc *.cpp *.tcc *.txt
 
 # The RECURSIVE tag can be used to turn specify whether or not subdirectories
 # should be searched for input files as well. Possible values are YES and NO.
@@ -451,7 +451,7 @@ EXAMPLE_RECURSIVE      = NO
 # directories that contain image that are included in the documentation (see
 # the \image command).
 
-IMAGE_PATH             = doc/images
+IMAGE_PATH             = dox/
 
 # The INPUT_FILTER tag can be used to specify a program that doxygen should
 # invoke to filter for each input file. Doxygen will invoke the filter program
