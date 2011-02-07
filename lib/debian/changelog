@@ -1,8 +1,9 @@
-libxc (1.0.4~svn174) maverick; urgency=low
+libxc (1.0.4~svn175) unstable; urgency=low
 
   * Oprava verze a nove cislovani 
+  * Uprava shdeps pro verze knihoven
 
- -- Milan Dunghubel <milan.dunghubel@gmail.com>  Mon, 07 Feb 2011 02:32:46 +0100
+ -- Milan Dunghubel <milan.dunghubel@gmail.com>  Mon, 07 Feb 2011 12:46:23 +0100
 
 libxc (1.0.3-2) maverick; urgency=low
 
