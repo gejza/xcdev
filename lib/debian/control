@@ -1,10 +1,11 @@
 Source: libxc
 Priority: extra
 Maintainer: Milan Dunghubel <milan.dunghubel@gmail.com>
-Build-Depends: debhelper (>= 7), autotools-dev, autoconf-archive, autopoint, libconfig++-dev, binutils-dev, libpcre3-dev, libreadline-dev
+Homepage: http://xcdev.ministryofnet.com/
+Build-Depends: debhelper (>= 7), autotools-dev, autoconf-archive, autopoint, libtool, autoconf,
+ libconfig++-dev, binutils-dev, libpcre3-dev, libreadline-dev
+Build-Depends-Indep: doxygen
 Standards-Version: 3.9.1
-Section: libs
-#Homepage: <insert the upstream URL, if relevant>
 
 Package: libxc0
 Section: libs
@@ -12,6 +13,9 @@ Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Conflicts: libxcrd0 
 Description: Xross Core Library
+ This package contains shared libraries needed to run programs that have
+ been developed using the clipper libraries.
+ .
  $Rev$:     Revision of last commit
  $Author$:  Author of last commit
  $Date$:    Date of last commit
@@ -22,7 +26,25 @@ Section: libdevel
 Architecture: any
 Depends: libxc0 (= ${binary:Version}), ${misc:Depends}
 Conflicts: libxcrd-dev
+Suggests: libxc-doc
 Description: Xross Core Library - Devel files
+ This package contains development environment for programs which will use
+ the xc libraries. 
+ .
+ $Rev$:     Revision of last commit
+ $Author$:  Author of last commit
+ $Date$:    Date of last commit
+ $Id$
+
+Package: libxc-doc
+Section: doc
+Architecture: all
+Depends: ${misc:Depends}
+Suggests: www-browser
+Enhances: libxc-dev
+Description: doxygen generated documentation for libxc
+ This package provides doxygen generated documentation for the library.
+ .
  $Rev$:     Revision of last commit
  $Author$:  Author of last commit
  $Date$:    Date of last commit
@@ -35,6 +57,7 @@ Priority: extra
 Depends: libxc0 (= ${binary:Version}), ${misc:Depends}
 Description: Xross Core Library - Debug symbols
  This package contains debugging symbols for binaries in libxc.
+ .
  $Rev$:     Revision of last commit
  $Author$:  Author of last commit
  $Date$:    Date of last commit

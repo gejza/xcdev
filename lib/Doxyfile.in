@@ -800,7 +800,7 @@ RTF_EXTENSIONS_FILE    =
 
 # NOTE: You can enable this by running "configure --enable-doxygen-man"
 # TODO: to configure
-GENERATE_MAN           = $(GENERATE_MAN)
+GENERATE_MAN           = YES
 
 # The MAN_OUTPUT tag is used to specify where the man pages will be put.
 # If a relative path is entered the value of OUTPUT_DIRECTORY will be

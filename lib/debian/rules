@@ -1,14 +1,18 @@
 #!/usr/bin/make -f
 # -*- makefile -*-
-# Sample debian/rules that uses debhelper.
-# This file was originally written by Joey Hess and Craig Small.
-# As a special exception, when this file is copied by dh-make into a
-# dh-make output file, you may use that output file without restriction.
-# This special exception was added by Craig Small in version 0.37 of dh-make.
+#
+# This rules file builds packages in two different threads.
+# The -arch thread is initiated via the binary-arch target
+# and similarly, the -indep thread is initiated via the binary-indep
+# target. This enables dpkg-buildpackage to build either -arch only,
+# -indep only or both, depending on the setting of the -A, -B or -b 
+# flags.
 
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
+# This has to be exported to make some magic below work.
+export DH_OPTIONS
 
 # These are used for cross-compiling and for saving the configure script
 # from having to guess our platform (since we know it already)
@@ -29,63 +33,106 @@ major=2
 #major=`ls src/.libs/lib*.so.* | \
 # awk '{if (match($$0,/\.so\.[0-9]+$$/)) print substr($$0,RSTART+4)}'`
 
-configure:
-	autoreconf --install
+# These files are overwritten by autoreconf which we need to run because
+# one of the Makefile.am's is patched. They are deleted in the clean
+# target as not to interfere with the building of the source package.
 
-config.status: configure
+NOT_IN_TARBALL = config/lt~obsolete.m4 config/ltoptions.m4	\
+config/ltversion.m4 config/ltsugar.m4 config/libtool.m4
+
+# The first target to be called. First we patch, then
+# we run pre-configure:
+configure-stamp: config.status pre-configure-stamp
+	./configure $(CROSS) \
+	--prefix=/usr \
+	CFLAGS="$(CFLAGS)" \
+	CXXFLAGS="$(CXXFLAGS)"
+
+	touch $@
+
+config.status:
 	dh_testdir
-	# Add here commands to configure the package.
+
+	# Save some upstream files that get overwritten 
+	# when we run autoreconf... this is mainly useful
+	# when building the source package, where those files
+	# otherwise end up in .diff.gz.
+	#tar -czf ow.tgz $(OVERWRITTEN_FILES)
+
+	# Here we configure the package.
 ifneq "$(wildcard /usr/share/misc/config.sub)" ""
 	cp -f /usr/share/misc/config.sub config.sub
 endif
 ifneq "$(wildcard /usr/share/misc/config.guess)" ""
 	cp -f /usr/share/misc/config.guess config.guess
 endif
-	./configure $(CROSS) --prefix=/usr --mandir=\$${prefix}/share/man --infodir=\$${prefix}/share/info CFLAGS="$(CFLAGS)" LDFLAGS="-Wl,-z,defs"
 
 
-build: build-stamp
-build-stamp:  config.status 
-	dh_testdir
-
-	# Add here commands to compile the package.
-	$(MAKE)
-
+pre-configure-stamp:
+	autoreconf --force --install
 	touch $@
 
-clean: 
+#Architecture
+build:
+
+build-arch: build-arch-stamp
+build-arch-stamp: configure-stamp
+
+	$(MAKE)
+	touch $@
+
+build-indep: build-indep-stamp
+build-indep-stamp: configure-stamp
+	#cp debian/Doxyfile .
+	doxygen
+	touch $@
+
+clean:
 	dh_testdir
 	dh_testroot
-	rm -f build-stamp 
+	rm -f pre-configure-stamp configure-stamp 
+	rm -f build-arch-stamp build-indep-stamp
+	#rm -f Doxyfile	
+	#rm -rf doc/
 
-	# Add here commands to clean up after the build process.
+	# clean up after the build process.
 	[ ! -f Makefile ] || $(MAKE) distclean
 	rm -f config.sub config.guess
 
-	dh_clean 
+	# Re-establish original files
+	#if test -f ow.tgz; then tar -xzf ow.tgz; rm -f ow.tgz; fi
+	#rm -f $(NOT_IN_TARBALL)
+	#rm -f Doxygen doxy.core.tag
 
-install: build
+	dh_clean
+
+install: install-indep install-arch
+install-indep:
 	dh_testdir
 	dh_testroot
-	dh_prep  
-	dh_installdirs
+	dh_prep -i
+	dh_installdirs -i
+	dh_install -i
 
-	# Add here commands to install the package into debian/tmp
+install-arch:
+	dh_testdir
+	dh_testroot
+	dh_prep -s
+	dh_installdirs -s
+
+	# install the arch part of the package into debian/tmp.
 	$(MAKE) DESTDIR=$(CURDIR)/debian/tmp install
+	install -D -m644 debian/libclipper2.lintian debian/tmp/usr/share/lintian/overrides/libclipper2
 
+	dh_install -s
 
-# Build architecture-independent files here.
-binary-indep: install
-# We have nothing to do by default.
-
-# Build architecture-dependent files here.
-binary-arch: install
+# This target is called by binary-arch/binary-indep in another 'make' thread.
+binary-common:
 	dh_testdir
 	dh_testroot
-	dh_installchangelogs 
+	dh_installchangelogs ChangeLog
 	dh_installdocs
 	dh_installexamples
-	dh_install
 #	dh_installmenu
 #	dh_installdebconf
 #	dh_installlogrotate
@@ -98,10 +145,10 @@ binary-arch: install
 	dh_installman
 	dh_link
 	dh_strip --dbg-package=libxc-dbg
-	dh_compress
-	dh_fixperms
+	dh_compress --exclude=examples
 #	dh_perl
 #	dh_python
+	dh_fixperms
 	dh_makeshlibs
 	dh_installdeb
 	dh_shlibdeps
@@ -109,5 +156,17 @@ binary-arch: install
 	dh_md5sums
 	dh_builddeb
 
-binary: binary-indep binary-arch
-.PHONY: build clean binary-indep binary-arch binary install 
+# Build architecture independent packages using the common target.
+binary-indep: build-indep install-indep
+	$(MAKE) -f debian/rules DH_OPTIONS=-i binary-common
+
+# Build architecture dependant packages using the common target.
+binary-arch: build-arch install-arch
+	$(MAKE) -f debian/rules DH_OPTIONS=-s binary-common
+
+binary: binary-arch binary-indep
+
+.PHONY: build clean binary-indep binary-arch binary install install-indep install-arch
+
+####
+
