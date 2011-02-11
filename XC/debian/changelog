@@ -1,4 +1,4 @@
-libxc-perl (1.0.0-1) maverick; urgency=low
+libxc-perl (1.0.1~svn177) maverick; urgency=low
 
   * Rebuild with libxc 
 
