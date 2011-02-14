@@ -40,6 +40,22 @@ major=2
 NOT_IN_TARBALL = config/lt~obsolete.m4 config/ltoptions.m4	\
 config/ltversion.m4 config/ltsugar.m4 config/libtool.m4
 
+# Adapted from http://wiki.debian.org/SandroTosi/Svn_get-orig-source
+PACKAGE = xcdev
+SVN REPOSITORY = http://svn.ministryofnet.com/svn/mfis/branches/ubuntu-web-package
+SRC_VERSION := $(shell dpkg-parsechangelog | sed -ne 's/^Version: \(\([0-9]\+\):\)\?\(.*\)-.*/\3/p')
+SVN_REVISION := $(shell echo $(SRC_VERSION) | sed 's/svn//' | awk -F"+" '{ print $$2 }' )
+TARBALL = $(PACKAGE)_$(SRC_VERSION).orig.tar.gz
+
+get-orig-source:
+	rm -rf get-orig-source $(TARBALL)
+	mkdir get-orig-source
+	svn export -r $(SVN_REVISION) $(SVN REPOSITORY) \
+        	get-orig-source/$(PACKAGE)-$(SRC_VERSION).orig
+	GZIP='--best --no-name' tar czf $(TARBALL) -C get-orig-source $(PACKAGE)-$(SRC_VERSION).orig
+	rm -rf get-orig-source
+	echo "  "$(TARBALL)" created; move it to the right destination to build the package"
+
 # The first target to be called. First we patch, then
 # we run pre-configure:
 configure-stamp: config.status pre-configure-stamp
@@ -166,7 +182,7 @@ binary-arch: build-arch install-arch
 
 binary: binary-arch binary-indep
 
-.PHONY: build clean binary-indep binary-arch binary install install-indep install-arch
+.PHONY: get-orig-source build clean binary-indep binary-arch binary install install-indep install-arch
 
 ####
 

@@ -1,3 +1,9 @@
+libxc (1.0.5~svn177) maverick; urgency=low
+
+  * Pridan objekt timer_t. Closes: #000029 
+
+ -- Milan Dunghubel <milan.dunghubel@gmail.com>  Mon, 14 Feb 2011 17:38:26 +0100
+
 libxc (1.0.4~svn175) unstable; urgency=low
 
   * Oprava verze a nove cislovani 

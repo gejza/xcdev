@@ -6,7 +6,7 @@ AM_CPPFLAGS = -I../include $(LIBCONFIG_CFLAGS) -DLOCALEDIR=\"$(localedir)\" -ggd
 AM_LDFLAGS = -static -L../src -lxc -lxclog -lxctest -g
 
 #noinst_PROGRAMS = test_tree test_file test_st test_string
-noinst_PROGRAMS = log config debug text gc values files system serialize
+noinst_PROGRAMS = log config debug text gc values files system serialize timer
 
 log_SOURCES = log.cc
 
@@ -26,3 +26,5 @@ files_SOURCES = files.cc
 system_SOURCES = system.cc
 
 serialize_SOURCES = serialize.cc
+
+timer_SOURCES = timer.cc

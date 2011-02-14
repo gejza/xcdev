@@ -13,7 +13,7 @@ libxc_la_SOURCES = text.cpp regex.cc log.cc \
 				   pool.cc error.cc debug.cc debug_sys.cc \
 				   fd.cc file.cc fs.cc paths.cc \
 				   system.cc system_pidfile.cc refobj.cc \
-				   version.cc serialize.cc unserialize.cc bytecode.cc
+				   version.cc serialize.cc unserialize.cc bytecode.cc timer.cc
 
 libxc_la_LDFLAGS = -version-info $(VERSION_INFO)
 libxc_la_LIBADD = -lpcre -ldl -liberty_pic
