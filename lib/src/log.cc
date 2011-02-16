@@ -23,6 +23,7 @@
 #include "xc/debug.h"
 #include "xc/error.h"
 #include "xc/file.h"
+#include "xc/mutex.h"
 
 namespace {
 
@@ -172,6 +173,7 @@ namespace {
         log_std_t(FILE* out, const char* mask) : _out(out), log_mod_t(mask) {}
 
         virtual void info(const xc::debug::loc_t& loc, int level, const xc::string& msg) {
+			xc::lock_t lock(_mutex);
             size_t ind = print_info(_out);
             loc.trace().dump(_out, ind);
             fprintf(_out, "INFO%d: ", level, ind);
@@ -182,6 +184,7 @@ namespace {
         }
 
         virtual void warn(const xc::debug::loc_t& loc, int level, const xc::string& msg) {
+			xc::lock_t lock(_mutex);
             size_t ind = print_info(_out);
             loc.trace().dump(_out, ind);
             {
@@ -195,6 +198,7 @@ namespace {
         }
 
         virtual void error(const xc::debug::loc_t& loc, int level, const xc::string& msg) {
+			xc::lock_t lock(_mutex);
             size_t ind = print_info(_out);
             loc.trace().dump(_out, ind);
             {
@@ -208,6 +212,7 @@ namespace {
         }
 
         virtual void fatal(const xc::debug::loc_t& loc, const xc::string& msg) {
+			xc::lock_t lock(_mutex);
             size_t ind = print_info(_out);
             loc.trace().dump(_out, ind);
             {
@@ -221,6 +226,7 @@ namespace {
         }
     protected:
         FILE* _out;
+		xc::mutex_t _mutex;
     };
 
     class log_file_t : public xc::file_t, public log_std_t

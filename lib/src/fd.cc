@@ -13,8 +13,7 @@
 #include <errno.h>
 #include <string.h>
 
-#include <xc/system.h>
-
+#include "xc/system.h"
 #include "xc/fd.h"
 #include "xc/error.h"
 
@@ -34,7 +33,7 @@ xc::fd_t::fd_t(const fd_t& fd)
         XC_DBG("Copy fd %d = `%s'", fd._fd, _filename.c_str());
         _fd = TEMP_FAILURE_RETRY(::dup(fd._fd));
         if (_fd == -1) {
-            ERROR(xc::error_t, "Can't copy fd %d",
+            ERROR(xc::error_t, "Can't copy fd %d: %s",
                             fd._fd, strerror(errno));
         }
     }
