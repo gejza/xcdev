@@ -102,46 +102,43 @@ namespace {
 
     };
 
-    size_t print_time(FILE* out)
+    xc::string format_time()
     {
         size_t ret;
-        char outstr[200];
+        char out[200];
         time_t t;
         struct tm *tmp;
 
         t = ::time(NULL);
         tmp = ::localtime(&t);
         if (tmp == NULL)
-            return 0;
+            return "";
 
-        if ((ret = ::strftime(outstr, sizeof(outstr), "[%T] ", tmp)) == 0)
-            return 0;
+        if ((ret = ::strftime(out, sizeof(out), "[%T] ", tmp)) == 0)
+            return "";
 
-        ::fputs(outstr, out);
-        return ret;
+        return out;
     }
 
-    size_t print_procinfo(FILE* out)
+    xc::string format_procinfo()
     {
-        return ::fprintf(out, "[%d] ", ::getpid());
+        return xc::format("[%d] ", ::getpid());
     }
 
-    size_t print_info(FILE* out)
+    xc::string format_info()
     {
-        //return print_time(out) + print_procinfo(out);
-        size_t s1 = print_time(out);
-        s1 += print_procinfo(out);
-        return s1;
+        return format_time() + format_procinfo();
     }
     
-    void print_loc(FILE* out, const xc::debug::loc_t& loc)
+    xc::string format_loc(const xc::debug::loc_t& loc)
     {
         if (loc.filename() && loc.func())
-            fprintf(out, _(" at %s:%d:%s"), loc.filename(), loc.line(), loc.func());
+            return xc::format(_(" at %s:%d:%s"), loc.filename(), loc.line(), loc.func());
         else if (loc.filename())
-            fprintf(out, _(" at %s:%d"), loc.filename(), loc.line());
+            return xc::format(_(" at %s:%d"), loc.filename(), loc.line());
         else if (loc.func())
-            fprintf(out, _(" at %s"), loc.func());
+            return xc::format(_(" at %s"), loc.func());
+        return "";
     }
 
     class log_mod_t
@@ -173,56 +170,51 @@ namespace {
         log_std_t(FILE* out, const char* mask) : _out(out), log_mod_t(mask) {}
 
         virtual void info(const xc::debug::loc_t& loc, int level, const xc::string& msg) {
-			xc::lock_t lock(_mutex);
-            size_t ind = print_info(_out);
-            loc.trace().dump(_out, ind);
-            fprintf(_out, "INFO%d: ", level, ind);
-            fwrite(msg.data(), 1, msg.size(), _out);
-            print_loc(_out, loc);
-            fprintf(_out, "\n");
-            fflush(_out);
+            const xc::string m = xc::format("INFO%d: ", level) + msg;
+            xc::string entry;
+            entry += format_info();
+            entry += loc.trace().dump(entry.size());
+            entry += m;
+            entry += format_loc(loc);
+            entry += "\n";
+            ::fwrite(entry.data(), entry.size(), 1, _out);
+            ::fflush(_out);
         }
 
         virtual void warn(const xc::debug::loc_t& loc, int level, const xc::string& msg) {
-			xc::lock_t lock(_mutex);
-            size_t ind = print_info(_out);
-            loc.trace().dump(_out, ind);
-            {
-                xc::colored_t color(_out, 33);
-                fprintf(_out, "WARN%d: ", level);
-                fwrite(msg.data(), 1, msg.size(), _out);
-            }
-            print_loc(_out, loc);
-            fprintf(_out, "\n");
-            fflush(_out);
+            const xc::string m = xc::format("WARN%d: ", level) + msg;
+            xc::string entry;
+            entry += format_info();
+            entry += loc.trace().dump(entry.size());
+            entry += ::isatty(_out->_fileno) ? xc::colorize(m, 33) : m;
+            entry += format_loc(loc);
+            entry += "\n";
+            ::fwrite(entry.data(), entry.size(), 1, _out);
+            ::fflush(_out);
         }
 
         virtual void error(const xc::debug::loc_t& loc, int level, const xc::string& msg) {
-			xc::lock_t lock(_mutex);
-            size_t ind = print_info(_out);
-            loc.trace().dump(_out, ind);
-            {
-                xc::colored_t color(_out, 31);
-                fprintf(_out, "ERROR%d: ", level);
-                fwrite(msg.data(), 1, msg.size(), _out);
-            }
-            print_loc(_out, loc);
-            fprintf(_out, "\n");
-            fflush(_out);
+            const xc::string m = xc::format("ERROR%d: ", level) + msg;
+            xc::string entry;
+            entry += format_info();
+            entry += loc.trace().dump(entry.size());
+            entry += ::isatty(_out->_fileno) ? xc::colorize(m, 31) : m;
+            entry += format_loc(loc);
+            entry += "\n";
+            ::fwrite(entry.data(), entry.size(), 1, _out);
+            ::fflush(_out);
         }
 
         virtual void fatal(const xc::debug::loc_t& loc, const xc::string& msg) {
-			xc::lock_t lock(_mutex);
-            size_t ind = print_info(_out);
-            loc.trace().dump(_out, ind);
-            {
-                xc::colored_t color(_out, 31);
-                fprintf(_out, "FATAL: ");
-                fwrite(msg.data(), 1, msg.size(), _out);
-            }
-            print_loc(_out, loc);
-            fprintf(_out, "\nExiting...\n");
-            fflush(_out);
+            const xc::string m = xc::string("FATAL: ") + msg;
+            xc::string entry;
+            entry += format_info();
+            entry += loc.trace().dump(entry.size());
+            entry += ::isatty(_out->_fileno) ? xc::colorize(m, 31) : m;
+            entry += format_loc(loc);
+            entry += "\nExiting...\n";
+            ::fwrite(entry.data(), entry.size(), 1, _out);
+            ::fflush(_out);
         }
     protected:
         FILE* _out;

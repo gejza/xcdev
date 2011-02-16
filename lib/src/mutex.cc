@@ -35,6 +35,7 @@ void xc::mutex_t::lock()
 	if (TEMP_FAILURE_RETRY(::pthread_mutex_lock(&this->_mutex)) != 0) {
         ERROR(xc::error_t, "Can't lock mutex %s", strerror(errno));
 	}
+    XC_DBG("Mutex locked.");
 }
 
 void xc::mutex_t::unlock()
@@ -42,6 +43,7 @@ void xc::mutex_t::unlock()
 	if (TEMP_FAILURE_RETRY(::pthread_mutex_unlock(&this->_mutex)) != 0) {
         ERROR(xc::error_t, "Can't unlock mutex %s", strerror(errno));
 	}
+    XC_DBG("Mutex unlocked.");
 }
 
 

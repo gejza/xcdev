@@ -110,18 +110,19 @@ xc::string xc::debug::trace_t::name(unsigned int index) const
 
 static char ws[] = "                                                                      ";
 
-void xc::debug::trace_t::dump(FILE* out, size_t indent) const
+xc::string xc::debug::trace_t::dump(size_t indent) const
 {
     static trace_t last(false);
+    xc::string out;
     size_t max = *this - last;
     for (unsigned int i=0; i < max; i++) {
-        fprintf(out, "\n%.*s%s", (int)indent, ws, this->name(i).c_str());
-        
+        out += xc::format("\n%.*s", (int)indent, ws) + this->name(i);
     }
     if (max)
-        fprintf(out, "\n%.*s", (int)indent, ws);
+        out += xc::format("\n%.*s", (int)indent, ws);
     //::backtrace_symbols_fd(this->_p, this->_size, fd);
     last = *this;
+    return out;
 }
 
 void xc::debug::debug_enable()

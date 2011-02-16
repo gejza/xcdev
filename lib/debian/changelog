@@ -1,7 +1,8 @@
-libxc (1.0.5~svn180) maverick; urgency=low
+libxc (1.0.5~svn181) maverick; urgency=low
 
   * Pridan objekt timer_t. Closes: #000029 
-  * Pridan objekt mutex_t. Closes: #000049 
+  * Pridan objekt mutex_t. Closes: #000049
+  * Upravene logovani pro konzistenci zaznamu
 
  -- Milan Dunghubel <milan.dunghubel@gmail.com>  Wed, 16 Feb 2011 01:33:21 +0100
 

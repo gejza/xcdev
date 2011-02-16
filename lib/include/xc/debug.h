@@ -60,7 +60,7 @@ public:
         return this->name(index);
     }
 
-    void dump(FILE* out, size_t indent) const;
+    xc::string dump(size_t indent = 0) const;
 
     size_t operator - (const trace_t& d) const {
         size_t s1 = _size;

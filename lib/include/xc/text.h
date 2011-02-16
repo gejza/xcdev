@@ -86,6 +86,11 @@ namespace xc {
         FILE* _out;
     };
 
+    inline xc::string colorize(const xc::string& str, int color, int style = 1)
+    {
+        return xc::format("\033[%d;%dm", style, color) + str + "\033[0m";
+    }
+
 } // namespace xc
 
 
