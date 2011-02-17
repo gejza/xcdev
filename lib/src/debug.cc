@@ -65,6 +65,7 @@ namespace {
     };
 
     debug_mask_t _mask;
+    bool show_pid = false;
 }
 
 xc::debug::trace_t::trace_t(const trace_t& other)
@@ -140,6 +141,11 @@ void xc::debug::debug_disable()
     _mask.disable();
 }
 
+void xc::debug::debug_show_pid(bool show)
+{
+    show_pid = show;
+}
+
 void xc::debug::print(const loc_t& loc, const char* format, ...)
 {
     if (!_mask.test(0, loc))
@@ -148,8 +154,11 @@ void xc::debug::print(const loc_t& loc, const char* format, ...)
     va_start(arg, format);
     {
         xc::colored_t c(stdout, 30);
+        if (show_pid) {
+            ::fprintf(stdout, "[%d] ", ::getpid());
+        }
         fprintf(stdout, "DEBUG(%s:%s:%d): ", loc.filename(), loc.func(), loc.line());
-        vfprintf(stdout, _(format), arg);
+        ::vfprintf(stdout, format, arg);
     }
     fprintf(stdout, "\n");
     va_end(arg);
@@ -163,8 +172,11 @@ void xc::debug::trace(const loc_t& loc, const char* format, ...)
     va_start(arg, format);
     {
         xc::colored_t c(stdout, 30);
+        if (show_pid) {
+            ::fprintf(stdout, "[%d] ", ::getpid());
+        }
         fprintf(stdout, "TRACE(%s): ", loc.filename(), loc.line());
-        vfprintf(stdout, _(format), arg);
+        ::vfprintf(stdout, format, arg);
     }
     fprintf(stdout, "\n");
     va_end(arg);

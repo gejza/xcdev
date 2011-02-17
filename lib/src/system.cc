@@ -17,10 +17,69 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <signal.h>
 
 #include <xc/log.h>
 #include <xc/error.h>
 #include "xc/system.h"
+
+namespace {
+    struct signal_t {
+        int signum;
+        const char *signame;
+    };
+    const signal_t signals[] = {
+        {SIGHUP, "SIGHUP"},
+        {SIGINT, "SIGINT"},
+        {SIGQUIT, "SIGQUIT"},
+        {SIGILL, "SIGILL"},
+        {SIGTRAP, "SIGTRAP"},
+        {SIGABRT, "SIGABRT"},
+        {SIGIOT, "SIGIOT"},
+        {SIGBUS, "SIGBUS"},
+        {SIGFPE, "SIGFPE"},
+        {SIGKILL, "SIGKILL"},
+        {SIGUSR1, "SIGUSR1"},
+        {SIGSEGV, "SIGSEGV"},
+        {SIGUSR2, "SIGUSR2"},
+        {SIGPIPE, "SIGPIPE"},
+        {SIGALRM, "SIGALRM"},
+        {SIGTERM, "SIGTERM"},
+#ifdef SIGSTKFLT
+        {SIGSTKFLT, "SIGSTKFLT"},
+#endif
+        {SIGCLD, "SIGCLD"},
+        {SIGCHLD, "SIGCHLD"},
+        {SIGCONT, "SIGCONT"},
+        {SIGSTOP, "SIGSTOP"},
+        {SIGTSTP, "SIGTSTP"},
+        {SIGTTIN, "SIGTTIN"},
+        {SIGTTOU, "SIGTTOU"},
+        {SIGURG, "SIGURG"},
+        {SIGXCPU, "SIGXCPU"},
+        {SIGXFSZ, "SIGXFSZ"},
+        {SIGVTALRM, "SIGVTALRM"},
+        {SIGPROF, "SIGPROF"},
+        {SIGWINCH, "SIGWINCH"},
+        {SIGPOLL, "SIGPOLL"},
+        {SIGIO, "SIGIO"},
+        {SIGPWR, "SIGPWR"},
+        {SIGSYS, "SIGSYS"},
+        {0, "UNKNOWN"}
+    };
+}
+
+const char* xc::system::signal_name(int signal)
+{
+    const signal_t* s = signals;
+    while (s->signum) {
+        if (s->signum == signal) {
+            break;
+        }
+        s++;
+    }
+    return s->signame;
+}
 
 uid_t xc::system::get_uid(const char* user)
 {

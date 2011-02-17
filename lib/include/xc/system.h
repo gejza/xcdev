@@ -19,6 +19,13 @@
 namespace xc {
 namespace system {
 
+    /** 
+     * @short Get signal name
+     * @param signal 
+     * @return name
+     */
+    const char* signal_name(int signal);
+
     uid_t get_uid(const char* user);
     gid_t get_gid(const char* group);
 

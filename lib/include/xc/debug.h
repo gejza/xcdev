@@ -302,6 +302,12 @@ void debug_enable(const char* src_ex);
  */
 void debug_disable();
 
+/** 
+ * @short Zobrazit pid procesu
+ * @param show Zobrazit/Nezobrazit
+ */
+void debug_show_pid(bool show);
+
 } // namespace debug
 } // namespace xc
 
