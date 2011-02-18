@@ -31,6 +31,9 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess config.h.in \
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libxc.pc
 
+ChangeLog:
+	svn2cl
+
 dist-hook:
 	echo "$(VERSION)" > $(distdir)/VERSION
 
