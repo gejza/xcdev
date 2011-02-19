@@ -61,6 +61,7 @@ get-orig-source:
 configure-stamp: config.status pre-configure-stamp
 	./configure $(CROSS) \
 	--prefix=/usr \
+	--enable-optimization \
 	CFLAGS="$(CFLAGS)" \
 	CXXFLAGS="$(CXXFLAGS)"
 

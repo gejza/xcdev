@@ -4,7 +4,7 @@ Priority: extra
 Maintainer: Milan Dunghubel <milan.dunghubel@gmail.com>
 Homepage: http://xcdev.ministryofnet.com/
 Build-Depends: debhelper (>= 7), autotools-dev, autoconf-archive, autopoint, libtool, autoconf,
- libmm-dev, libconfig++-dev, binutils-dev, libpcre3-dev, libreadline-dev
+ libmm-dev, libcdb-dev, libconfig++-dev, binutils-dev, libpcre3-dev, libreadline-dev
 Build-Depends-Indep: doxygen,texlive-font-utils
 Standards-Version: 3.9.1
 
