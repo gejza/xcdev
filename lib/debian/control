@@ -39,7 +39,7 @@ Description: Xross Core Library - Devel files
 
 Package: libxc-doc
 Section: doc
-Architecture: all
+Architecture: any
 Depends: ${misc:Depends}
 Suggests: www-browser
 Enhances: libxc-dev
